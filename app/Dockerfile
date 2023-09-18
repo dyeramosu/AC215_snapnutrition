@@ -19,7 +19,7 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Expose the port on which the Flask app will run
-EXPOSE 6006
+EXPOSE 8000
 
 # Start the Flask development server
 CMD ["flask", "run"]
