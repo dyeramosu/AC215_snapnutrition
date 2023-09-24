@@ -2,8 +2,8 @@
 ==============================
 
 Project Organization
-</br>
-<font color='red'>Need to update structure.</font>
+<br>
+`Need to update structure (Ben)`
 ------------
       ├── LICENSE
       ├── README.md
@@ -37,7 +37,7 @@ SnapNutrition
 **Project**
 In this project we aim to develop an application that can estimate calories and macronutrients of food from user submitted photos of food using computer vision.
 
-<font color='red'>Stopped editing here..(Ben).</font>
+`Stopped editing here.. (Ben)`
 
 ### Milestone2 ###
 
