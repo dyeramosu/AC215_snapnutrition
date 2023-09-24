@@ -1,9 +1,9 @@
-AC215-Template (Milestone2)
+# AC215 - Milestone2 - SnapNutrition
 ==============================
 
-AC215 - Milestone2
-
 Project Organization
+</br>
+<font color='red'>Need to update structure.</font>
 ------------
       ├── LICENSE
       ├── README.md
@@ -23,16 +23,21 @@ Project Organization
 
 
 --------
-# AC215 - Milestone2 - ButterFlyer
 
 **Team Members**
-Pavlov Protovief, Paolo Primopadre and Pablo El Padron
+- Brent Ruttle, [brent.ruttle@gmail.com](brent.ruttle@gmail.com)
+- Benjamin Fulroth, [btf355@g.harvard.edu](btf355@g.harvard.edu)
+- Deepika Yeramosu, [deepikayeramosu@gmail.com](deepikayeramosu@gmail.com)
+- Christina Wang, [wschristina@gmail.com](wschristina@gmail.com)
+- Russel Brown, [r.n.brown314@gmail.com](r.n.brown314@gmail.com)
 
 **Group Name**
-Awesome Group
+SnapNutrition
 
 **Project**
-In this project we aim to develop an application that can identify various species of butterflies in the wild using computer vision and offer educational content through a chatbot interface.
+In this project we aim to develop an application that can estimate calories and macronutrients of food from user submitted photos of food using computer vision.
+
+<font color='red'>Stopped editing here..(Ben).</font>
 
 ### Milestone2 ###
 
@@ -65,7 +70,4 @@ To run Dockerfile - `Instructions here`
 To run Dockerfile - `Instructions here`
 
 **Notebooks** 
-This folder contains code that is not part of container - for e.g: EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations. 
-
-----
-You may adjust this template as appropriate for your project.
+This folder contains code that is not part of container - for e.g: EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
