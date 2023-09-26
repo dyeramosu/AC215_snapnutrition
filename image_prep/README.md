@@ -1,1 +1,3 @@
-[Final Project Sphinx Docs](https://csci-e-29.github.io/2022sp-final-project-rnbrown/)
+You can cd into the image_prep folder and run it like so:
+
+docker compose run -it image_prep python -m src batch_a
