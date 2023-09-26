@@ -37,11 +37,16 @@ SnapNutrition
 **Project**
 In this project we aim to develop an application that can estimate calories and macronutrients of food from user submitted photos of food using computer vision.
 
-`Stopped editing here.. (Ben)`
-
 ### Milestone2 ###
 
-We gathered dataset of 1M butterflies representing 17K species. Our dataset comes from following sources - (1),(2),(3) with approx 100GB in size. We parked our dataset in a private Google Cloud Bucket. 
+**Datasets**
+
+We focused our efforts on the exploration and processing of two very different datasets containing images of food.
+
+1. The first dataset named `Nutrition 5K` consists of 180GB of images and videos of food.  As this dataset is so large we narrowed our focus to only images taken directly above a plate of food.  In addition, we anticipate that this dataset will be more difficult to develop a predictive model as it consists of entire dishes with multiple foods and ingredients.  That said, we have begun initial model development and results are promising.
+2. The second dataset is named `FooDD` and consists of images of single foods (apples, bread, etc.) but not all images are the same size which presents a challenge during initial preprocessing.  This challenge is being addressed in our preprocessing container below.
+
+`Stopped editing here.. (Ben)`
 
 **Preprocess container**
 - This container reads 100GB of data and resizes the image sizes and stores it back to GCP
