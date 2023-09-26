@@ -1,7 +1,0 @@
-[core]
-    remote = nute5k_realsense
-['remote "foodd"']
-    url = gs://snapnutrition_data_bucket/raw_data/FooDD/
-    version_aware = true
-['remote "nute5k_realsense"']
-    url = gs://nutrition5k_dataset/nutrition5k_dataset/imagery/realsense_overhead
