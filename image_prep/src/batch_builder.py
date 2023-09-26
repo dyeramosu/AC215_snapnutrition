@@ -53,7 +53,6 @@ class BatchBuilder:
         """
         if not os.path.isdir(self.LOCAL_ROOT + out_dir):
             os.makedirs(self.LOCAL_ROOT + out_dir)
-        breakpoint()
         for file_name in to_keep:
             os.rename(
                 pipeline.LOCAL_ROOT + pipeline.OUT_DIR + file_name,

@@ -1,6 +1,9 @@
 import skimage
 from functools import partial
 
+def resize(img, height, width):
+    return skimage.transform.resize(img, output_shape=(height, width))
+
 function_registry = {
     "grayscale": {
         "func": skimage.color.rgb2gray,
@@ -63,6 +66,10 @@ function_registry = {
         "func": skimage.filters.rank.entropy,
         "params": {},
     },
+    "resize": {
+        "func": resize,
+        "params": {"width": {"type": int}, "height": {"type": int}}
+    }
 }
 
 

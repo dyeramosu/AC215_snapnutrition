@@ -3,4 +3,4 @@ subsets:
   - processed/cats/
   - pipeline_a
   - 100
-  - true
+  - false

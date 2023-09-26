@@ -47,9 +47,8 @@ class SaltedOutput(TargetOutput):
     def __call__(self, task):
         i = task.file_name.rfind("/")
         j = task.file_name.rfind(".")
-
         fn, ext = task.file_name[i+1:j], task.file_name[j:]
-        breakpoint()
+
         unique_string = get_hash(fn, task.image_process, task.kwargs)
 
         return self.target_class(
@@ -72,8 +71,15 @@ class InitialImageTask(Task):
     def run(self):
         func = function_registry[self.image_process]["func"]
         img = skimage.io.imread(self.file_name)
-        img = func(img, **self.kwargs)
+
+        # func_kwargs = self.kwargs.copy()
+        # for key in func_kwargs:
+        #     val = func_kwargs[key]
+        #     val_type = function_registry[self.image_process]['params'][key]['type']
+        #     if val_type == tuple:
+                
         breakpoint()
+        img = func(img, **self.kwargs)
         skimage.io.imsave(self.output().path, (img * 255).astype(np.uint8))
 
 
@@ -201,7 +207,6 @@ class ImagePipeline:
             j = prev.rfind(".")
 
             fn, ext = prev[i+1:j], prev[j:]
-            breakpoint()
             unique_string = get_hash(fn, task["func"], task["params"])
             prev = self.LOCAL_ROOT + self.OUT_DIR + unique_string + ext
             file_names.append(prev)
