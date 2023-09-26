@@ -1,0 +1,9 @@
+version: '3'
+services:
+  image_prep:
+    build:
+      context: .
+    volumes:
+      - .:/image_prep
+    environment:
+      - PYTHONBREAKPOINT=0

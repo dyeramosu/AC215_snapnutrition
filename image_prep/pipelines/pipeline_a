@@ -1,0 +1,9 @@
+tasks:
+- func: grayscale
+  params: {}
+- func: equalize_hist
+  params: {}
+- func: rotate
+  params:
+    angle: 30
+    resize: true
