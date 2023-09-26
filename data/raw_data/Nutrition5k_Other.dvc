@@ -1,0 +1,6 @@
+outs:
+- md5: b288772da01471caa0b4c5c089b7c24c.dir
+  size: 2329639
+  nfiles: 3
+  hash: md5
+  path: Nutrition5k_Other

@@ -1,0 +1,6 @@
+outs:
+- md5: 15ba7c603b87eb7aab4b114de8dff413.dir
+  size: 3178878531
+  nfiles: 10470
+  hash: md5
+  path: Nutrition5k_realsense_overhead
