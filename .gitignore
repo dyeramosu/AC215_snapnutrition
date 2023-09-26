@@ -2,5 +2,5 @@
 .DS_store
 *.jpg
 *.pyc
-data/raw*
-data/processed*
+data/raw/*
+data/processed/*
