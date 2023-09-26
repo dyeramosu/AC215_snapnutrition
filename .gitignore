@@ -4,3 +4,4 @@
 *.pyc
 data/raw/*
 data/processed/*
+/data
