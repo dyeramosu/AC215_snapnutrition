@@ -11,7 +11,7 @@ class BatchBuilder:
     Use this class to generate a large batch of images
     """
     
-    def __init__(self, local_root="data/"):
+    def __init__(self, local_root="/data/"):
         self.LOCAL_ROOT = local_root
         self.batch_definition = []
 

@@ -91,7 +91,7 @@ class ImagePipeline:
     def __init__(
         self,
         original_img="choose a file",
-        local_root="data/",
+        local_root="/data/",
         in_dir="raw/",
         out_dir="processed/all/",
     ):
@@ -102,7 +102,7 @@ class ImagePipeline:
 
         self.tasks = []
         self.luigi_graph = []
-
+        breakpoint()
         if not os.path.exists(self.LOCAL_ROOT):
             os.makedirs(self.LOCAL_ROOT)
         if not os.path.exists(self.LOCAL_ROOT + self.IN_DIR):
