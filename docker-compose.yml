@@ -14,3 +14,9 @@ services:
       - ./data:/data
     environment:
       - PYTHONBREAKPOINT=0
+
+  app:
+    build:
+      context: ./src/app
+    ports:
+      - 8000:8000
