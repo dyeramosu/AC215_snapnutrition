@@ -1,10 +1,13 @@
 version: '3'
 services:
   dvc:
+    environment:
+      GOOGLE_APPLICATIONS_CREDENTIALS: /secrets/data-service-account.json
     build:
       context: ./src/dvc
     volumes:
       - .:/snapnutrition
+      - ../secrets:/secrets
 
   image_prep:
     build:
