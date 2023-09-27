@@ -70,6 +70,7 @@ We focused our efforts on the exploration and processing of two very different d
 
 
 **Notebooks**
+This folder contains code that is not part of container - for e.g: EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
 
 We had the following notebooks for Nutrition5k EDA and Modeling
 1. [EDA] 230922_EDA_of_Nutrition5k_Ben.ipynb
@@ -111,5 +112,3 @@ subsets:
 
 (4) Check the examples in the `src/image_prep/pipelines` and `src/image_prep/batch_definitions` folders for the structure of these yaml files. The ending '/' in the paths is important. This main data directory can be configured, but by default it will look for paths within a `data/` folder at the same level as the main project.
 
-**Notebooks** 
-This folder contains code that is not part of container - for e.g: EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
