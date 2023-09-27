@@ -29,7 +29,7 @@ Project Organization
 - Benjamin Fulroth, [btf355@g.harvard.edu](btf355@g.harvard.edu)
 - Deepika Yeramosu, [deepikayeramosu@gmail.com](deepikayeramosu@gmail.com)
 - Christina Wang, [wschristina@gmail.com](wschristina@gmail.com)
-- Russel Brown, [r.n.brown314@gmail.com](r.n.brown314@gmail.com)
+- Russell Brown, [r.n.brown314@gmail.com](r.n.brown314@gmail.com)
 
 **Group Name**
 SnapNutrition
@@ -46,20 +46,30 @@ We focused our efforts on the exploration and processing of two very different d
 1. The first dataset named `Nutrition 5K` consists of 180GB of images and videos of food.  As this dataset is so large we narrowed our focus to only images taken directly above a plate of food.  In addition, we anticipate that this dataset will be more difficult to develop a predictive model as it consists of entire dishes with multiple foods and ingredients.  That said, we have begun initial model development and results are promising.
 2. The second dataset is named `FooDD` and consists of images of single foods (apples, bread, etc.) but not all images are the same size which presents a challenge during initial preprocessing.  This challenge is being addressed in our preprocessing container below.
 
-`Stopped editing here.. (Ben)`
-
 **Preprocess container**
-- This container reads 100GB of data and resizes the image sizes and stores it back to GCP
-- Input to this container is source and destincation GCS location, parameters for resizing, secrets needed - via docker
-- Output from this container stored at GCS location
+- This container has code that allows you to define data preprocessing pipelines, and build batches to pad out your image sets.
 
-(1) `src/preprocessing/preprocess.py`  - Here we do preprocessing on our dataset of 100GB, we reduce the image sizes (a parameter that can be changed later) to 128x128 for faster iteration with our process. Now we have dataset at 10GB and saved on GCS. 
+(1) `src/image_prep/pipelines`
+      - This contains yaml files that define preprocessing pipelines. Check src/image_prep/src/function_registry.py to see which functions are available and their parameters.
+      - pipelines are referenced later in batch_definition files which are used to actually run the preprocessing
 
-(2) `src/preprocessing/requirements.txt` - We used following packages to help us preprocess here - `special butterfly package` 
+(2) `src/image_prep/batch_definitions`
+      - yaml files here are used to define batches. Ex:
+```
+subsets:
+      - - raw/cats/
+      - processed/cats/
+      - pipeline_a
+      - 100
+      - false
+```
+      - The parameters are, input directory, output directory, pipeline name, n_images, keep_intermediates
+      - n_images chooses a random sample of images, seed is specified in `src/image_prep/src/batch_builder.py`
+      - keep_intermediates indicates whether intermediate images produced by the pipeline can end up in the batch, or if it should only keep images produced by the last step in the pipeline
 
-(3) `src/preprocessing/Dockerfile` - This dockerfile starts with  `python:3.8-slim-buster`. This <statement> attaches volume to the docker container and also uses secrets (not to be stored on GitHub) to connect to GCS.
+(3) To build a batch of processed images, run `docker compose run image_prep python -m src <batch_name>`
 
-To run Dockerfile - `Instructions here`
+(4) Check the examples in the `src/image_prep/pipelines` and `src/image_prep/batch_definitions` folders for the structure of these yaml files. The ending '/' in the paths is important. This main data directory can be configured, but by default it will look for paths within a `data/` folder at the same level as the main project.
 
 **Cross validation, Data Versioning**
 - This container reads preprocessed dataset and creates validation split and uses dvc for versioning.
