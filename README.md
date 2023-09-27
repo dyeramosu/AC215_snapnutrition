@@ -98,7 +98,7 @@ We look forward to more refined results with further exploration.
       - yaml files here are used to define batches. Ex:
 ```
 subsets:
-- - "raw_data/FooDD/Apple/1-Samsung-S4-Light Environment/"
+  - "raw_data/FooDD/Apple/1-Samsung-S4-Light Environment/"
   - processed/FooDD/Apple/
   - pipeline_a
   - 100
