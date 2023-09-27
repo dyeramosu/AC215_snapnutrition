@@ -98,11 +98,11 @@ We look forward to more refined results with further exploration.
       - yaml files here are used to define batches. Ex:
 ```
 subsets:
-      - - raw/cats/
-      - processed/cats/
-      - pipeline_a
-      - 100
-      - false
+- - "raw_data/FooDD/Apple/1-Samsung-S4-Light Environment/"
+  - processed/FooDD/Apple/
+  - pipeline_a
+  - 100
+  - false
 ```
       - The parameters are, input directory, output directory, pipeline name, n_images, keep_intermediates
       - n_images chooses a random sample of images, seed is specified in `src/image_prep/src/batch_builder.py`
@@ -112,3 +112,11 @@ subsets:
 
 (4) Check the examples in the `src/image_prep/pipelines` and `src/image_prep/batch_definitions` folders for the structure of these yaml files. The ending '/' in the paths is important. This main data directory can be configured, but by default it will look for paths within a `data/` folder at the same level as the main project.
 
+**app container**
+ - This contains the frontend app that runs in your browser.
+ - The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
+
+**data version control container**
+ - `src/dvc` contains a Dockerfile that installs dvc and also Google Cloud CLI
+ - This relies on a `secrets/data-service-account.json` file already existing that has access to the `snapnutrition_data_bucket`
+ - the `secrets` folder must be on the same level as the main project, and is not tracked by Git
