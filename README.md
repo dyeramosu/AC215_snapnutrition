@@ -5,23 +5,46 @@ Project Organization
 <br>
 `Need to update structure (Ben)`
 ------------
-      ├── LICENSE
-      ├── README.md
-      ├── notebooks
-      ├── references
-      ├── requirements.txt
-      ├── setup.py
-      └── src
-            ├── preprocessing
-            │   ├── Dockerfile
-            │   ├── preprocess.py
-            │   └── requirements.txt
-            └── validation
-                  ├── Dockerfile
-                  ├── cv_val.py
-                  └── requirements.txt
-
-
+├── docker-compose.yml
+├── LICENSE
+├── notebooks
+│   ├── 230922_EDA_of_Nutrition5k_Ben.ipynb
+│   ├── FooDD_EDA.ipynb
+│   └── Nutrition5k_EDA_Base_Model.ipynb
+├── README.md
+├── reports
+│   └── base_CNN_prediction_example.jpg
+└── src
+    ├── app
+    │   ├── app.py
+    │   ├── Dockerfile
+    │   ├── Pipfile
+    │   ├── Pipfile.lock
+    │   ├── static
+    │   │   ├── css
+    │   │   ├── fonts
+    │   │   ├── img
+    │   │   └── js
+    │   └── templates
+    │       ├── layouts
+    │       └── pages
+    ├── dvc
+    │   └── Dockerfile
+    └── image_prep
+        ├── batch_definitions
+        ├── Dockerfile
+        ├── image_prep
+        │   ├── batch_builder.py
+        │   ├── cli.py
+        │   ├── function_registry.py
+        │   ├── __init__.py
+        │   ├── __main__.py
+        │   ├── preprocessing_pipeline.py
+        │   └── task.py
+        ├── pipelines
+        ├── Pipfile
+        ├── Pipfile.lock
+        └── README.md
 --------
 
 **Team Members**
@@ -88,19 +111,6 @@ subsets:
 (3) To build a batch of processed images, run `docker compose run image_prep python -m src <batch_name>`
 
 (4) Check the examples in the `src/image_prep/pipelines` and `src/image_prep/batch_definitions` folders for the structure of these yaml files. The ending '/' in the paths is important. This main data directory can be configured, but by default it will look for paths within a `data/` folder at the same level as the main project.
-
-**Cross validation, Data Versioning**
-- This container reads preprocessed dataset and creates validation split and uses dvc for versioning.
-- Input to this container is source GCS location, parameters if any, secrets needed - via docker
-- Output is flat file with cross validation splits
-  
-(1) `src/validation/cv_val.py` - Since our dataset is quite large we decided to stratify based on species and kept 80% for training and 20% for validation. Our metrics will be monitored on this 20% validation set. 
-
-(2) `requirements.txt` - We used following packages to help us with cross validation here - `iterative-stratification` 
-
-(3) `src/validation/Dockerfile` - This dockerfile starts with  `python:3.8-slim-buster`. This <statement> attaches volume to the docker container and also uses secrets (not to be stored on GitHub) to connect to GCS.
-
-To run Dockerfile - `Instructions here`
 
 **Notebooks** 
 This folder contains code that is not part of container - for e.g: EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
