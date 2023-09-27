@@ -3,8 +3,7 @@
 
 Project Organization
 <br>
-`Need to update structure (Ben)`
-------------
+
 ├── docker-compose.yml
 ├── LICENSE
 ├── notebooks
@@ -45,7 +44,6 @@ Project Organization
         ├── Pipfile
         ├── Pipfile.lock
         └── README.md
---------
 
 **Team Members**
 - Brent Ruttle, [brent.ruttle@gmail.com](brent.ruttle@gmail.com)
