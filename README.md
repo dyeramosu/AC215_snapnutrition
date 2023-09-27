@@ -112,11 +112,11 @@ subsets:
 
 (4) Check the examples in the `src/image_prep/pipelines` and `src/image_prep/batch_definitions` folders for the structure of these yaml files. The ending '/' in the paths is important. This main data directory can be configured, but by default it will look for paths within a `data/` folder at the same level as the main project.
 
-**app container**
+**App container**
  - This contains the frontend app that runs in your browser.
  - The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
 
-**data version control container**
+**Data version control container**
  - `src/dvc` contains a Dockerfile that installs dvc and also Google Cloud CLI
  - This relies on a `secrets/data-service-account.json` file already existing that has access to the `snapnutrition_data_bucket`
  - the `secrets` folder must be on the same level as the main project, and is not tracked by Git
