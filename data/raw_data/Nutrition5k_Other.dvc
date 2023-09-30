@@ -1,6 +1,25 @@
 outs:
-- md5: b288772da01471caa0b4c5c089b7c24c.dir
-  size: 2329639
-  nfiles: 3
-  hash: md5
+- hash: md5
   path: Nutrition5k_Other
+  files:
+  - relpath: dish_metadata_cafe1.csv
+    md5: 7d936c3b3f70a87fd363cfa0cf9298bc
+    size: 2206282
+    cloud:
+      myremote:
+        etag: 08f3e2a6ebadd381031001
+        version_id: '1696112069685619'
+  - relpath: dish_metadata_cafe2.csv
+    md5: 6778561ef4da1ca54b9da0747f98198f
+    size: 101817
+    cloud:
+      myremote:
+        etag: 08edabb2ebadd381031001
+        version_id: '1696112069875181'
+  - relpath: ingredients_metadata.csv
+    md5: d60e3822d15a5cc0a8df3249580ca609
+    size: 21540
+    cloud:
+      myremote:
+        etag: 08e49582ebadd381031001
+        version_id: '1696112069085924'
