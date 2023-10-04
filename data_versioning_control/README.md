@@ -2,25 +2,77 @@
 - Keep the modeling data on Google Cloud Bucket, use GitHub private repos inside docker container
 - Use DVC to version datasets
 
+## Overview of DVC Versioning Flows
+
+Google Cloud Bucket Structure for ```snapnutrition_data_bucket```
+```angular2html
+
+├─ data
+│  ├─ raw_data
+│  │  ├─ FOODD
+│  │  ├─ Nutrition5k_realsense_overhead
+│  │  ├─ Nutrition5k_Other
+│  │  └─ Nutrition5k
+│  └─ tensorflow_records
+│     ├─ 180_by_180
+│     └─ New Dataset Pre-Processing Sizes Continued...
+└─ dvc_store
+```
+
+We dvc ignore everything focusing on the following for DVC Versioning: 
+```angular2html
+data/raw_data/Nutrition5k
+data/tensorlow_records/
+```
+- The ```data/raw_data/Nutrition5k``` contains the images used for train, validation, and test. These are pre-processed and saved into the corresponding tensorflow_records directory.
+- If new images are added into Nutrition5k, they will be fed into making new TF_Record datasets e.g. new dataset with images resized ```to 180_by_180```
+- DVC versioning will then track Nutrition5k images and TF_Records datasets.
+- ```nutrition5k_v1``` should be the tag for reverting back to the first version of the raw_images_dataset (before tf_record conversion) 
+
 ## Quick Commands (Assuming Set-up Complete):
-**Committing New Data Versions**
+### **Committing New Dataset Versions**
+
+0. There is new data in the bucket already that you want to commit as a new version.
+
+1.  The following commands should run the DVC container and open interactive shell within. 
 ```
 cd ~/AC215_snapnutrition/
-mkdir snapnutrition_data_bucket
-gcsfuse snapnutrition_data_bucket snapnutrition_data_bucket/
-dvc init
-dvc remote add -d snapnutrition_data_bucket gs://snapnutrition_data_bucket/dvc_store
-dvc add snapnutrition_data_bucket  
+sudo sh data_versioning_control/docker-shell.sh
+```
+
+2. In the interactive container shell, run the following:
+
+```
+gcsfuse --implicit-dirs snapnutrition_data_bucket snapnutrition_data_bucket/
+dvc add {DIRECTORY TO VERSION e.g. snapnutrition_data_bucket}  
 dvc push
 
 git status
 git add .
 git commit -m 'dataset updates...'
-git tag -a 'dataset_{version-name e.g. v1}' -m 'tag dataset'
-git push --atomic origin main 'dataset_{insert version name e.g. v1}'
+git tag -a '{VERSION_TAG e.g. dataset_v1}' -m 'tag dataset'
+git push --atomic origin {GIT_BRANCH_NAME} '{VERSION_TAG}'
+```
+Your tag will be how you later retrieve the data version you want. 
+
+### **Switching Dataset Versions**
+
+There are two ways of doing this: a full workspace checkout or checkout of a specific data or model file. Let's consider the full checkout first. It's pretty straightforward:
+```angular2html
+git checkout {VERSION_TAG}
+dvc checkout
 ```
 
+These commands will restore the workspace to the first snapshot we made: code, data files, model, all of it. DVC optimizes this operation to avoid copying data or model files each time. So dvc checkout is quick even if you have large datasets, data files, or models.
 
+On the other hand, if we want to keep the current code, but go back to the previous dataset version, we can target specific data, like this:
+
+```angular2html
+git checkout {VERSTION_TAG} snapnutrition_data_bucket.dvc
+dvc checkout snapnutrition_data_bucket.dvc
+```
+### Save Model, Output, and/or Dataset Version Dependencies
+To checkpoint dependencies (e.g. a saved model and datset version, see detailed instructions from the DVC documentation here: https://dvc.org/doc/use-cases/versioning-data-and-models/tutorial)
 
 ## Initial VM DVC Set-up Steps (Only 1-time):
 

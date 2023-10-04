@@ -1,3 +1,8 @@
 # Add patterns of files dvc should ignore, which could improve
 # the performance. Learn more at
 # https://dvc.org/doc/user-guide/dvcignore
+/snapnutrition_data_bucket/raw_data
+/snapnutrition_data_bucket/data/FooDD
+/snapnutrition_data_bucket/data/Nutrition5k_realsense_overhead
+
+
