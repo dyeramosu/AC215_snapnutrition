@@ -2,3 +2,4 @@
 .DS_store
 *.jpg
 *.pyc
+/snapnutrition_data_bucket
