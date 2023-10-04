@@ -11,10 +11,10 @@ export GCP_REGION="us-central1"
 
 
 # Build the image based on the Dockerfile
-docker build -t $IMAGE_NAME -f Dockerfile .
+docker build -t $IMAGE_NAME -f data_versioning_control/Dockerfile .
 
 # M1/2 chip macs use this line
-# docker build -t $IMAGE_NAME --platform=linux/arm64/v8 -f Dockerfile .
+# docker build -t $IMAGE_NAME --platform=linux/arm64/v8 -f data_versioning_control/Dockerfile .
 
 sudo docker run --rm --name $IMAGE_NAME --privileged  -ti \
 -v "$BASE_DIR":/app \

@@ -44,7 +44,7 @@ USER app
 WORKDIR /app
 
 # Install python packages
-ADD --chown=app:app Pipfile Pipfile.lock /app/
+ADD --chown=app:app data_versioning_control/Pipfile data_versioning_control/Pipfile.lock /app/
 
 RUN pipenv sync
 
@@ -53,4 +53,4 @@ RUN pipenv sync
 ADD --chown=app:app . /app
 
 # Entry point
-ENTRYPOINT ["/bin/bash","./docker-entrypoint.sh"]
+ENTRYPOINT ["/bin/bash","./data_versioning_control/docker-entrypoint.sh"]
