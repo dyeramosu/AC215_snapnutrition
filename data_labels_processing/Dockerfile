@@ -38,7 +38,6 @@ RUN set -ex; \
     mkdir -p /app && \
     chown app:app /app \
 
-RUN gcsfuse snapnutrition_data_bucket snapnutrition_data_bucket/
 
 # Switch to the new user
 USER app
@@ -54,5 +53,5 @@ RUN pipenv sync
 ADD --chown=app:app . /app
 
 # Entry point
-CMD ["python", "labels_processing.py"]
-#ENTRYPOINT ["/bin/bash","./data_labels_processing/docker-entrypoint.sh"]
+#CMD ["python", "labels_processing.py"]
+ENTRYPOINT ["/bin/bash","./data_labels_processing/docker-entrypoint.sh"]
