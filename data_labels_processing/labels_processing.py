@@ -56,7 +56,7 @@ print("Num image labels: ", len(labels))
 #Save cleaned labels and image paths for TFRecord Creation Ingestion
 final_data = {"filenames" : filenames, "labels": labels}
 final_df = pd.DataFrame(data=final_data)
-final_df.tocsv(PROCESSED_LABELS_CSV_SAVE_PATH)
+final_df.to_csv(PROCESSED_LABELS_CSV_SAVE_PATH)
 print("Successfully saved processed labels and paths to: ", PROCESSED_LABELS_CSV_SAVE_PATH)
 
 #Prepare Data For Train Test Validation Splits
