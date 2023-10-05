@@ -9,7 +9,7 @@ print("Begin processing....")
 
 RAW_LABELS_CAFE1_PATH = "./snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe1.csv"
 RAW_LABELS_CAFE2_PATH = "./snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe2.csv"
-PROCESSED_LABELS_CSV_SAVE_PATH = "./snapnutrition_data_bucket/data/processed_labels/full_cleaned_dish_labels1.csv"
+PROCESSED_LABELS_CSV_SAVE_PATH = "./snapnutrition_data_bucket/data/processed_labels/full_cleaned_dish_labels.csv"
 TRAIN_SAVE_PATH = "./snapnutrition_data_bucket/data/processed_labels/train_data.pickle"
 VAL_SAVE_PATH = "./snapnutrition_data_bucket/data/processed_labels/validation_data.pickle"
 TEST_SAVE_PATH = "./snapnutrition_data_bucket/data/processed_labels/test_data.pickle"
