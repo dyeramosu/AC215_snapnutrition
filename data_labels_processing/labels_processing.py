@@ -4,10 +4,10 @@ import numpy as np
 
 print("Begin processing....")
 
-RAW_LABELS_CAFE1_PATH = "snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe1.csv"
-RAW_LABELS_CAFE2_PATH = "snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe2.csv"
-PROCESSED_LABELS_CSV_SAVE_PATH = "./snapnutrition_data_bucket/data/processed_labels/full_cleaned_dish_labels1.csv"
-DATA_DIR = './snapnutrition_data_bucket/data/raw_data/Nutrition5k'
+RAW_LABELS_CAFE1_PATH = "../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe1.csv"
+RAW_LABELS_CAFE2_PATH = "../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe2.csv"
+PROCESSED_LABELS_CSV_SAVE_PATH = "../snapnutrition_data_bucket/data/processed_labels/full_cleaned_dish_labels1.csv"
+DATA_DIR = '../snapnutrition_data_bucket/data/raw_data/Nutrition5k'
 
 #get labels from raw dataset
 labels = pd.read_csv(RAW_LABELS_CAFE1_PATH, sep=',', header=None,  usecols=range(0,6), names=['dish_id', 'total_calories', 'total_mass', 'total_fat', 'total_carb', 'total_protein'])
