@@ -10,7 +10,7 @@ echo "Container is running!"
 
 git config --global user.name "wschristina"
 git config --global user.email "wschristina@gmail.com"
-gcsfuse snapnutrition_data_bucket snapnutrition_data_bucket/
+gcsfuse --implicit-dirs snapnutrition_data_bucket snapnutrition_data_bucket/
 python data_labels_processing/labels_processing.py
 echo "Container complete!"
 

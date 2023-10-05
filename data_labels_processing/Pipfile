@@ -11,6 +11,7 @@ pandas = "*"
 dvc = "*"
 dvc-gs = "*"
 numpy = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.9"

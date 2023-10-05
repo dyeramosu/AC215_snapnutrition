@@ -1,20 +1,21 @@
 import pandas as pd
 import os
 import numpy as np
+# sklearn
+from sklearn.model_selection import train_test_split
 
 print("Begin processing....")
 
-RAW_LABELS_CAFE1_PATH = "../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe1.csv"
-RAW_LABELS_CAFE2_PATH = "../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe2.csv"
-PROCESSED_LABELS_CSV_SAVE_PATH = "../snapnutrition_data_bucket/data/processed_labels/full_cleaned_dish_labels1.csv"
-DATA_DIR = '../snapnutrition_data_bucket/data/raw_data/Nutrition5k'
+RAW_LABELS_CAFE1_PATH = "./../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe1.csv"
+RAW_LABELS_CAFE2_PATH = "./../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe2.csv"
+PROCESSED_LABELS_CSV_SAVE_PATH = "./../snapnutrition_data_bucket/data/processed_labels/full_cleaned_dish_labels1.csv"
+DATA_DIR = './../snapnutrition_data_bucket/data/raw_data/Nutrition5k'
 
 #get labels from raw dataset
 labels = pd.read_csv(RAW_LABELS_CAFE1_PATH, sep=',', header=None,  usecols=range(0,6), names=['dish_id', 'total_calories', 'total_mass', 'total_fat', 'total_carb', 'total_protein'])
 labels2 = pd.read_csv(RAW_LABELS_CAFE2_PATH, sep=',', header=None,  usecols=range(0,6), names=['dish_id', 'total_calories', 'total_mass', 'total_fat', 'total_carb', 'total_protein'])
 #combine 2 csv's of dish id and nutrition from the 2 cafe's
 full_labels_df = pd.concat([labels, labels2], axis=0, ignore_index=True)
-
 
 #UTILS
 #get label for dish
@@ -26,8 +27,6 @@ def get_nutrition_from_dish_id(full_labels_df, dish_id):
     total_protein = full_labels_df[full_labels_df['dish_id']==dish_id]['total_protein'].item()
 
     return [np.float32(total_calories), np.float32(total_mass), np.float32(total_fat), np.float32(total_carb), np.float32(total_protein)]
-
-
 
 ## INSERT LOGIC HERE TO SELECT GOOD LABELS OR PRE-PROCESS LABELS
 #exclude bad entires from dataset (EDA determined some foods had errors with having 0 mass and 0 calories)
@@ -55,4 +54,18 @@ final_data = {"filenames" : filenames, "labels": labels}
 final_df = pd.DataFrame(data=final_data)
 final_df.tocsv(PROCESSED_LABELS_CSV_SAVE_PATH)
 print("Successfully saved processed labels and paths to: ", PROCESSED_LABELS_CSV_SAVE_PATH)
+
+#Prepare Data For Train Test Validation Splits
+data = zip(labels, filenames)
+data = list(data)
+validation_percent = 0.3
+test_percent = 0.5 # split half so val and test are both 15% of original dataset
+# Split data into train / validate
+train_xy, validate_xy = train_test_split(data, test_size=validation_percent)
+validate_xy, test_xy = train_test_split(validate_xy, test_size=test_percent)
+
+print("train_xy count:",len(train_xy))
+print("validate_xy count:",len(validate_xy))
+print("test_xy count:",len(test_xy))
+
 print("End processing....")
