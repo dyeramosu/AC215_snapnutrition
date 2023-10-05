@@ -46,7 +46,7 @@ USER app
 WORKDIR /app
 
 # Install python packages
-ADD --chown=app:app data_labels_processing/Pipfile data_labels_processing/Pipfile.lock /app/
+ADD --chown=app:app data_labels_processing/Pipfile data_labels_processing/Pipfile.lock data_labels_processing/labels_processing.py /app/
 
 RUN pipenv sync
 
