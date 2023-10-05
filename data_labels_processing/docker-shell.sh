@@ -2,7 +2,7 @@
 
 set -e
 
-export IMAGE_NAME=dvc-docker-image
+export IMAGE_NAME=labels-processing-docker-image
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/../secrets/
 export GCS_BUCKET_URI="gs://snapnutrition_data_bucket"
