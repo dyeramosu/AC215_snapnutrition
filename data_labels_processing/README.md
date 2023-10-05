@@ -3,16 +3,20 @@ The purpose of this data labels processing container is as follows:
 
 1) Have logic to exclude faulty labels (e.g. 0 mass dishes)
 2) Create train, test, and validation splits
-3) Have the splits be in the format [(label, image_file_path), ...]
+3) Have the splits be in the format [(label, image_file_path), ...] for easy read in tfrecord creation
 
 The idea is that more labels and more images could be added to our raw dataset with time. Or we could find issues with our data and want to make exclusions. In those cases, we can simply add add our data selection logic here and recreate our train, test, validation splits. 
 
-**Output**: The output will be 3 csv's one each for train, test, and validation. They will contain 2 columns: 
+**Output**: The output will include 
 
-1) filepaths: string of path to dish image
-2) label: array of np.float32 of [total_calories, total_mass, total_fat, total_carb, total_protein]
+1) One csv which will contain 2 columns:
+     - filepaths: string of path to dish image
+     - label: array of np.float32 of [total_calories, total_mass, total_fat, total_carb, total_protein]
 
-These outputs will feed into our tfrecords creation container which outputs tfrecords to our Google Bucket.
+2) And 3 pickle files for train, test, and validation splits with data in format [(label, image_file_path), ...]
+
+
+**Purpose:** These outputs can be used to feed into our tfrecords creation container which outputs tfrecords to our Google Bucket.
 
 ## Instructions: 
 
@@ -23,6 +27,11 @@ These outputs will feed into our tfrecords creation container which outputs tfre
 
 ![](../reports/data_labels_processing_output_1.jpg)
 3) Output should go to Google Bucket directory specified in the filepath constants at the top of the labels_processing.py script. 
+Outputs are as follows: 
+-full_cleaned_dish_labels.csv (data before splits)
+-train_data.pickle
+-test_data.pickle
+-validation_data.pickle
 
 **Screenshot of a successful csv and train, test, split pkl outputs on the Google VM**
 ![](../reports/data_labels_processing_output_2.jpg)
