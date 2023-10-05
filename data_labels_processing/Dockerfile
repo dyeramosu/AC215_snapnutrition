@@ -36,8 +36,7 @@ RUN set -ex; \
     pip install pipenv && \
     useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
     mkdir -p /app && \
-    chown app:app /app \
-
+    chown app:app /app
 
 # Switch to the new user
 USER app
