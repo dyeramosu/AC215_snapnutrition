@@ -46,6 +46,8 @@ WORKDIR /app
 ADD --chown=app:app data_labels_processing/Pipfile data_labels_processing/Pipfile.lock data_labels_processing/labels_processing.py /app/
 
 RUN pipenv sync
+RUN pip install pandas
+RUN pip install numpy
 
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
