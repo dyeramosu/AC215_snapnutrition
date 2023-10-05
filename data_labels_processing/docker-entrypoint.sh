@@ -12,5 +12,5 @@ git config --global user.name "wschristina"
 git config --global user.email "wschristina@gmail.com"
 
 #/bin/bash
-pipenv shell
+#pipenv shell
 

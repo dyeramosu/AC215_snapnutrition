@@ -37,9 +37,8 @@ RUN set -ex; \
     useradd -ms /bin/bash app -d /home/app -u 1000 -p "$(openssl passwd -1 Passw0rd)" && \
     mkdir -p /app && \
     chown app:app /app \
-    gcsfuse snapnutrition_data_bucket snapnutrition_data_bucket/
 
-
+RUN gcsfuse snapnutrition_data_bucket snapnutrition_data_bucket/
 
 # Switch to the new user
 USER app
@@ -55,5 +54,5 @@ RUN pipenv sync
 ADD --chown=app:app . /app
 
 # Entry point
-#ENTRYPOINT ["/bin/bash","./data_labels_processing/docker-entrypoint.sh"]
 CMD ["python", "labels_processing.py"]
+#ENTRYPOINT ["/bin/bash","./data_labels_processing/docker-entrypoint.sh"]

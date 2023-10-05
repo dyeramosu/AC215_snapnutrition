@@ -10,6 +10,7 @@ google-cloud-storage = "*"
 pandas = "*"
 dvc = "*"
 dvc-gs = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.9"
