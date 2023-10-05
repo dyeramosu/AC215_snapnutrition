@@ -14,7 +14,7 @@ The idea is that more labels and more images could be added to our raw dataset w
 
 These outputs will feed into our tfrecords creation container which outputs tfrecords to our Google Bucket.
 
-##Instructions: 
+## Instructions: 
 
 0) Have a Google VM Set-Up according to the data_versioning_control/READEME.md instructions. DVC should be set-up first so that everthing can also be versioned. 
 1) Within the VM, go to the git repo root folder ```AC215_snapnutrition``` and run: ```sudo sh data_labels_processing/docker-shell.sh```

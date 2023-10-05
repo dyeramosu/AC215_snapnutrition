@@ -3,12 +3,16 @@ import os
 import numpy as np
 # sklearn
 from sklearn.model_selection import train_test_split
+import pickle
 
 print("Begin processing....")
 
 RAW_LABELS_CAFE1_PATH = "./../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe1.csv"
 RAW_LABELS_CAFE2_PATH = "./../snapnutrition_data_bucket/data/raw_data/Nutrition5k_Other/dish_metadata_cafe2.csv"
 PROCESSED_LABELS_CSV_SAVE_PATH = "./../snapnutrition_data_bucket/data/processed_labels/full_cleaned_dish_labels1.csv"
+TRAIN_SAVE_PATH = "./../snapnutrition_data_bucket/data/processed_labels/train_data.pickle"
+VAL_SAVE_PATH = "./../snapnutrition_data_bucket/data/processed_labels/validation_data.pickle"
+TEST_SAVE_PATH = "./../snapnutrition_data_bucket/data/processed_labels/test_data.pickle"
 DATA_DIR = './../snapnutrition_data_bucket/data/raw_data/Nutrition5k'
 
 #get labels from raw dataset
@@ -63,9 +67,16 @@ test_percent = 0.5 # split half so val and test are both 15% of original dataset
 # Split data into train / validate
 train_xy, validate_xy = train_test_split(data, test_size=validation_percent)
 validate_xy, test_xy = train_test_split(validate_xy, test_size=test_percent)
-
 print("train_xy count:",len(train_xy))
 print("validate_xy count:",len(validate_xy))
 print("test_xy count:",len(test_xy))
+
+# Store data (serialize)
+with open(TRAIN_SAVE_PATH, 'wb') as handle:
+    pickle.dump(train_xy, handle, protocol=pickle.HIGHEST_PROTOCOL)
+with open(VAL_SAVE_PATH, 'wb') as handle:
+    pickle.dump(validate_xy, handle, protocol=pickle.HIGHEST_PROTOCOL)
+with open(TEST_SAVE_PATH, 'wb') as handle:
+    pickle.dump(test_xy, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 print("End processing....")

@@ -7,7 +7,7 @@ echo "Container is running!"
 # Set GCP Project Details
 #gcloud config set project $GCP_PROJECT
 
-
+echo "$PWD"
 git config --global user.name "wschristina"
 git config --global user.email "wschristina@gmail.com"
 gcsfuse --implicit-dirs snapnutrition_data_bucket snapnutrition_data_bucket/
