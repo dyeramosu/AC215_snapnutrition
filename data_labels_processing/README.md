@@ -16,6 +16,13 @@ These outputs will feed into our tfrecords creation container which outputs tfre
 
 ## Instructions: 
 
-0) Have a Google VM Set-Up according to the data_versioning_control/READEME.md instructions. DVC should be set-up first so that everthing can also be versioned. 
+0) Have a Google VM Set-Up according to the ```data_versioning_control/READEME.md instructions```. This readme is for VM and DVC set-up which should be set-up first so that everything, including the input raw data used to make the splits, can also be versioned or rolled-back. 
 1) Within the VM, go to the git repo root folder ```AC215_snapnutrition``` and run: ```sudo sh data_labels_processing/docker-shell.sh```
-2) Output should go to Google Bucket directory specified in labels_processing.py 
+
+**Screenshot of a successful run of the command in the Google VM**
+
+![](../reports/data_labels_processing_output_1.jpg)
+3) Output should go to Google Bucket directory specified in the filepath constants at the top of the labels_processing.py script. 
+
+**Screenshot of a successful csv and train, test, split pkl outputs on the Google VM**
+![](../reports/data_labels_processing_output_2.jpg)
