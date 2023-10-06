@@ -1,5 +1,6 @@
 # Use the official Debian-hosted Python image
-FROM python:3.9-slim-buster
+#FROM python:3.9-slim-buster
+FROM tensorflow/tensorflow
 
 ARG DEBIAN_PACKAGES="build-essential git curl wget unzip gzip"
 
