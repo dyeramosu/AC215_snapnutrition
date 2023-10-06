@@ -1,7 +1,5 @@
 .idea
 .DS_store
-*.jpg
 *.pyc
-*.png
 *annotations.json
 *checkpoint*
