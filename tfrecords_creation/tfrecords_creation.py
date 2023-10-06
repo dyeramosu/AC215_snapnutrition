@@ -28,9 +28,9 @@ if os.path.exists(TFRECORD_SAVE_PATH):
 tf.io.gfile.makedirs(TFRECORD_SAVE_PATH)
 
 # read train, test, validation data from pickle files
-train_xy = pd.read_pickle(r'./snap_nutrition_data/data/processed_labels/train_data.pickle')
-validate_xy = pd.read_pickle(r'./snap_nutrition_data/data/processed_labels/validation_data.pickle')
-test_xy = pd.read_pickle(r'./snap_nutrition_data/data/processed_labels/test_data.pickle')
+train_xy = pd.read_pickle(TRAIN_SAVE_PATH)
+validate_xy = pd.read_pickle(VAL_SAVE_PATH)
+test_xy = pd.read_pickle(TEST_SAVE_PATH)
 
 
 def create_tf_example(item):
