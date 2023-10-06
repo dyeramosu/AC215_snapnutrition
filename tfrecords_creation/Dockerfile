@@ -46,9 +46,7 @@ WORKDIR /app
 # Install python packages
 ADD --chown=app:app tfrecords_creation/Pipfile tfrecords_creation/Pipfile.lock /app/
 
-RUN pipenv sync
 RUN pip install pandas
-RUN pip install tensorflow
 
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
