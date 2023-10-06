@@ -20,7 +20,7 @@ The idea is that more labels and more images could be added to our raw dataset w
 
 ## Instructions: 
 
-0) Have a Google VM Set-Up according to the ```data_versioning_control/READEME.md instructions```. This readme is for VM and DVC set-up which should be set-up first so that everything, including the input raw data used to make the splits, can also be versioned or rolled-back. 
+0) Have a Google VM Set-Up with git repo cloned according to the ```data_versioning_control/READEME.md instructions```. This readme is for VM and DVC set-up which should be set-up first so that everything, including the input raw data used to make the splits, can also be versioned or rolled-back. 
 1) Within the VM, go to the git repo root folder ```AC215_snapnutrition``` and run: ```sudo sh data_labels_processing/docker-shell.sh```
 
 **Screenshot of a successful run of the command in the Google VM**
