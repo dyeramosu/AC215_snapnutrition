@@ -5,7 +5,7 @@ set -e
 export IMAGE_NAME=model-training-cli
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/../secrets/
-export GCS_BUCKET_URI="gs://snap-nutrition-model-training"
+export GCS_BUCKET_URI="gs://snapnutrition_data_bucket"
 export GCP_PROJECT="csci-115-398800"
 
 

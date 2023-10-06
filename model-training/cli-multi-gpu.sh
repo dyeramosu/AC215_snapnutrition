@@ -2,11 +2,11 @@
 # https://cloud.google.com/vertex-ai/docs/training/pre-built-containers
 
 export UUID=$(openssl rand -hex 6)
-export DISPLAY_NAME="mushroom_training_multi_gpu_job_$UUID"
+export DISPLAY_NAME="snapnutrition_training_job_$UUID"
 export MACHINE_TYPE="n1-standard-4"
 export REPLICA_COUNT=1
 export EXECUTOR_IMAGE_URI="us-docker.pkg.dev/vertex-ai/training/tf-gpu.2-12.py310:latest"
-export PYTHON_PACKAGE_URI=$GCS_BUCKET_URI/mushroom-app-trainer.tar.gz
+export PYTHON_PACKAGE_URI=$GCS_BUCKET_URI/trainer_package/snapnutrition-trainer.tar.gz
 export PYTHON_MODULE="trainer.task_multi_gpu"
 export ACCELERATOR_TYPE="NVIDIA_TESLA_T4"
 export ACCELERATOR_COUNT=2

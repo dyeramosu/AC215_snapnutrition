@@ -22,7 +22,7 @@ Your folder structure should look like this:
 We need a bucket to store the packaged python files that we will use for training.
 
 - Go to `https://console.cloud.google.com/storage/browser`
-- Create a bucket `snap-nutrition-model-training`
+- Create a bucket `snapnutrition_data_bucket`
 
 ### Get WandB Account API Key
 
@@ -44,7 +44,7 @@ This is what your `docker-shell` file will look like:
 export IMAGE_NAME=model-training-cli
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/../secrets/
-export GCS_BUCKET_URI="gs://snap-nutrition-model-training" 
+export GCS_BUCKET_URI="gs://snapnutrition_data_bucket" 
 export GCP_PROJECT="csci-115-398800"
 
 
@@ -79,7 +79,7 @@ $IMAGE_NAME
 
 ### Run `sh package-trainer.sh`
 - This script will create a `trainer.tar.gz` file with all the training code bundled inside it
-- Then this script will upload this packaged file to your GCS bucket can call it `snap-nutrition-model-trainer.tar.gz`
+- Then this script will upload the packaged file to your GCS bucket and call it `snapnutrition-trainer.tar.gz`
 
 
 ### Create Jobs in Vertex AI

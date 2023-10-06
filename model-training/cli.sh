@@ -3,20 +3,17 @@
 # https://cloud.google.com/vertex-ai/docs/training/pre-built-containers
 
 export UUID=$(openssl rand -hex 6)
-export DISPLAY_NAME="snap_nutrition_training_job_$UUID"
+export DISPLAY_NAME="snapnutrition_training_job_$UUID"
 export MACHINE_TYPE="n1-standard-4"
 export REPLICA_COUNT=1
 export EXECUTOR_IMAGE_URI="us-docker.pkg.dev/vertex-ai/training/tf-gpu.2-12.py310:latest"
-export PYTHON_PACKAGE_URI=$GCS_BUCKET_URI/snap-nutrition-model-trainer.tar.gz
+export PYTHON_PACKAGE_URI=$GCS_BUCKET_URI/trainer_package/snapnutrition-trainer.tar.gz
 export PYTHON_MODULE="trainer.task"
 export ACCELERATOR_TYPE="NVIDIA_TESLA_T4"
 export ACCELERATOR_COUNT=1
 export GCP_REGION="us-central1" # Adjust region based on you approved quotas for GPUs
 
-export CMDARGS="--model_name=mobilenetv2,--epochs=30,--batch_size=32,--wandb_key=$WANDB_KEY"
-#export CMDARGS="--model_name=mobilenetv2,--train_base,--epochs=30,--batch_size=32,--wandb_key=$WANDB_KEY"
-#export CMDARGS="--model_name=tfhub_mobilenetv2,--epochs=30,--batch_size=32,--wandb_key=$WANDB_KEY"
-#export CMDARGS="--model_name=tfhub_mobilenetv2,--train_base,--epochs=30,--batch_size=32,--wandb_key=$WANDB_KEY"
+export CMDARGS="--config=model_config.yml,--wandb_key=$WANDB_KEY"
 
 #gcloud ai custom-jobs create \
 #  --region=$GCP_REGION \
