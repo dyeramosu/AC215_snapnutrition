@@ -43,7 +43,7 @@ USER app
 WORKDIR /app
 
 # Install python packages
-ADD --chown=app:app tfrecords_creation/Pipfile tfrecords_creation/Pipfile.lock tfrecords_creation/labels_processing.py /app/
+ADD --chown=app:app tfrecords_creation/Pipfile tfrecords_creation/Pipfile.lock /app/
 
 RUN pipenv sync
 RUN pip install pandas
