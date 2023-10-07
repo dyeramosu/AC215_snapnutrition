@@ -1,20 +1,36 @@
+# Overview
+The purpose of this model-training container is as follows:
+
+1. Scale and parameterize our model training by using serverless training on Google's Vertex AI platform.
+2. Automatically track model training using the Weights and Biases platform.
+3. Automatically save trained models to a google cloud bucket for ease of model selection and inference.
+
+## Dependencies
+
+This container depends on our `image_prep` container and our `tfrecords_creation` containers.  Our `image_prep` container process raw images from the Nutrition 5K dataset and our `tfrecords_creation` container creates TensorFlow Datasets, stores them in a Google Cloud Bucket, and also versions these records using Data Version Control [dvc](dvc.org).  See the tfrecord_creation container README.md for a more detailed description.  This container uses these TensorFlow Datasets to efficiently train our models.
+
+## Instructions:
+
+*Adopted from the following GitHub Repository developed and provided by Shivas Javaram [https://github.com/dlops-io/model-training](https://github.com/dlops-io/model-training)*
+
 ### Setup GCP Credentials
-Next step is to enable our container to have access to Storage buckets & Vertex AI(AI Platform) in  GCP. 
+
+Enable this container to have access to Storage buckets & Vertex AI(AI Platform) in GCP. 
 
 #### Create a local **secrets** folder
 
-It is important to note that we do not want any secure information in Git. So we will manage these files outside of the git folder. At the same level as the `model-training` folder create a folder called **secrets**
+It is important to note that we do not want any secure information in Git. So we will manage these files outside of the git folder. 
 
-Your folder structure should look like this:
+Folder Structure:
 ```
    |-model-training
    |-secrets
 ```
 
 #### Setup GCP Service Account
-- Here are the step to create a service account:
-- To setup a service account you will need to go to [GCP Console](https://console.cloud.google.com/home/dashboard), search for  "Service accounts" from the top search box. or go to: "IAM & Admins" > "Service accounts" from the top-left menu and create a new service account called "model-trainer". For "Service account permissions" select "Storage Admin", "AI Platform Admin", "Vertex AI Administrator".
-- This will create a service account
+
+- Go to [GCP Console](https://console.cloud.google.com/home/dashboard), search for  "Service accounts" from the top search box. or go to: "IAM & Admins" > "Service accounts" from the top-left menu and create a new service account called "model-trainer". For "Service account permissions" select "Storage Admin", "AI Platform Admin", "Vertex AI Administrator".
+- This will create a service account.
 - On the right "Actions" column click the vertical ... and select "Manage keys". A prompt for Create private key for "model-trainer" will appear select "JSON" and click create. This will download a Private key json file to your computer. Copy this json file into the **secrets** folder. Rename the json file to `model-trainer.json`
 
 ### Create GCS Bucket
@@ -32,7 +48,6 @@ We want to track our model training runs using WandB. Get the API Key for WandB:
 - Scroll down to the `API keys` sections 
 - Copy the key
 - Set an environment variable using your terminal: `export WANDB_KEY=...`
-<img src="wandb-api-key.png"  width="400">
 
 ## Run Container
 
@@ -81,7 +96,6 @@ $IMAGE_NAME
 - This script will create a `trainer.tar.gz` file with all the training code bundled inside it
 - Then this script will upload the packaged file to your GCS bucket and call it `snapnutrition-trainer.tar.gz`
 
-
 ### Create Jobs in Vertex AI
 - Open & Review `model-training` > `cli.sh`
 - `cli.sh` is a script file to make calling `gcloud ai custom-jobs create` easier by maintaining all the parameters in the script
@@ -122,13 +136,27 @@ $IMAGE_NAME
 - Make any required changes to your `cli-multi-gpu.sh`
 - Run `sh cli-multi-gpu.sh`
 
+## Examples of a Successful Training Run
 
+### Screenshots of a successful training run of multiple models with different parameters on Vertex AI
 ![](../reports/command_line.png)
 
 ![](../reports/vertex_ai.png)
 
+### Screenshots of models being sucessfully tracked using Weights and Biases
 ![](../reports/wandb_1.png)
 
 ![](../reports/wandb_2.png)
 
 ![](../reports/wanb_3.png)
+
+
+
+
+
+
+
+
+
+
+
