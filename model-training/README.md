@@ -49,9 +49,9 @@ We want to track our model training runs using WandB. Get the API Key for WandB:
 - Copy the key
 - Set an environment variable using your terminal: `export WANDB_KEY=...`
 
-## Run Container
+### Run Container
 
-### Run `docker-shell.sh` or `docker-shell.bat`
+#### Run `docker-shell.sh` or `docker-shell.bat`
 Based on your OS, run the startup script to make building & running the container easy
 
 This is what your `docker-shell` file will look like:
