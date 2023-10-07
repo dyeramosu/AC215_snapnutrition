@@ -28,7 +28,7 @@ job = aip.CustomPythonPackageTrainingJob(
     project=GCP_PROJECT,
 )
 
-CMDARGS = ["--config=trainer/model_config.yml", f"--wandb_key={WANDB_KEY}"]
+CMDARGS = [f"--wandb_key={WANDB_KEY}"]
 MODEL_DIR = GCS_BUCKET_URI
 TRAIN_COMPUTE = "n1-standard-4"
 TRAIN_GPU = "NVIDIA_TESLA_T4"
