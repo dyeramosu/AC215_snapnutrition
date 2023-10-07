@@ -127,11 +127,19 @@ SnapNutrition
 **Project**
 In this project we aim to develop an application that can estimate calories and macronutrients of food from user submitted photos of food using computer vision.
 
-## Milestone3 
+## Milestone3
+
+**Main Objectives for Milestone**
+
+The main objectives for our project on this milestone:
+
+1. Build a comprehensive containerized data pipeline with extraction, transformation, and dataset versioning capabilities.
+2. Implement distributed computing using Dask as well as integrate Cloud Storage using Googles Cloud Storage options.
+3. Scale up our model training by developing a containerized training workflow that uses Google's Vertex AI platform for serverless training, Weights and Biases for model metric tracking, and Google cloud storage to store models for inference. 
 
 **Datasets**
 
-We focused our efforts on the exploration and processing of two very different datasets containing images of food.
+For this We focused our efforts on the exploration and processing of two very different datasets containing images of food.
 
 1. The first dataset named `Nutrition 5K` consists of 180GB of images and videos of food.  As this dataset is so large we narrowed our focus to only images taken directly above a plate of food.  In addition, we anticipate that this dataset will be more difficult to develop a predictive model as it consists of entire dishes with multiple foods and ingredients.  That said, we have begun initial model development and results are promising.
 2. The second dataset is named `FooDD` and consists of images of single foods (apples, bread, etc.) but not all images are the same size which presents a challenge during initial preprocessing.  This challenge is being addressed in our preprocessing container below.
