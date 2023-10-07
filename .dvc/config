@@ -1,5 +1,4 @@
 [core]
-    remote = myremote
-['remote "myremote"']
-    url = gs://snapnutrition_data_bucket
-    version_aware = true
+    remote = snapnutrition_data_bucket
+['remote "snapnutrition_data_bucket"']
+    url = gs://snapnutrition_data_bucket/dvc_store
