@@ -1,6 +1,5 @@
 outs:
-- md5: 17c04b9328143a5a3e92149de793a7bc.dir
-  size: 1310008217
-  nfiles: 3265
+- md5: b5fc9af7e7fdc3e4c0ee16ef16e9ba28.dir
+  nfiles: 3294
   hash: md5
   path: snapnutrition_data_bucket
