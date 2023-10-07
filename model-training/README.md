@@ -121,3 +121,14 @@ $IMAGE_NAME
 - `cli-multi-gpu.sh` is a script file to make calling `gcloud ai custom-jobs create` easier by maintaining all the parameters in the script
 - Make any required changes to your `cli-multi-gpu.sh`
 - Run `sh cli-multi-gpu.sh`
+
+
+![](../reports/command_line.png)
+
+![](../reports/vertex_ai.png)
+
+![](../reports/wandb_1.png)
+
+![](../reports/wandb_2.png)
+
+![](../reports/wanb_3.png)
