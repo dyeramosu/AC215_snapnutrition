@@ -210,7 +210,7 @@ will produce this directory structure and images with the following transformati
 
 **Model training container**
 
-[More Details Here: model-training README.md](./model-training.README.md)
+[More Details Here: model-training README.md](./model-training/README.md)
 
 - This contains the code necessary to package our training script, execute a job in Vertex AI, and track model progress in Weights and Biases.
 - The training script currently uses a simple VGG-like model architecture for simplicity at this stage of the project. Later milestones will see usage of more complex architectures
