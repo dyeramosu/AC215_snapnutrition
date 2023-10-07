@@ -52,7 +52,7 @@ class SaltedOutput(TargetOutput):
         unique_string = get_hash(fn, task.image_process, task.kwargs)
 
         return self.target_class(
-            task.OUT_DIR + unique_string + ext, **self.target_kwargs
+            task.INTERMEDIATE_DIR + unique_string + ext, **self.target_kwargs
         )
 
 
@@ -64,11 +64,17 @@ class InitialImageTask(Task):
     kwargs = DictParameter({})
 
     file_name = Parameter()
+    INTERMEDIATE_DIR = Parameter()
     OUT_DIR = Parameter()
 
     output = SaltedOutput()
 
     def run(self):
+        breakpoint()
+        if os.path.exists(self.output().path.replace(self.INTERMEDIATE_DIR, self.OUT_DIR)):
+            os.rename(self.output().path.replace(self.INTERMEDIATE_DIR, self.OUT_DIR), self.output().path)
+        if os.path.exists(self.output().path):
+            return
         func = function_registry[self.image_process]["func"]
         img = skimage.io.imread(self.file_name)
 
@@ -78,7 +84,6 @@ class InitialImageTask(Task):
         #     val_type = function_registry[self.image_process]['params'][key]['type']
         #     if val_type == tuple:
                 
-        breakpoint()
         img = func(img, **self.kwargs)
         skimage.io.imsave(self.output().path, (img * 255).astype(np.uint8))
 
@@ -93,22 +98,23 @@ class ImagePipeline:
         original_img="choose a file",
         local_root="/data/",
         in_dir="raw/",
+        intermediate_dir="processed/all/",
         out_dir="processed/all/",
     ):
         self.LOCAL_ROOT = local_root
         self.IN_DIR = in_dir
+        self.INTERMEDIATE_DIR = intermediate_dir
         self.OUT_DIR = out_dir
         self.original_img = original_img
 
         self.tasks = []
         self.luigi_graph = []
-        breakpoint()
         if not os.path.exists(self.LOCAL_ROOT):
             os.makedirs(self.LOCAL_ROOT)
         if not os.path.exists(self.LOCAL_ROOT + self.IN_DIR):
             os.makedirs(self.LOCAL_ROOT + self.IN_DIR)
-        if not os.path.exists(self.LOCAL_ROOT + self.OUT_DIR):
-            os.makedirs(self.LOCAL_ROOT + self.OUT_DIR)
+        if not os.path.exists(self.LOCAL_ROOT + self.INTERMEDIATE_DIR):
+            os.makedirs(self.LOCAL_ROOT + self.INTERMEDIATE_DIR)
 
     def add_task(self, func: str, params = {}):
         """
@@ -131,13 +137,14 @@ class ImagePipeline:
         """
         Generates luigi graph according to self.original_img and self.pipeline
         """
-
+        breakpoint()
         if len(self.tasks) >= 1:
             self.luigi_graph = []
             kwargs = dict(
                 file_name=self.LOCAL_ROOT + self.IN_DIR + self.original_img,
                 image_process=self.tasks[0]["func"],
                 kwargs=self.tasks[0]["params"],
+                INTERMEDIATE_DIR=self.LOCAL_ROOT + self.INTERMEDIATE_DIR,
                 OUT_DIR=self.LOCAL_ROOT + self.OUT_DIR,
             )
             self.luigi_graph.append(InitialImageTask(**kwargs))
@@ -150,6 +157,7 @@ class ImagePipeline:
                         params=self.tasks[i]["params"],
                     )
                 )
+        breakpoint()
 
     def run_tasks(self):
         """
@@ -162,7 +170,6 @@ class ImagePipeline:
         """
         Function to add the next task to the luigi pipeline
         """
-        OUT_DIR = self.OUT_DIR
 
         class ImageTask(InitialImageTask):
             file_name = prev_task.output().path
@@ -171,7 +178,9 @@ class ImagePipeline:
                 return prev_task
 
         return ImageTask(
-            image_process=func, kwargs=params, OUT_DIR=self.LOCAL_ROOT + self.OUT_DIR
+            image_process=func, kwargs=params, 
+            INTERMEDIATE_DIR=self.LOCAL_ROOT + self.INTERMEDIATE_DIR,
+            OUT_DIR=self.LOCAL_ROOT + self.OUT_DIR
         )
 
     def save_pipeline(self, name):
@@ -208,9 +217,9 @@ class ImagePipeline:
 
             fn, ext = prev[i+1:j], prev[j:]
             unique_string = get_hash(fn, task["func"], task["params"])
-            prev = self.LOCAL_ROOT + self.OUT_DIR + unique_string + ext
+            prev = self.LOCAL_ROOT + self.INTERMEDIATE_DIR + unique_string + ext
             file_names.append(prev)
         file_names = [
-            fn.replace(self.LOCAL_ROOT + self.OUT_DIR, "") for fn in file_names
+            fn.replace(self.LOCAL_ROOT + self.INTERMEDIATE_DIR, "") for fn in file_names
         ]
         return file_names
