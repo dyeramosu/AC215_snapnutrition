@@ -129,7 +129,7 @@ In this project we aim to develop an application that can estimate calories and 
 
 ## Milestone3
 
-**Main Objectives for Milestone**
+### **Main Objectives for Milestone**
 
 The main objectives for our project on this milestone:
 
@@ -137,34 +137,22 @@ The main objectives for our project on this milestone:
 2. Implement distributed computing using Dask as well as integrate Cloud Storage using Googles Cloud Storage options.
 3. Scale up our model training by developing a containerized training workflow that uses Google's Vertex AI platform for serverless training, Weights and Biases for model metric tracking, and Google cloud storage to store models for inference. 
 
-**Datasets**
+### **Datasets**
 
-For this We focused our efforts on the exploration and processing of two very different datasets containing images of food.
+For this milestone, we focused our efforts on one dataset named `Nutrition 5K`.  This differs from the previous milestone where we explored two very different datasets; Nutrition 5K and FooDD. We are still interested in using FooD for this project but for this milestone our team felt it would be best to focus on one dataset for developing an end-to-end machine learning workflow.
 
-1. The first dataset named `Nutrition 5K` consists of 180GB of images and videos of food.  As this dataset is so large we narrowed our focus to only images taken directly above a plate of food.  In addition, we anticipate that this dataset will be more difficult to develop a predictive model as it consists of entire dishes with multiple foods and ingredients.  That said, we have begun initial model development and results are promising.
-2. The second dataset is named `FooDD` and consists of images of single foods (apples, bread, etc.) but not all images are the same size which presents a challenge during initial preprocessing.  This challenge is being addressed in our preprocessing container below.
+As for `Nutrition 5K`, it consists of 180GB of images and videos of food. As this dataset is so large, we narrowed our focus to only colored images taken directly above a plate of food. This reduced the size of the dataset considerably to about 3GB.
 
+### **Containers**
 
-**Notebooks**
+We built the following containers for this part of our project:
 
-This folder contains code that is not part of container - for e.g: EDA, any 🔍 🕵️‍♀️ 🕵️‍♂️ crucial insights, reports or visualizations.
+- Image Preprocessing
+- Data Versioning Control
+- Model Training
+- App Frontend Container: Note that this container will be used later in our project.
 
-We had the following notebooks for Nutrition5k EDA and Modeling
-1. [EDA] 230922_EDA_of_Nutrition5k_Ben.ipynb
-2. [EDA + Modeling] Nutrition5k_EDA_Base_Model.ipynb
-
-We had the following notebooks for FooDD dataset: 
-1. [EDA] FooDD_EDA.ipynb
-
-The Nutrition5k_EDA_Base_Model.ipynb colab successfully reads images from our team GCS Bucket directly for our base model.
-Results from the base CNN on Nutrition5k seem promising so far. One of the best results we noticed from one sample run was: 
-
-![](reports/base_CNN_prediction_example.jpg)
-
-We look forward to more refined results with further exploration.
-
-
-**Preprocess container**
+**Image Preprocessing Container**
 
 - This container has code that allows you to define data preprocessing pipelines, and build batches to increase the size of your image datasets and make them more robust to variations in image quality.
 
@@ -205,18 +193,13 @@ will produce this directory structure and images with the following transformati
 
 ![](src/image_prep/image_preprocessing_output.png)
 
-**App container**
-
- - This contains the frontend app that runs in your browser.
- - The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
-
-**Data version control container**
+**Data Version Control Container**
 
  - `src/dvc` contains a Dockerfile that installs dvc and also Google Cloud CLI
  - This relies on a `secrets/data-service-account.json` file already existing that has access to the `snapnutrition_data_bucket`
  - the `secrets` folder must be on the same level as the main project, and is not tracked by Git
 
-**Model training container**
+**Model Training Container**
 
 [More Details Here: model-training README.md](./model-training/README.md)
 
@@ -225,3 +208,12 @@ will produce this directory structure and images with the following transformati
 - The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
 - The `README.md` in this container gives detailed instructions on how to build the container, package the training scripts, and execute the packages in Vertex AI.
 - The current configuration of this container allows us to manipulate a YAML file called `model_config.yml` to more easily change hyperparameters. Later versions will allow more control over model architectures and tracking within Weights and Biases.
+
+**App container**
+
+ - This contains the frontend app that runs in your browser.
+ - The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
+
+### **References**
+
+Need to fill out...
