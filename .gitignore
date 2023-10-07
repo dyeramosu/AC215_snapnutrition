@@ -1,5 +1,7 @@
 .idea
 .DS_store
 *.pyc
+/secrets/
 *annotations.json
 *checkpoint*
+
