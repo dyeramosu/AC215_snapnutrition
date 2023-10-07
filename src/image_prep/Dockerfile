@@ -19,4 +19,4 @@ WORKDIR /image_prep
 COPY Pipfile .
 RUN pipenv install --deploy --ignore-pipfile --dev
 
-ENTRYPOINT ["pipenv", "run"]
+ENTRYPOINT ["pipenv", "run", "python", "-m", "image_prep"]

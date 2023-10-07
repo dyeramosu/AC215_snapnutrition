@@ -3,3 +3,7 @@
 *.jpg
 *.pyc
 /snapnutrition_data_bucket
+/secrets/
+*annotations.json
+*checkpoint*
+

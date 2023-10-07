@@ -5,6 +5,9 @@ def resize(img, height, width):
     return skimage.transform.resize(img, output_shape=(height, width))
 
 function_registry = {
+    "none": {
+        "func": (lambda img: img)
+    },
     "grayscale": {
         "func": skimage.color.rgb2gray,
     },
