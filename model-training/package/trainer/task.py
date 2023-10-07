@@ -38,14 +38,6 @@ parser = argparse.ArgumentParser(
 )
 
 parser.add_argument(
-    '-c',
-    '--config', 
-    required=True,
-    type=str, 
-    help='Path to the YAML configuration file'
-)
-
-parser.add_argument(
     '-w',
     '--wandb_key',
     required=True,
@@ -57,8 +49,8 @@ args = parser.parse_args()
 
 
 # Define globals
-GCS_BUCKET_NAME = os.path.basename(os.environ["GCS_BUCKET_URI"])
-GCP_PROJECT = os.environ["GCP_PROJECT"]
+GCS_BUCKET_NAME = "snapnutrition_data_bucket" #os.path.basename(os.environ["GCS_BUCKET_URI"])
+GCP_PROJECT = "csci-115-398800" # os.environ["GCP_PROJECT"]
 tfrecords_folder = "data/tf_records/180_by_180/"
 models_folder = "models/"
 
@@ -238,7 +230,8 @@ def download_tfrecords():
 
 
 # Read config file
-with open(args.config, 'r') as file:
+config_path = os.path.join(os.path.dirname(__file__), 'model_config.yml')
+with open(config_path, 'r') as file:
     config = yaml.full_load(file)
 
 

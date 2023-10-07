@@ -13,7 +13,7 @@ export ACCELERATOR_TYPE="NVIDIA_TESLA_T4"
 export ACCELERATOR_COUNT=1
 export GCP_REGION="us-central1" # Adjust region based on you approved quotas for GPUs
 
-export CMDARGS="--config=model_config.yml,--wandb_key=$WANDB_KEY"
+export CMDARGS="--wandb_key=$WANDB_KEY"
 
 #gcloud ai custom-jobs create \
 #  --region=$GCP_REGION \

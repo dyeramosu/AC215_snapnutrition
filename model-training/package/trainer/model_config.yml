@@ -5,8 +5,8 @@ build_params:
   model_name: test
   input_shape: !!python/tuple [180, 180, 3] # [rows, columns, channels]
   n_classes: 5
-  n_filters: 16 
-  dense_nodes: 256
+  n_filters: 32 
+  dense_nodes: 1024
   conv_dropout: 0.25 
   dense_dropout: 0.5  
   filter_size: !!python/tuple [3, 3] # [rows, columns]
@@ -17,7 +17,7 @@ compile_params:
   loss: mean_squared_error
   optimizer: adam
   learning_rate: 0.001
-  metrics: [root_mean_squared_error, mean_absolute_error]
+  metrics: [rmse, mae]
 
 train_params:
   batch_size: 128

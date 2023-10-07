@@ -14,4 +14,5 @@ setup(
     install_requires=REQUIRED_PACKAGES,
     packages=find_packages(),
     description="SnapNutrition Trainer Application",
+    package_data={"": ["*.yml"]}
 )
