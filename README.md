@@ -35,7 +35,7 @@ future inference container, but it is not an objective for this milestone and th
 
 ### **Notebooks**
 
-The [highlight notebook](./notebooks/data_versioning_control_demo.ipynb) for this milestone shows how we use **dask** to 
+The [highlight notebook](./notebooks/classification_models_wandb_deepika.ipynb) for this milestone shows how we use **dask** to 
 compute image metrics and preprocess the image (re-sizing, etc.). This notebook additionally trains on a couple model types including 
 MobileNet for transfer learning. Finally, it also connects to **weights and biases** for training output metrics tracking.
 
