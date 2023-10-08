@@ -59,18 +59,32 @@ We built the following containers for our project:
 
 **Data Version Control Container**
 
- - `src/dvc` contains a Dockerfile that installs dvc and also Google Cloud CLI
- - This relies on a `secrets/data-service-account.json` file already existing that has access to the `snapnutrition_data_bucket`
- - the `secrets` folder must be on the same level as the main project, and is not tracked by Git
+ - We use an open source tool called DVC (product page [here](https://dvc.org/doc)) for versioning our datasets stored in Google Cloud Bucket
+ - We mainly track our raw images and corresponding labels, as well as our generated TFRecords.
+ - [Full Details Here: data versioning control README.md](./data_versioning_control/README.md)
+
+**Data Labels Processing and Train, Test, Validation Split**
+
+ - This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
+ - As input, it reads the raw image and label data, and saves the filepaths + labels as pickle files into the Bucket.
+ - These pickle files are already split into train, test, and validation splits for ingestion by the TFRecords container
+ - [Full Details Here: data labels processing README.md](./data_labels_processing/README.md)
+
+**TFRecords Creation Container**
+ - This container is expected to read the output of the **Data Labels Processing and Train, Test, Validation Split** container. 
+ - It reads the train, test, validation splits pickle files, and subsequently creates TFRecords
+ - This step includes some image preprocessing, re-sizing, etc. before saving the TFRecords into the Bucket. 
+ - These TFRecords are prepped for consumption either by our Google Colab notebooks or by our **Model Training Container**
+ - [Full Details Here: TFRecords Creation README.md](./tfrecords_creation/README.md)
 
 **Model Training Container**
 
-- [Full Details Here: model-training README.md](./model-training/README.md)
 - This contains the code necessary to package our training script, execute a job in Vertex AI, and track model progress in Weights and Biases.
 - The training script currently uses a simple VGG-like model architecture for simplicity at this stage of the project. Later milestones will see usage of more complex architectures
 - The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
 - The `README.md` in this container gives detailed instructions on how to build the container, package the training scripts, and execute the packages in Vertex AI.
 - The current configuration of this container allows us to manipulate a YAML file called `model_config.yml` to more easily change hyperparameters. Later versions will allow more control over model architectures and tracking within Weights and Biases.
+- [Full Details Here: model-training README.md](./model-training/README.md)
 
 **App Front-End Container**
 
@@ -78,7 +92,12 @@ We built the following containers for our project:
  - The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
  - Visit [here](./src/app) for container directory
 
+**Image Processing Container**
 
+ - This container has code that allows you to define data preprocessing pipelines with Luigi 
+ - You can build batches to increase the size of your image datasets and make them more robust to variations in image quality. 
+ - **Note:** Augmented image data is not currently used in our training at this time. 
+ - [Full Details Here: Image Processing Containers README.md](./src/image_prep/README.md)
 
 **Full Project Directory Structure**
 <br>
