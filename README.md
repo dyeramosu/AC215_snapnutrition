@@ -102,109 +102,144 @@ We built the following containers for our project:
 
 **Full Project Directory Structure**
 <br>
-```
-.
+```bash
+
 ├── LICENSE
+├── Pipfile
 ├── README.md
+├── app
+│   ├── __pycache__
+│   │  
+│   └── data
 ├── block_diagram.drawio.svg
 ├── data
-│   └── raw_data
-│       ├── FooDD.dvc
-│       ├── Nutrition5k_Other.dvc
-│       └── Nutrition5k_realsense_overhead.dvc
+│   ├── FooDD.dvc
+│   ├── Nutrition5k_Other.dvc
+│   └── Nutrition5k_realsense_overhead.dvc
+├── data_labels_processing
+│   ├── Dockerfile
+│   ├── Pipfile
+│   ├── Pipfile.lock
+│   ├── README.md
+│   ├── docker-entrypoint.sh
+│   ├── docker-shell.sh
+│   └── labels_processing.py
+├── data_versioning_control
+│   ├── Dockerfile
+│   ├── Pipfile
+│   ├── Pipfile.lock
+│   ├── README.md
+│   ├── docker-entrypoint.sh
+│   └── docker-shell.sh
 ├── docker-compose.yml
 ├── model-training
-│   ├── Dockerfile
-│   ├── LICENSE
-│   ├── Pipfile
-│   ├── Pipfile.lock
-│   ├── README.md
-│   ├── cli-multi-gpu.sh
-│   ├── cli.py
-│   ├── cli.sh
-│   ├── docker-entrypoint.sh
-│   ├── docker-shell.bat
-│   ├── docker-shell.sh
-│   ├── package
-│   │   ├── PKG-INFO
-│   │   ├── setup.py
-│   │   └── trainer
-│   │       ├── __init__.py
-│   │       ├── model_config.yml
-│   │       ├── task.py
-│   │       └── task_multi_gpu.py
-│   ├── package-trainer.sh
-│   ├── serverless-training.png
-│   └── trainer.tar.gz
+│   ├── Dockerfile
+│   ├── LICENSE
+│   ├── Pipfile
+│   ├── Pipfile.lock
+│   ├── README.md
+│   ├── cli-multi-gpu.sh
+│   ├── cli.py
+│   ├── cli.sh
+│   ├── docker-entrypoint.sh
+│   ├── docker-shell.bat
+│   ├── docker-shell.sh
+│   ├── package
+│   │   ├── PKG-INFO
+│   │   ├── setup.py
+│   │   └── trainer
+│   │       ├── __init__.py
+│   │       ├── model_config.yml
+│   │       ├── task.py
+│   │       └── task_multi_gpu.py
+│   ├── package-trainer.sh
+│   └── serverless-training.png
 ├── notebooks
-│   ├── 230922_EDA_of_Nutrition5k_Ben.ipynb
-│   ├── FooDD_EDA.ipynb
-│   └── Nutrition5k_EDA_Base_Model.ipynb
+│   ├── 230922_EDA_of_Nutrition5k_Ben.ipynb
+│   ├── FooDD_EDA.ipynb
+│   ├── Nutrition5k_EDA_Base_Model.ipynb
+│   ├── README.md
+│   ├── classification_models_wandb_deepika.ipynb
+│   └── data_versioning_control_demo.ipynb
 ├── reports
-│   ├── base_CNN_prediction_example.jpg
-│   ├── command_line.png
-│   ├── vertex_ai.png
-│   ├── wanb_3.png
-│   ├── wandb_1.png
-│   └── wandb_2.png
+│   ├── base_CNN_prediction_example.jpg
+│   ├── command_line.png
+│   ├── data_labels_processing_output_1.jpg
+│   ├── data_labels_processing_output_2.jpg
+│   ├── data_versioning_1.png
+│   ├── dvc_notebook_1.png
+│   ├── image_preprocessing_definition.png
+│   ├── image_preprocessing_output.png
+│   ├── tfrecord_creations_output1.jpg
+│   ├── tfrecord_creations_output2.jpg
+│   ├── vertex_ai.png
+│   ├── wanb_3.png
+│   ├── wandb_1.png
+│   └── wandb_2.png
 ├── secrets
-│   └── model-training.json
-└── src
-    ├── app
-    │   ├── Dockerfile
-    │   ├── Pipfile
-    │   ├── Pipfile.lock
-    │   ├── app.py
-    │   ├── static
-    │   │   ├── css
-    │   │   │   ├── custom_styles.css
-    │   │   │   └── styles.css
-    │   │   ├── fonts
-    │   │   │   ├── glyphicons-halflings-regular.eot
-    │   │   │   ├── glyphicons-halflings-regular.svg
-    │   │   │   ├── glyphicons-halflings-regular.ttf
-    │   │   │   ├── glyphicons-halflings-regular.woff
-    │   │   │   └── glyphicons-halflings-regular.woff2
-    │   │   ├── img
-    │   │   │   ├── 1837-diabetic-pecan-crusted-chicken-breast_JulAug20DF_clean-simple_061720 Background Removed.png
-    │   │   │   ├── 1837-diabetic-pecan-crusted-chicken-breast_JulAug20DF_clean-simple_061720.jpg
-    │   │   │   ├── construction_img.jpeg
-    │   │   │   └── sample_upload_file_ui.png
-    │   │   └── js
-    │   │       ├── main.js
-    │   │       └── scripts.js
-    │   └── templates
-    │       ├── layouts
-    │       │   └── main.html
-    │       └── pages
-    │           ├── home.html
-    │           ├── results.html
-    │           ├── under_construction.html
-    │           └── upload_photo.html
-    ├── dvc
-    │   └── Dockerfile
-    └── image_prep
-        ├── Dockerfile
-        ├── Pipfile
-        ├── Pipfile.lock
-        ├── README.md
-        ├── batch_definitions
-        │   └── batch_a
-        ├── image_prep
-        │   ├── __init__.py
-        │   ├── __main__.py
-        │   ├── batch_builder.py
-        │   ├── cli.py
-        │   ├── function_registry.py
-        │   ├── preprocessing_pipeline.py
-        │   └── task.py
-        ├── image_preprocessing_definition.png
-        ├── image_preprocessing_output.png
-        └── pipelines
-            ├── pipeline_a
-            ├── pipeline_b
-            ├── pipeline_c
-            ├── pipeline_d
-            └── pipeline_e
+│   └── data-service-account.json
+├── snapnutrition_data_bucket.dvc
+├── src
+│   ├── app
+│   │   ├── Dockerfile
+│   │   ├── Pipfile
+│   │   ├── Pipfile.lock
+│   │   ├── app.py
+│   │   ├── static
+│   │   │   ├── css
+│   │   │   │   ├── custom_styles.css
+│   │   │   │   └── styles.css
+│   │   │   ├── fonts
+│   │   │   │   ├── glyphicons-halflings-regular.eot
+│   │   │   │   ├── glyphicons-halflings-regular.svg
+│   │   │   │   ├── glyphicons-halflings-regular.ttf
+│   │   │   │   ├── glyphicons-halflings-regular.woff
+│   │   │   │   └── glyphicons-halflings-regular.woff2
+│   │   │   ├── img
+│   │   │   │   ├── 1837-diabetic-pecan-crusted-chicken-breast_JulAug20DF_clean-simple_061720 Background Removed.png
+│   │   │   │   ├── 1837-diabetic-pecan-crusted-chicken-breast_JulAug20DF_clean-simple_061720.jpg
+│   │   │   │   ├── construction_img.jpeg
+│   │   │   │   └── sample_upload_file_ui.png
+│   │   │   └── js
+│   │   │       ├── main.js
+│   │   │       └── scripts.js
+│   │   └── templates
+│   │       ├── layouts
+│   │       │   └── main.html
+│   │       └── pages
+│   │           ├── home.html
+│   │           ├── results.html
+│   │           ├── under_construction.html
+│   │           └── upload_photo.html
+│   └── image_prep
+│       ├── Dockerfile
+│       ├── Pipfile
+│       ├── Pipfile.lock
+│       ├── README.md
+│       ├── batch_definitions
+│       │   └── batch_a
+│       ├── image_prep
+│       │   ├── __init__.py
+│       │   ├── __main__.py
+│       │   ├── batch_builder.py
+│       │   ├── cli.py
+│       │   ├── function_registry.py
+│       │   ├── preprocessing_pipeline.py
+│       │   └── task.py
+│       └── pipelines
+│           ├── pipeline_a
+│           ├── pipeline_b
+│           ├── pipeline_c
+│           ├── pipeline_d
+│           └── pipeline_e
+└── tfrecords_creation
+    ├── Dockerfile
+    ├── Pipfile
+    ├── Pipfile.lock
+    ├── README.md
+    ├── docker-entrypoint.sh
+    ├── docker-shell.sh
+    └── tfrecords_creation.py
+
 
 ```
