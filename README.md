@@ -30,27 +30,32 @@ Our main dataset is named `Nutrition 5K` where we focus on overhead images of fo
 ### **Architecture Diagram**
 
 ![](block_diagram.drawio.svg)
-**Note the diagram depicts an inference container. We have the set-up for incorporating a future inference container, but it is not an objective for this milestone and thus not included at this time.
+**Note:** the diagram above includes a depiction of an inference container. We have the set-up for incorporating a 
+future inference container, but it is not an objective for this milestone and thus not included at this time.
 
 ### **Notebooks**
 
 The [highlight notebook](./notebooks/data_versioning_control_demo.ipynb) for this milestone shows how we use **dask** to 
 compute image metrics and preprocess the image (re-sizing, etc.). This notebook additionally trains on a couple model types including 
-MobileNet for transfer learning. Finally, it also connects to weights and biases for output tracking. 
+MobileNet for transfer learning. Finally, it also connects to **weights and biases** for training output metrics tracking.
 
 These notebook components were also containerized in this project into several containers for preprocessing, dataset-splitting,
-TFRecords creation, and model training.
+TFRecords creation, and model training on Vertex.
 
-All jupyter notebooks and EDA [here](./notebooks)
+- All project Jupyter notebooks and dataset EDA [here](./notebooks)
+- Weights and Biases product page [here](https://wandb.ai/site)
+- Vertex AI product page [here](https://cloud.google.com/vertex-ai?hl=en)
 
 ### **Containers**
 
-We built the following containers specifically for this milestone of our project:
+We built the following containers for our project:
 
 1) [Data Versioning Control](./data_versioning_control)
 2) [Data Labels Processing and Train, Test, Validation Split](./data_labels_processing)
 3) [TFRecords Creation](./tfrecords_creation)
 4) [Model Training](./model-training)
+5) [App Frontend Container:](./src/app) Note that this container will be used later in our project.
+6) [Image Processing](./src/image_prep) Note: Multiple processing options including data augmentation.
 
 **Data Version Control Container**
 
@@ -60,29 +65,22 @@ We built the following containers specifically for this milestone of our project
 
 **Model Training Container**
 
-[More Details Here: model-training README.md](./model-training/README.md)
-
+- [Full Details Here: model-training README.md](./model-training/README.md)
 - This contains the code necessary to package our training script, execute a job in Vertex AI, and track model progress in Weights and Biases.
 - The training script currently uses a simple VGG-like model architecture for simplicity at this stage of the project. Later milestones will see usage of more complex architectures
 - The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
 - The `README.md` in this container gives detailed instructions on how to build the container, package the training scripts, and execute the packages in Vertex AI.
 - The current configuration of this container allows us to manipulate a YAML file called `model_config.yml` to more easily change hyperparameters. Later versions will allow more control over model architectures and tracking within Weights and Biases.
 
-**App container**
+**App Front-End Container**
 
  - This contains the frontend app that runs in your browser.
  - The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
-
-**Other Containers**
-
-These are other containers we have but do not explicitly use at this milestone:
-
-1) App Frontend Container: Note that this container will be used later in our project.
-2) [Image Processing (Multiple processing options including data augmentation)](./src/image_prep)
+ - Visit [here](./src/app) for container directory
 
 
 
-**Project Organization**
+**Full Project Directory Structure**
 <br>
 ```
 .
