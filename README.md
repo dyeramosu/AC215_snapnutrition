@@ -58,7 +58,7 @@ We built the following containers for our project:
 6) [Image Processing](./src/image_prep) Note: Multiple processing options including data augmentation.
 
 **Data Version Control Container**
-
+ - This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - We use an open source tool called DVC (product page [here](https://dvc.org/doc)) for versioning our datasets stored in Google Cloud Bucket
  - We mainly track our raw images and corresponding labels, as well as our generated TFRecords.
  - [Full Details Here: data versioning control README.md](./data_versioning_control/README.md)
@@ -66,11 +66,12 @@ We built the following containers for our project:
 **Data Labels Processing and Train, Test, Validation Split**
 
  - This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
- - As input, it reads the raw image and label data, and saves the filepaths + labels as pickle files into the Bucket.
+ - As input, it reads the raw image and label data, and saves the formatted filepaths + labels as pickle files into the Bucket.
  - These pickle files are already split into train, test, and validation splits for ingestion by the TFRecords container
  - [Full Details Here: data labels processing README.md](./data_labels_processing/README.md)
 
 **TFRecords Creation Container**
+ - This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - This container is expected to read the output of the **Data Labels Processing and Train, Test, Validation Split** container. 
  - It reads the train, test, validation splits pickle files, and subsequently creates TFRecords
  - This step includes some image preprocessing, re-sizing, etc. before saving the TFRecords into the Bucket. 
