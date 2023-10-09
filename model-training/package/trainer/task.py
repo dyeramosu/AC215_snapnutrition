@@ -4,6 +4,7 @@ import math
 import uuid
 import argparse
 import yaml
+from importlib.resources import files
 from google.cloud import storage
 
 # Tensorflow
@@ -230,8 +231,8 @@ def download_tfrecords():
 
 
 # Read config file
-config_path = os.path.join(os.path.dirname(__file__), 'model_config.yml')
-with open(config_path, 'r') as file:
+config_path = files('trainer').joinpath('model_config.yml')
+with config_path.open('r') as file:
     config = yaml.full_load(file)
 
 
