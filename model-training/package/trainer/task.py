@@ -5,7 +5,9 @@ import uuid
 import argparse
 import yaml
 from importlib.resources import files
-from google.cloud import storage
+from trainer.utils import download_tfrecords, upload_model_weights
+from trainer.models import DefaultModel
+
 
 # Tensorflow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # silence tf info, error, warning messages
@@ -16,19 +18,16 @@ from tensorflow.keras.layers import Flatten, MaxPooling2D
 from tensorflow.keras.optimizers import Adam
 print(f'Tensorflow Version: {tf.__version__}')
 print("Eager Execution Enabled:", tf.executing_eagerly())
-
-# Get the number of replicas
 strategy = tf.distribute.MirroredStrategy()
 print("Number of Replicas:", strategy.num_replicas_in_sync)
-
 devices = tf.config.experimental.get_visible_devices()
 print("Devices:", devices)
 print(tf.config.experimental.list_logical_devices('GPU'))
-
 print("GPU Available: ", tf.config.list_physical_devices('GPU'))
 print("All Physical Devices", tf.config.list_physical_devices())
 
-# W&B
+
+# Weights & Biases
 import wandb
 from wandb.keras import WandbCallback
 
@@ -60,65 +59,6 @@ models_folder = "models/"
 wandb.login(key=args.wandb_key)
 
 
-def build_model(
-    input_shape,
-    n_classes, 
-    n_filters=16,
-    dense_nodes=1024, 
-    conv_dropout=0.25, 
-    dense_dropout=0.5,  
-    filter_size=(3,3), 
-    pool_size=(2,2), 
-    output_activation='softmax',
-    model_name='model' 
-    ):
-
-    """
-    This function builds a simplified vgg-like convolutional model
-   
-    """
-    model = Sequential(
-        [
-            Conv2D(
-                n_filters, filter_size, padding="same", activation="relu",
-                input_shape=input_shape,
-            ),
-            Conv2D(n_filters, filter_size, padding="same", activation="relu"),
-            MaxPooling2D(pool_size=pool_size),
-            Dropout(conv_dropout),
-            
-            Conv2D(n_filters*2, filter_size, padding="same", activation="relu"),
-            Conv2D(n_filters*2, filter_size, padding="same", activation="relu"),
-            MaxPooling2D(pool_size=pool_size),
-            Dropout(conv_dropout),
-
-            Conv2D(n_filters*4, filter_size, padding="same", activation="relu"),
-            Conv2D(n_filters*4, filter_size, padding="same", activation="relu"),
-            MaxPooling2D(pool_size=pool_size),
-            Dropout(conv_dropout),
-
-            Conv2D(n_filters*8, filter_size, padding="same", activation="relu"),
-            Conv2D(n_filters*8, filter_size, padding="same", activation="relu"),
-            MaxPooling2D(pool_size=pool_size),
-            Dropout(conv_dropout),
-
-            Conv2D(n_filters*8, filter_size, padding="same", activation="relu"),
-            Conv2D(n_filters*8, filter_size, padding="same", activation="relu"),
-            MaxPooling2D(pool_size=pool_size),
-            Dropout(conv_dropout),
-
-            Flatten(),
-            Dense(dense_nodes, activation="relu"),
-            Dropout(dense_dropout),
-            Dense(n_classes, activation=output_activation),            
-        ],
-        name=f'{model_name}_{uuid.uuid4()}'
-    )
-    
-    return model
-
-
-
 # Parse a single image and label
 def parse_tfrecord_example(example):
     # Read TF Records
@@ -130,7 +70,7 @@ def parse_tfrecord_example(example):
     parsed_example = tf.io.parse_single_example(example, feature_description)
 
     # Access global variables
-    global image_size, image_shape, num_classes
+    global image_size, image_shape
 
     # Image
     image = tf.io.decode_raw(parsed_example['image'], tf.uint8)
@@ -143,12 +83,10 @@ def parse_tfrecord_example(example):
     return image, label
 
 
-
 # Normalize pixels
 def normalize(image, label):
     image = image/255
     return image, label
-
 
 
 # Load train and validation data from tfrecords files
@@ -181,55 +119,6 @@ def load_tfrecords(
     return train_data, validation_data
 
 
-
-def upload_model(model):
-    print(f'Uploading model to {GCS_BUCKET_NAME}')
-
-    # Create upload folder
-    upload_source = 'uploads'
-    os.makedirs(upload_source, exist_ok=True)
-
-    # Save model
-    file_name = f'{model.name}.h5'
-    model.save(os.path.join(upload_source, file_name))
-
-    # Instantiate GCS client
-    storage_client = storage.Client(project=GCP_PROJECT)
-    bucket = storage_client.bucket(GCS_BUCKET_NAME)
-
-    # Upload model
-    blob = bucket.blob(os.path.join(models_folder, file_name))
-    generation_match_precondition = 0
-    blob.upload_from_filename(
-        os.path.join(upload_source, file_name), 
-        if_generation_match=generation_match_precondition
-    )
-    print('Upload complete')    
-
-
-
-def download_tfrecords():
-    print(f'Downloading tfrecords files from {GCS_BUCKET_NAME}')
-
-    # Create download folder
-    download_destination = 'downloads'
-    os.makedirs(download_destination, exist_ok=True)
-
-    # Instantiate GCS client
-    client = storage.Client(project=GCP_PROJECT)
-
-    # Download tfrecords locally
-    blobs = client.list_blobs(GCS_BUCKET_NAME, prefix=tfrecords_folder)
-    for blob in blobs:
-        if blob.name.endswith("/"):
-            continue
-        print(f'Downloading: {blob.name}')
-        blob.download_to_filename(
-            os.path.join(download_destination, os.path.basename(blob.name))
-        )
-    print('Download complete')
-
-
 # Read config file
 config_path = files('trainer').joinpath('model_config.yml')
 with config_path.open('r') as file:
@@ -237,7 +126,15 @@ with config_path.open('r') as file:
 
 
 # Build model
-model = build_model(**config['build_params'])
+if config['build_params']['model_name'] == 'test':
+    model_name = config['build_params']['model_name']
+    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+    model = DefaultModel(**config['build_params'])
+else:
+    model_name = 'default'
+    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+    model = DefaultModel(**config['build_params'])
+model.build((None,) + config['build_params']['input_shape'])    
 print(model.summary())
 
 
@@ -246,6 +143,8 @@ if config['compile_params']['optimizer'] == 'adam':
     optimizer = Adam(
         learning_rate = config['compile_params']['learning_rate']
     )
+else:
+    optimizer = Adam()
 
 
 # Set metrics
@@ -263,29 +162,23 @@ model.compile(
 
 
 # Define global variables for tfrecords parser
-global image_size, image_shape, num_classes
+global image_size, image_shape
 image_size = [math.prod(config['build_params']['input_shape'])]
 image_shape = list(config['build_params']['input_shape'])
-num_classes = config['build_params']['n_classes']
 
 
 # Fetch data
-download_tfrecords()
+download_tfrecords(GCS_BUCKET_NAME, GCP_PROJECT, tfrecords_folder)
 train_data, validation_data = load_tfrecords(
     'downloads',
     config['train_params']['batch_size']
 )
 
 
-# Initialize a Weights and Biases run
+# Initialize a Weights & Biases run
 wandb.init(
     project="snapnutrition-training-vertex-ai",
-    config={
-        "learning_rate": config['compile_params']['learning_rate'],
-        "epochs": config['train_params']['epochs'],
-        "batch_size": config['train_params']['batch_size'],
-        "model_name": model.name,
-    },
+    config=config,
     name=model.name,
 )
 
@@ -302,8 +195,8 @@ execution_time = (time.time() - start_time)/60.0
 print(f'Training execution time (mins): {execution_time:.02f}')
 
 
-# Upload model
-upload_model(model)
+# Upload model weights
+upload_model_weights(model, GCS_BUCKET_NAME, GCP_PROJECT, models_folder)
 
 
 # Update W&B

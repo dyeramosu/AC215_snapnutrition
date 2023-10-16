@@ -1,0 +1,1 @@
+from trainer.models.default import DefaultModel
