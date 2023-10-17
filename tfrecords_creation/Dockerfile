@@ -49,7 +49,7 @@ ADD --chown=app:app tfrecords_creation/Pipfile tfrecords_creation/Pipfile.lock /
 RUN pip install pandas
 RUN pip install numpy
 RUN pip install dask
-RUN pip install opencv-python
+RUN pip install opencv-python-headless
 
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
