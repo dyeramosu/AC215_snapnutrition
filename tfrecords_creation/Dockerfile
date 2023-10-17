@@ -47,6 +47,8 @@ WORKDIR /app
 ADD --chown=app:app tfrecords_creation/Pipfile tfrecords_creation/Pipfile.lock /app/
 
 RUN pip install pandas
+RUN pip install numpy
+RUN pip install dask
 
 # Add the rest of the source code. This is done last so we don't invalidate all
 # layers when we change a line of code.
