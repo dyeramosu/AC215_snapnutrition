@@ -2,7 +2,7 @@ import os
 from google.cloud import storage
 
 
-# Upload a tensorflow model to GCS bucket 
+# Upload tensorflow model weights to GCS bucket 
 def upload_model_weights(model, bucket_name, project_name, models_folder):
     print(f'Uploading model weights to {bucket_name}')
 

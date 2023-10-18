@@ -34,9 +34,8 @@ from wandb.keras import WandbCallback
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(
-    description='Build a VGG-like CNN model from a YAML configuration file.'
+    description='Build and train a model from a YAML configuration file.'
 )
-
 parser.add_argument(
     '-w',
     '--wandb_key',
@@ -44,15 +43,35 @@ parser.add_argument(
     type=str, 
     help="Weights and Biases API Key"
 )
-
+parser.add_argument(
+    '-b',
+    '--bucket',
+    required=True,
+    type=str, 
+    help="GCS bucket name"
+)
+parser.add_argument(
+    '-p',
+    '--project',
+    required=True,
+    type=str, 
+    help="GCP project name"
+)
+parser.add_argument(
+    '-tf',
+    '--tfrecords_folder',
+    required=True,
+    type=str, 
+    help="TF records folder path in GCS bucket"
+)
+parser.add_argument(
+    '-mo',
+    '--models_folder',
+    required=True,
+    type=str, 
+    help="Trained models folder path in GCS bucket"
+)
 args = parser.parse_args()
-
-
-# Define globals
-GCS_BUCKET_NAME = "snapnutrition_data_bucket" #os.path.basename(os.environ["GCS_BUCKET_URI"])
-GCP_PROJECT = "csci-115-398800" # os.environ["GCP_PROJECT"]
-tfrecords_folder = "data/tf_records/180_by_180/"
-models_folder = "models/"
 
 
 # Login to Weights and Biases
@@ -168,7 +187,7 @@ image_shape = list(config['build_params']['input_shape'])
 
 
 # Fetch data
-download_tfrecords(GCS_BUCKET_NAME, GCP_PROJECT, tfrecords_folder)
+download_tfrecords(args.bucket, args.project, args.tfrecords_folder)
 train_data, validation_data = load_tfrecords(
     'downloads',
     config['train_params']['batch_size']
@@ -182,6 +201,7 @@ wandb.init(
     name=model.name,
 )
 
+
 # Train model
 start_time = time.time()
 training_results = model.fit(
@@ -189,14 +209,14 @@ training_results = model.fit(
         validation_data = validation_data,
         epochs = config['train_params']['epochs'],
         callbacks=[WandbCallback()],
-        verbose = 1
+        verbose = 'auto'
 )
 execution_time = (time.time() - start_time)/60.0
 print(f'Training execution time (mins): {execution_time:.02f}')
 
 
 # Upload model weights
-upload_model_weights(model, GCS_BUCKET_NAME, GCP_PROJECT, models_folder)
+upload_model_weights(model, args.bucket, args.project, args.models_folder)
 
 
 # Update W&B
@@ -204,7 +224,7 @@ wandb.config.update({"execution_time": execution_time})
 
 
 # Close the W&B run
-wandb.run.finish()
+wandb.finish()
 
 
 print("Training Job Complete")
