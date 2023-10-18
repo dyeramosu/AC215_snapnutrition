@@ -4,6 +4,14 @@ import time
 import tensorflow as tf
 import shutil
 
+import numpy as np
+# Dask
+import dask
+import dask.dataframe as dd
+import dask.delayed as delayed
+from dask.diagnostics import ProgressBar
+import cv2
+
 print("Begin processing....")
 
 # paths to read train test val data (has image filepaths and corresponding labels
@@ -21,7 +29,7 @@ NUM_TRAIN_SHARDS = 12
 NUM_TEST_VAL_SHARDS = 4
 
 # output directory for this tfrecord creation script
-TFRECORD_SAVE_PATH = './snapnutrition_data_bucket/data/tf_records/180_by_180'
+TFRECORD_SAVE_PATH = './snapnutrition_data_bucket/data/tf_records/180_by_180_dask_normalized'
 # Create an output path to store the tfrecords
 if os.path.exists(TFRECORD_SAVE_PATH):
     shutil.rmtree(TFRECORD_SAVE_PATH)
@@ -33,15 +41,29 @@ validate_xy = pd.read_pickle(VAL_SAVE_PATH)
 test_xy = pd.read_pickle(TEST_SAVE_PATH)
 
 
-def create_tf_example(item):
+@dask.delayed
+def read_resize_image(file_path):
+  # read image
+  image = cv2.imread(file_path)
+  # convert to rgb
+  image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+  # Resize image
+  image = cv2.resize(image, (IMAGE_WIDTH,IMAGE_HEIGHT), interpolation = cv2.INTER_AREA)
+
+  return image
+
+def create_tf_example(item, dask_metrics):
     # Read image
     image = tf.io.read_file(item[1])
     image = tf.image.decode_png(image, channels=NUM_CHANNELS)
     image = tf.image.resize(image, [IMAGE_HEIGHT, IMAGE_WIDTH])
+
+    # Custom Normalize image with pre-calculated Dask Metrics
+    image = (tf.cast(image, tf.float32) - dask_metrics['mean']) / dask_metrics['stdev']
     # # Encode
     # image = tf.cast(image, tf.uint8)
     # image = tf.image.encode_jpeg(image, optimize_size=True, chroma_downsampling=False)
-    image = tf.cast(image, tf.uint8)
+    # image = tf.cast(image, tf.uint8)
 
     # Label
     label = item[0]
@@ -56,7 +78,10 @@ def create_tf_example(item):
     return example
 
 
-def create_tf_records(data, num_shards=10, prefix='', folder='data'):
+def create_tf_records(data, dask_metrics, num_shards=10, prefix='', folder='data'):
+    #first use dask to calculate mean
+
+
     num_records = len(data)
     step_size = num_records // num_shards + 1
 
@@ -69,24 +94,39 @@ def create_tf_records(data, num_shards=10, prefix='', folder='data'):
         with tf.io.TFRecordWriter(path) as writer:
             # Filter the subset of data to write to tfrecord file
             for item in data[i:i + step_size]:
-                tf_example = create_tf_example(item)
+                tf_example = create_tf_example(item, dask_metrics)
                 writer.write(tf_example.SerializeToString())
 
+#Let's get image mean and stdev from train dataset
+full_train_val = train_xy + validate_xy
+lazy_loaded_images = [read_resize_image(path_and_label[1]) for path_and_label in full_train_val]
+image_arrays = [dask.array.from_delayed(img,dtype=np.uint8,shape=(IMAGE_WIDTH, IMAGE_HEIGHT, NUM_CHANNELS)) for img in lazy_loaded_images]
+all_images_dask = dask.array.stack(image_arrays, axis=0)
+
+start_time = time.time()
+dask_computed_metrics = {}
+mean, stdev = dask.compute(all_images_dask.mean(axis=(0,1, 2)), all_images_dask.std(axis=(0,1, 2)))
+print("mean:", mean)
+print("stdev:", stdev)
+dask_computed_metrics ["mean"] = mean
+dask_computed_metrics ["stdev"] = stdev
+execution_time = (time.time() - start_time)/60.0
+print("Execution time (mins)",execution_time)
 
 # Create TF Records for train
 start_time = time.time()
-create_tf_records(train_xy, num_shards=NUM_TRAIN_SHARDS, prefix="train", folder=TFRECORD_SAVE_PATH)
+create_tf_records(train_xy, dask_computed_metrics, num_shards=NUM_TRAIN_SHARDS, prefix="train", folder=TFRECORD_SAVE_PATH)
 execution_time = (time.time() - start_time) / 60.0
 print("Train TFRecords Execution time (mins)", execution_time)
 
 # Create TF Records for validation
 start_time = time.time()
-create_tf_records(validate_xy, num_shards=NUM_TEST_VAL_SHARDS, prefix="val", folder=TFRECORD_SAVE_PATH)
+create_tf_records(validate_xy, dask_computed_metrics, num_shards=NUM_TEST_VAL_SHARDS, prefix="val", folder=TFRECORD_SAVE_PATH)
 execution_time = (time.time() - start_time) / 60.0
 print("Validation TFRecords Execution time (mins)", execution_time)
 
 # Create TF Records for test
 start_time = time.time()
-create_tf_records(test_xy, num_shards=NUM_TEST_VAL_SHARDS, prefix="test", folder=TFRECORD_SAVE_PATH)
+create_tf_records(test_xy, dask_computed_metrics, num_shards=NUM_TEST_VAL_SHARDS, prefix="test", folder=TFRECORD_SAVE_PATH)
 execution_time = (time.time() - start_time) / 60.0
 print("Test TFRecords Execution time (mins)", execution_time)

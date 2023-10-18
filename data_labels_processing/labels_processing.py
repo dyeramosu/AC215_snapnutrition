@@ -42,11 +42,11 @@ issue_dish_id_array = full_labels_df[full_labels_df['total_calories']==0].dish_i
 full_labels_df = full_labels_df[full_labels_df['total_calories']!=0]
 #remove filepaths to images with 0 calories
 issue_dish_id_array_filepaths = [dish_id for dish_id in issue_dish_id_array] #get issue dish id's with 0 calories
-dish_ids_with_rgb = [fname for fname in os.listdir(DATA_DIR )] #get all dishes with overhead images
+dish_ids_with_rgb = [fname.rstrip(".png") for fname in os.listdir(DATA_DIR)] #get all dishes with overhead images
 valid_dish_ids = list(set(dish_ids_with_rgb)-set(issue_dish_id_array_filepaths)) #get only good dishes
 #create image filepaths and labels
-filenames = [os.path.join(DATA_DIR, fname) for fname in os.listdir(DATA_DIR) if fname != "annotations.json" and fname in valid_dish_ids]  #select rgb images only for now (exclude depth)
-labels = [get_nutrition_from_dish_id(full_labels_df, fname.rstrip(".png")) for fname in os.listdir(DATA_DIR) if fname != "annotations.json" and fname in valid_dish_ids]
+filenames = [os.path.join(DATA_DIR, fname) for fname in os.listdir(DATA_DIR) if fname != "annotations.json" and fname.rstrip(".png") in valid_dish_ids]  #select rgb images only for now (exclude depth)
+labels = [get_nutrition_from_dish_id(full_labels_df, fname.rstrip(".png")) for fname in os.listdir(DATA_DIR) if fname != "annotations.json" and fname.rstrip(".png") in valid_dish_ids]
 data_dict = {'filename': filenames, 'label': labels}
 
 print("Num image files: ", len(filenames))
