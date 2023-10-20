@@ -6,7 +6,7 @@ import argparse
 import yaml
 from importlib.resources import files
 from trainer.utils import download_tfrecords, upload_model_weights
-from trainer.models import DefaultModel
+from trainer.models import default_model, mobilenet_model 
 
 
 # Tensorflow
@@ -148,12 +148,15 @@ with config_path.open('r') as file:
 if config['build_params']['model_name'] == 'test':
     model_name = config['build_params']['model_name']
     config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = DefaultModel(**config['build_params'])
+    model = mobilenet_model(**config['build_params'])
+elif config['build_params']['model_name'] == 'mobilenet':
+    model_name = config['build_params']['model_name']
+    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+    model = mobilenet_model(**config['build_params'])
 else:
     model_name = 'default'
     config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = DefaultModel(**config['build_params'])
-model.build((None,) + config['build_params']['input_shape'])    
+    model = default_model(**config['build_params'])
 print(model.summary())
 
 
