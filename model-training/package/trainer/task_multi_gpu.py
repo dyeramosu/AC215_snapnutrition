@@ -12,10 +12,8 @@ from trainer.models import default_model, mobilenet_model
 # Tensorflow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # silence tf info, error, warning messages
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, Dense, Dropout 
-from tensorflow.keras.layers import Flatten, MaxPooling2D
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping
 print(f'Tensorflow Version: {tf.__version__}')
 print("Eager Execution Enabled:", tf.executing_eagerly())
 strategy = tf.distribute.MirroredStrategy()
@@ -159,7 +157,6 @@ global_batch_size = config['train_params']['batch_size'] * num_workers
 
 # Wrap model creation and compilation within scope of strategy
 with strategy.scope():
-
     # Build model
     if config['build_params']['model_name'] == 'test':
         model_name = config['build_params']['model_name']
@@ -218,21 +215,29 @@ wandb.init(
 )
 
 
+# Early Stopping 
+if config['train_params']['early_stopping'] == True:
+    early_stopping = EarlyStopping(
+        monitor='val_loss', 
+        patience=config['train_params']['patience'], 
+        restore_best_weights=True
+    )
+    callbacks = [WandbCallback(), early_stopping]
+else:
+    callbacks = [WandbCallback()]
+
+
 # Train model
 start_time = time.time()
 training_results = model.fit(
         train_data,
         validation_data = validation_data,
         epochs = config['train_params']['epochs'],
-        callbacks=[WandbCallback()],
+        callbacks=callbacks,
         verbose = 'auto'
 )
 execution_time = (time.time() - start_time)/60.0
 print(f'Training execution time (mins): {execution_time:.02f}')
-
-
-# Upload model weights
-upload_model_weights(model, args.bucket, args.project, args.models_folder)
 
 
 # Update W&B
@@ -241,6 +246,69 @@ wandb.config.update({"execution_time": execution_time})
 
 # Close the W&B run
 wandb.finish()
+
+
+# Fine tune model
+if config['train_params']['fine_tune'] == True:
+
+    # Initialize a new Weights & Biases run
+    wandb.init(
+        project="snapnutrition-training-vertex-ai",
+        config=config,
+        name='fine_tuned_'+model.name,
+    )
+
+    # Reset optimizer for 100x smaller learning rate
+    learning_rate = config['compile_params']['learning_rate'] / 100.
+
+    with strategy.scope():
+
+        # Clone the model and et all trainable parameters to True
+        fine_tuned = tf.keras.models.clone_model(model)
+        fine_tuned.trainable = True
+
+        # Set optimizer
+        if config['compile_params']['optimizer'] == 'adam':
+            optimizer = Adam(learning_rate=learning_rate)
+        else:
+            optimizer = Adam()
+
+        # Set metrics
+        for i, metric in enumerate(config['compile_params']['metrics']):
+            if metric ==  'rmse':
+                config['compile_params']['metrics'][i] = tf.keras.metrics.RootMeanSquaredError()
+
+        # Recompile model
+        fine_tuned.compile(
+            loss = config['compile_params']['loss'],
+            optimizer = optimizer,
+            metrics = config['compile_params']['metrics']
+        )
+
+    # Retrain
+    start_time = time.time()
+    training_results = fine_tuned.fit(
+            train_data,
+            validation_data = validation_data,
+            epochs = config['train_params']['epochs'],
+            callbacks=callbacks,
+            verbose = 'auto'
+    )
+    execution_time = (time.time() - start_time)/60.0
+    print(f'Fine tuning execution time (mins): {execution_time:.02f}')
+
+    # Update W&B
+    wandb.config.update({"execution_time": execution_time})
+
+    # Close the W&B run
+    wandb.finish()
+
+
+# Upload model weights
+if config['train_params']['fine_tune'] == True:
+    upload_model_weights(fine_tuned, args.bucket, args.project, args.models_folder)
+else:
+    upload_model_weights(model, args.bucket, args.project, args.models_folder)
 
 
 print("Training Job Complete")

@@ -49,9 +49,16 @@ We want to track our model training runs using WandB. Get the API Key for WandB:
 - Copy the key
 - Set an environment variable using your terminal: `export WANDB_KEY=...`
 
+### Review Build Files 
+
+- Open & Review `model-training` > `package` > `setup.py`. All required third party libraries needed for training are specified in `setup.py`. 
+- Open & Review `model-training` > `package` > `trainer` > `task.py` or `task_multi_gpu.py`. All training code for the snap-nutrition app models are present in `task.py` or `task_multi_gpu.py`
+- Open & Review `model-training` > `package` > `trainer` > `model_config.yml`. The package will create a model according to the specs in this file. Change it before launching the container.
+= Open & Review `model-training` > `cli.sh` or `cli-multi-gpu.sh`. Change these files before launching the Docker container. Comment or uncomment lines as necessary within `cli.sh` when using GPUs or not. Use the `cli-multi-gpu.sh` file for multi GPU training. Ensure the appropriate region, accelerators, bucket name, project name, TFrecords folder, and model upload folders are correct.  
+
 ### Run Container
 
-#### Run `docker-shell.sh` or `docker-shell.bat`
+#### Run `sh docker-shell.sh` or `docker-shell.bat`
 Based on your OS, run the startup script to make building & running the container easy
 
 This is what your `docker-shell` file will look like:
@@ -84,22 +91,18 @@ $IMAGE_NAME
 - The `docker-shell` file assumes you have the `WANDB_KEY` as an environment variable and is passed into the container
 
 
-### Package & Upload Python Code
+### Run Package Creation Script
 
-### Review Trainer Code
-- Open & Review `model-training` > `package` > `setup.py`
-- All required third party libraries needed for training are specified in `setup.py`
-- Open & Review `model-training` > `package` > `trainer` > `task.py`
-- All training code for the snap-nutrition app models are present in `task.py`
-
-### Run `sh package-trainer.sh`
+#### Run `sh package-trainer.sh`
 - This script will create a `trainer.tar.gz` file with all the training code bundled inside it
 - Then this script will upload the packaged file to your GCS bucket and call it `snapnutrition-trainer.tar.gz`
 
 ### Create Jobs in Vertex AI
+
+#### Run `sh cli.sh` or `sh cli-multi-gpu.sh`
 - Open & Review `model-training` > `cli.sh`
 - `cli.sh` is a script file to make calling `gcloud ai custom-jobs create` easier by maintaining all the parameters in the script
-- Make any required changes to your `cli.sh` file:
+- Make any required changes to your `cli.sh`.
 - List of `ACCELERATOR_TYPE` are:
     - NVIDIA_TESLA_T4
     - NVIDIA_TESLA_K80
@@ -114,11 +117,17 @@ $IMAGE_NAME
     - us-south1
     - us-west1
     - ...
+
+#### OPTIONAL: Create Jobs in Vertex AI using CPU
+- Uncomment and comment the appropriate lines in `cli.sh`
 - Run `sh cli.sh`
 
-### OPTIONAL:Create Jobs in Vertex AI using CPU
-- Edit your `cli.sh` to not pass the `accelerator-type` and `accelerator-count`
-- Run `sh cli.sh`
+#### OPTIONAL: Multi GPU Training
+- Open & Review `model-training` > `cli-multi-gpu.sh`
+- Open & Review `model-training` > `package` > `trainer` > `task_multi_gpu.py`
+- `cli-multi-gpu.sh` is a script file to make calling `gcloud ai custom-jobs create` easier by maintaining all the parameters in the script
+- Make any required changes to your `cli-multi-gpu.sh`
+- Run `sh cli-multi-gpu.sh`
 
 ### View Jobs in Vertex AI
 - Go to Vertex AI [Custom Jobs](https://console.cloud.google.com/vertex-ai/training/custom-jobs)
@@ -128,13 +137,6 @@ $IMAGE_NAME
 - Go to [WandB](https://wandb.a)
 - Select the project `snap-nutrition`
 - You will view the training metrics tracked and automatically updated
-
-### OPTIONAL: Multi GPU Training
-- Open & Review `model-training` > `cli-multi-gpu.sh`
-- Open & Review `model-training` > `package` > `trainer` > `task_multi_gpu.py`
-- `cli-multi-gpu.sh` is a script file to make calling `gcloud ai custom-jobs create` easier by maintaining all the parameters in the script
-- Make any required changes to your `cli-multi-gpu.sh`
-- Run `sh cli-multi-gpu.sh`
 
 ## Examples of a Successful Training Run
 

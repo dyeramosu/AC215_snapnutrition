@@ -21,8 +21,10 @@ compile_params:
 
 train_params:
   batch_size: 128
-  epochs: 5
-  callbacks:
+  epochs: 100
+  early_stopping: True
+  patience: 5
+  fine_tune: True
 
 save_instructions:
   model_path:
