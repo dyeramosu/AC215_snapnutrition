@@ -16,7 +16,7 @@ def inceptionv3_model(
 ):
 
     """
-    This function returns a mobilenet transfer learning model
+    This function returns a Inception V3 transfer learning model
     
     Arguments:
         input_shape: shape of the training data (row, column, channel)
