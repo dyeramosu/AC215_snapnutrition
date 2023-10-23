@@ -6,7 +6,7 @@ import argparse
 import yaml
 from importlib.resources import files
 from trainer.utils import download_tfrecords, upload_model_weights
-from trainer.models import default_model, mobilenet_model 
+from trainer.models import default_model, mobilenet_model, resnet50_model, vgg16_model
 
 
 # Tensorflow
@@ -153,6 +153,14 @@ elif config['build_params']['model_name'] == 'mobilenet':
     model_name = config['build_params']['model_name']
     config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
     model = mobilenet_model(**config['build_params'])
+elif config['build_params']['model_name'] == 'resnet50':
+    model_name = config['build_params']['model_name']
+    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+    model = resnet50_model(**config['build_params'])
+elif config['build_params']['model_name'] == 'vgg16':
+    model_name = config['build_params']['model_name']
+    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+    model = vgg16_model(**config['build_params'])
 else:
     model_name = 'default'
     config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
