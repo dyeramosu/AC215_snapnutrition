@@ -153,18 +153,6 @@ elif config['build_params']['model_name'] == 'mobilenet':
     model_name = config['build_params']['model_name']
     config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
     model = mobilenet_model(**config['build_params'])
-elif config['build_params']['model_name'] == 'resnet50':
-    model_name = config['build_params']['model_name']
-    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = resnet50_model(**config['build_params'])
-elif config['build_params']['model_name'] == 'VGG16':
-    model_name = config['build_params']['model_name']
-    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = VGG16_model(**config['build_params'])
-elif config['build_params']['model_name'] == 'inceptionv3':
-    model_name = config['build_params']['model_name']
-    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = inceptionv3_model(**config['build_params'])
 else:
     model_name = 'default'
     config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
