@@ -78,6 +78,10 @@ def build_model(**build_params):
     elif build_params['model_name'] == 'xception':
         model = xception_model(**build_params)
 
+    # Resnet50
+    elif build_params['model_name'] == 'resnet50':
+        model = resnet50_model(**build_params)
+
     # Default VGG-like model
     else:
         model = default_model(**build_params)

@@ -5,3 +5,4 @@ from trainer.models.efficientnet_b7 import efficientnet_b7_model
 from trainer.models.efficientnet_v2l import efficientnet_v2l_model
 from trainer.models.vgg16 import vgg16_model
 from trainer.models.vgg19 import vgg19_model
+from trainer.models.resnet50 import resnet50_model
