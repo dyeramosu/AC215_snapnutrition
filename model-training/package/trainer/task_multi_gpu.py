@@ -5,8 +5,8 @@ import uuid
 import argparse
 import yaml
 from importlib.resources import files
-from trainer.utils import download_tfrecords, upload_model_weights
-from trainer.models import default_model, mobilenet_model 
+from trainer.utils import download_tfrecords, upload_model_weights, build_model
+
 
 
 # Tensorflow
@@ -90,7 +90,7 @@ def parse_tfrecord_example(example):
     global image_size, image_shape
 
     # Image
-    image = tf.io.decode_raw(parsed_example['image'], tf.uint8)
+    image = tf.io.decode_raw(parsed_example['image'], tf.float32)
     image.set_shape(image_size)
     image = tf.reshape(image, image_shape)
     
@@ -109,7 +109,8 @@ def normalize(image, label):
 # Load train and validation data from tfrecords files
 def load_tfrecords(
         tfrecords_directory,
-        batch_size
+        batch_size,
+        normalize_data=False
     ):
 
     # Read the tfrecord files
@@ -119,14 +120,16 @@ def load_tfrecords(
     # Train data
     train_data = train_tfrecord_files.flat_map(tf.data.TFRecordDataset)
     train_data = train_data.map(parse_tfrecord_example, num_parallel_calls=tf.data.AUTOTUNE)
-    train_data = train_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
+    if normalize_data:
+        train_data = train_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
     train_data = train_data.batch(batch_size)
     train_data = train_data.prefetch(buffer_size=tf.data.AUTOTUNE)
 
     # Validation data
     validation_data = validate_tfrecord_files.flat_map(tf.data.TFRecordDataset)
     validation_data = validation_data.map(parse_tfrecord_example, num_parallel_calls=tf.data.AUTOTUNE)
-    validation_data = validation_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
+    if normalize_data:
+        validation_data = validation_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
     validation_data = validation_data.batch(batch_size)
     validation_data = validation_data.prefetch(buffer_size=tf.data.AUTOTUNE)
 
@@ -158,18 +161,9 @@ global_batch_size = config['train_params']['batch_size'] * num_workers
 # Wrap model creation and compilation within scope of strategy
 with strategy.scope():
     # Build model
-    if config['build_params']['model_name'] == 'test':
-        model_name = config['build_params']['model_name']
-        config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-        model = mobilenet_model(**config['build_params'])
-    elif config['build_params']['model_name'] == 'mobilenet':
-        model_name = config['build_params']['model_name']
-        config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-        model = mobilenet_model(**config['build_params'])
-    else:
-        model_name = 'default'
-        config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-        model = default_model(**config['build_params'])
+    model_name = config['build_params']['model_name']
+    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+    model = build_model(**config['build_params'])
     print(model.summary())
 
     # Set optimizer
@@ -203,7 +197,8 @@ image_shape = list(config['build_params']['input_shape'])
 download_tfrecords(args.bucket, args.project, args.tfrecords_folder)
 train_data, validation_data = load_tfrecords(
     'downloads',
-    global_batch_size
+    global_batch_size,
+    normalize_data=False
 )
 
 
@@ -220,7 +215,8 @@ if config['train_params']['early_stopping'] == True:
     early_stopping = EarlyStopping(
         monitor='val_loss', 
         patience=config['train_params']['patience'], 
-        restore_best_weights=True
+        restore_best_weights=True, 
+        start_from_epoch=int(config['train_params']['epochs']*0.25)
     )
     callbacks = [WandbCallback(), early_stopping]
 else:
@@ -240,6 +236,10 @@ execution_time = (time.time() - start_time)/60.0
 print(f'Training execution time (mins): {execution_time:.02f}')
 
 
+# Upload model weights
+upload_model_weights(model, args.bucket, args.project, args.models_folder)
+
+
 # Update W&B
 wandb.config.update({"execution_time": execution_time})
 
@@ -250,6 +250,13 @@ wandb.finish()
 
 # Fine tune model
 if config['train_params']['fine_tune'] == True:
+
+    # Fetch data again
+    train_data, validation_data = load_tfrecords(
+        'downloads',
+        global_batch_size,
+        normalize_data=False
+    )
 
     # Initialize a new Weights & Biases run
     wandb.init(
@@ -263,9 +270,12 @@ if config['train_params']['fine_tune'] == True:
 
     with strategy.scope():
 
-        # Clone the model and et all trainable parameters to True
-        fine_tuned = tf.keras.models.clone_model(model)
-        fine_tuned.trainable = True
+        # Clone the model and set all trainable parameters to True
+        model_name = config['build_params']['model_name']
+        config['build_params']['model_name'] = f'fine_tuned_{model_name}'
+        fine_tuned = build_model(train_base=True, **config['build_params'])
+        weights_path = f'uploads/{model.name}.h5'
+        fine_tuned.load_weights(weights_path)
 
         # Set optimizer
         if config['compile_params']['optimizer'] == 'adam':
@@ -297,18 +307,14 @@ if config['train_params']['fine_tune'] == True:
     execution_time = (time.time() - start_time)/60.0
     print(f'Fine tuning execution time (mins): {execution_time:.02f}')
 
+    # Upload model weights
+    upload_model_weights(fine_tuned, args.bucket, args.project, args.models_folder)
+
     # Update W&B
     wandb.config.update({"execution_time": execution_time})
 
     # Close the W&B run
     wandb.finish()
-
-
-# Upload model weights
-if config['train_params']['fine_tune'] == True:
-    upload_model_weights(fine_tuned, args.bucket, args.project, args.models_folder)
-else:
-    upload_model_weights(model, args.bucket, args.project, args.models_folder)
 
 
 print("Training Job Complete")
