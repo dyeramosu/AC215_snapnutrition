@@ -9,7 +9,7 @@ export PYTHON_PACKAGE_URI=$GCS_BUCKET_URI/trainer_package/snapnutrition-trainer.
 export PYTHON_MODULE="trainer.task"
 
 # Set location of tfrecords train/val data 
-export TFRECORDS_FOLDER="data/tf_records/180_by_180/"
+export TFRECORDS_FOLDER="data/tf_records/224_by_224_dask_normalized/"
 
 # Set location to upload trained model weights
 export MODELS_FOLDER="models/"

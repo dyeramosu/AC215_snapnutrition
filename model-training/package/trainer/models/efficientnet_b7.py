@@ -1,19 +1,19 @@
 import tensorflow as tf
 
-def mobilenet_model(
+def efficientnet_b7_model(
     input_shape,
     n_classes, 
     dense_nodes=1024, 
     kernel_weight = 0.02,
     bias_weight = 0.02,
     output_activation='linear',
-    model_name='mobilenet',
+    model_name='efficientnet_b7',
     train_base=False,
     **kwargs 
 ):
 
     """
-    This function returns a mobilenet transfer learning model
+    This function returns a efficientnet_b7 transfer learning model
     
     Arguments:
         input_shape: shape of the training data (row, column, channel)
@@ -28,7 +28,7 @@ def mobilenet_model(
     """
 
     # Load a pretrained model from keras.applications
-    tranfer_model_base = tf.keras.applications.MobileNetV2(
+    tranfer_model_base = tf.keras.applications.efficientnet.EfficientNetB7(
         input_shape=input_shape, 
         weights="imagenet", 
         include_top=False

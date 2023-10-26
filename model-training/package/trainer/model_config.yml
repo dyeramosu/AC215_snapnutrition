@@ -2,8 +2,8 @@ input_data:
   version: # TF Data/Records object
 
 build_params:
-  model_name: test
-  input_shape: !!python/tuple [180, 180, 3] # [rows, columns, channels]
+  model_name: mobilenet_v2
+  input_shape: !!python/tuple [224, 224, 3] # [rows, columns, channels]
   n_classes: 5
   n_filters: 32 
   dense_nodes: 1024
@@ -21,9 +21,9 @@ compile_params:
 
 train_params:
   batch_size: 128
-  epochs: 100
+  epochs: 200
   early_stopping: True
-  patience: 5
+  patience: 10
   fine_tune: True
 
 save_instructions:

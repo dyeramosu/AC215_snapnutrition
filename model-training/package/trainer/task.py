@@ -5,17 +5,14 @@ import uuid
 import argparse
 import yaml
 from importlib.resources import files
-from trainer.utils import download_tfrecords, upload_model_weights
-from trainer.models import default_model, mobilenet_model 
+from trainer.utils import download_tfrecords, upload_model_weights, build_model
 
 
 # Tensorflow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # silence tf info, error, warning messages
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, Dense, Dropout 
-from tensorflow.keras.layers import Flatten, MaxPooling2D
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.callbacks import EarlyStopping
 print(f'Tensorflow Version: {tf.__version__}')
 print("Eager Execution Enabled:", tf.executing_eagerly())
 strategy = tf.distribute.MirroredStrategy()
@@ -92,7 +89,7 @@ def parse_tfrecord_example(example):
     global image_size, image_shape
 
     # Image
-    image = tf.io.decode_raw(parsed_example['image'], tf.uint8)
+    image = tf.io.decode_raw(parsed_example['image'], tf.float32)
     image.set_shape(image_size)
     image = tf.reshape(image, image_shape)
     
@@ -111,7 +108,8 @@ def normalize(image, label):
 # Load train and validation data from tfrecords files
 def load_tfrecords(
         tfrecords_directory,
-        batch_size
+        batch_size,
+        normalize_data=False
     ):
 
     # Read the tfrecord files
@@ -121,14 +119,16 @@ def load_tfrecords(
     # Train data
     train_data = train_tfrecord_files.flat_map(tf.data.TFRecordDataset)
     train_data = train_data.map(parse_tfrecord_example, num_parallel_calls=tf.data.AUTOTUNE)
-    train_data = train_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
+    if normalize_data:
+        train_data = train_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
     train_data = train_data.batch(batch_size)
     train_data = train_data.prefetch(buffer_size=tf.data.AUTOTUNE)
 
     # Validation data
     validation_data = validate_tfrecord_files.flat_map(tf.data.TFRecordDataset)
     validation_data = validation_data.map(parse_tfrecord_example, num_parallel_calls=tf.data.AUTOTUNE)
-    validation_data = validation_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
+    if normalize_data:
+        validation_data = validation_data.map(normalize, num_parallel_calls=tf.data.AUTOTUNE)
     validation_data = validation_data.batch(batch_size)
     validation_data = validation_data.prefetch(buffer_size=tf.data.AUTOTUNE)
 
@@ -145,18 +145,9 @@ with config_path.open('r') as file:
 
 
 # Build model
-if config['build_params']['model_name'] == 'test':
-    model_name = config['build_params']['model_name']
-    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = mobilenet_model(**config['build_params'])
-elif config['build_params']['model_name'] == 'mobilenet':
-    model_name = config['build_params']['model_name']
-    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = mobilenet_model(**config['build_params'])
-else:
-    model_name = 'default'
-    config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
-    model = default_model(**config['build_params'])
+model_name = config['build_params']['model_name']
+config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+model = build_model(**config['build_params'])
 print(model.summary())
 
 
@@ -193,7 +184,8 @@ image_shape = list(config['build_params']['input_shape'])
 download_tfrecords(args.bucket, args.project, args.tfrecords_folder)
 train_data, validation_data = load_tfrecords(
     'downloads',
-    config['train_params']['batch_size']
+    config['train_params']['batch_size'],
+    normalize_data=False
 )
 
 
@@ -205,13 +197,26 @@ wandb.init(
 )
 
 
+# Early Stopping 
+if config['train_params']['early_stopping'] == True:
+    early_stopping = EarlyStopping(
+        monitor='val_loss', 
+        patience=config['train_params']['patience'], 
+        restore_best_weights=True, 
+        start_from_epoch=int(config['train_params']['epochs']*0.25)
+    )
+    callbacks = [WandbCallback(), early_stopping]
+else:
+    callbacks = [WandbCallback()]
+
+
 # Train model
 start_time = time.time()
 training_results = model.fit(
         train_data,
         validation_data = validation_data,
         epochs = config['train_params']['epochs'],
-        callbacks=[WandbCallback()],
+        callbacks=callbacks,
         verbose = 'auto'
 )
 execution_time = (time.time() - start_time)/60.0

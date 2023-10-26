@@ -1,6 +1,6 @@
 import os
 from google.cloud import storage
-
+from trainer.models import *
 
 # Upload tensorflow model weights to GCS bucket 
 def upload_model_weights(model, bucket_name, project_name, models_folder):
@@ -49,3 +49,41 @@ def download_tfrecords(bucket_name, project_name, tfrecords_folder):
             os.path.join(download_destination, os.path.basename(blob.name))
         )
     print('Download complete')
+
+
+# Build the model from build parameter dictionary
+def build_model(**build_params):
+
+    # MobileNet V2
+    if build_params['model_name'] == 'mobilenet_v2':
+        model = mobilenet_v2_model(**build_params)
+
+    # EfficientNet B7
+    elif build_params['model_name'] == 'efficientnet_b7':
+        model = efficientnet_b7_model(**build_params)
+
+    # EfficientNet V2L
+    elif build_params['model_name'] == 'efficientnet_v2l':
+        model = efficientnet_v2l_model(**build_params)
+
+    # VGG16
+    elif build_params['model_name'] == 'vgg16':
+        model = vgg16_model(**build_params)
+
+    # VGG19
+    elif build_params['model_name'] == 'vgg19':
+        model = vgg19_model(**build_params)
+
+    # Xception
+    elif build_params['model_name'] == 'xception':
+        model = xception_model(**build_params)
+
+    # Resnet50
+    elif build_params['model_name'] == 'resnet50':
+        model = resnet50_model(**build_params)
+
+    # Default VGG-like model
+    else:
+        model = default_model(**build_params)
+
+    return model
