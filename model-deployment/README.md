@@ -1,11 +1,16 @@
-# Mushroom App: Model Deployment Demo
+# Model Deployment Container
+## Overview
+The purpose of this model-training container is as follows:
 
-In this tutorial we will deploy a model to Vertex AI:
-<img src="images/serverless-model-deployment.png"  width="800">
+1. Download best model from Weights and Biases.
+2. Change the models signature so that images that are feed into the model during inference are preprocessed.
+3. Upload the model to Vertex AI Model Registry.
+4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
 
 ## Prerequisites
+* Have Vertex AI serverless training setup.
+* Have Weights and Biases setup to track training jobs.
 * Have Docker installed
-* Cloned this repository to your local machine with a terminal up and running
 * Check that your Docker is running with the following command
 
 `docker run hello-world`
@@ -16,26 +21,7 @@ Install `Docker Desktop`
 #### Ensure Docker Memory
 - To make sure we can run multiple container go to Docker>Preferences>Resources and in "Memory" make sure you have selected > 4GB
 
-### Install VSCode  
-Follow the [instructions](https://code.visualstudio.com/download) for your operating system.  
-If you already have a preferred text editor, skip this step.  
-
-## Setup Environments
-In this tutorial we will setup a container to manage building and deploying models to Vertex AI Model Registry and Model Endpoints.
-
-**In order to complete this tutorial you will need your GCP account setup and a WandB account setup.**
-
-### Clone the github repository
-- Clone or download from [here](https://github.com/dlops-io/model-deployment)
-
-### API's to enable in GCP for Project
-Search for each of these in the GCP search bar and click enable to enable these API's
-* Vertex AI API
-
-### Setup GCP Credentials
-Next step is to enable our container to have access to Storage buckets & Vertex AI(AI Platform) in  GCP. 
-
-#### Create a local **secrets** folder
+#### Similar to other containers in this project ensure there is a **secrets** folder
 
 It is important to note that we do not want any secure information in Git. So we will manage these files outside of the git folder. At the same level as the `model-deployment` folder create a folder called **secrets**
 
@@ -56,21 +42,24 @@ Your folder structure should look like this:
 We need a bucket to store the saved model files that we will be used by Vertext AI to deploy models.
 
 - Go to `https://console.cloud.google.com/storage/browser`
-- Create a bucket `mushroom-app-models-demo` [REPLACE WITH YOUR BUCKET NAME]
+- Create a bucket `snap_nutrition_model_deploy`
 
 ## Run Container
 
-### Run `docker-shell.sh` or `docker-shell.bat`
+#### Run `docker-shell.sh` or `docker-shell.bat`
 Based on your OS, run the startup script to make building & running the container easy
 
 This is what your `docker-shell` file will look like:
 ```
+#!/bin/bash
+
+set -e
+
 export IMAGE_NAME=model-deployment-cli
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/../secrets/
-export GCP_PROJECT="ac215-project" [REPLACE WITH YOUR PROJECT]
-export GCS_MODELS_BUCKET_NAME="mushroom-app-models-demo" [REPLACE WITH YOUR BUCKET NAME]
-
+export GCP_PROJECT="csci-115-398800"
+export GCS_MODELS_BUCKET_NAME="snap_nutrition_model_deploy"
 
 # Build the image based on the Dockerfile
 #docker build -t $IMAGE_NAME -f Dockerfile .
@@ -90,6 +79,10 @@ $IMAGE_NAME
 - Make sure you are inside the `model-deployment` folder and open a terminal at this location
 - Run `sh docker-shell.sh` or `docker-shell.bat` for windows
 
+Add Weight and Biases API Key to your environment variables.
+
+`export WANDB_KEY=...`
+
 ### Prepare Model for Deployment
 We have our model weights stored in WandB after we performed serverless training. In this step we will download the model and upload it to a GCS bucket so Vertex AI can have access to it to deploy to an endpoint.
 
@@ -106,22 +99,36 @@ In this step we first upload our model to Vertex AI Model registry. Then we depl
 
 * Update the endpoint uri in `cli.py`
 * Run `python cli.py --predict`
-* You  shouls see results simsialr to this:
+* You  should see results similar to this:
 ```
-Predict using endpoint
-image_files: ['data/oyster_3.jpg', 'data/oyster_2.jpg', 'data/oyster_1.jpg', 'data/oyster_4.jpg', 'data/crimini_1.jpg']
-Image: data/amanita_2.jpg
-Result: Prediction(predictions=[[0.0887121782, 0.0439011417, 0.867386699]], deployed_model_id='3704450387047088128', model_version_id='1', model_resource_name='projects/129349313346/locations/us-central1/models/8243511463436615680', explanations=None)
-[0.0887121782, 0.0439011417, 0.867386699] 2
-Label:    amanita 
+Image: test_images/1565379827.png
+Result: Prediction(predictions=[[76.3800049, 68.4668503, 2.39028168, 6.54596376, 5.12592745]], deployed_model_id='6772070236356083712', model_version_id='1', model_resource_name='projects/551792351994/locations/us-central1/models/6840745732626972672', explanations=None)
+[76.3800049, 68.4668503, 2.39028168, 6.54596376, 5.12592745]
 
-Image: data/oyster_4.jpg
-Result: Prediction(predictions=[[0.986440122, 0.00689249625, 0.0066674049]], deployed_model_id='3704450387047088128', model_version_id='1', model_resource_name='projects/129349313346/locations/us-central1/models/8243511463436615680', explanations=None)
-[0.986440122, 0.00689249625, 0.0066674049] 0
-Label:    oyster 
-
-Image: data/oyster_2.jpg
-Result: Prediction(predictions=[[0.80594486, 0.0182529744, 0.175802067]], deployed_model_id='3704450387047088128', model_version_id='1', model_resource_name='projects/129349313346/locations/us-central1/models/8243511463436615680', explanations=None)
-[0.80594486, 0.0182529744, 0.175802067] 0
-Label:    oyster 
 ```
+Take note that the numbers in the array are the predictions for calories, total mass (g), fat (g), carbs (g), protein (g) respectively.
+
+## Example of a Successful Deployment
+
+__Our Best Model: Student Distilled Logged on Weights and Biases__
+<img src="images/student_distilled_wb.png">
+
+__Sucecssful Download from Weight and Biases, Signature Change, and Upload to GCS__
+
+<img src="images/sucessful_model_download_and_upload_to_gcp.png">
+
+__Showing Saved Model in GCS__
+
+<img src="images/saved_model_in_gcs.png">
+
+__Showing Successful Model Deployment and Inference Endpoint__
+
+<img src="images/sucessful_model_deployment_and_endpoint.png">
+
+__Showing Successful Model Endpoint Creation__
+
+<img src="images/successful_endpoint_creation.png">
+
+__Showing Successful Inference__
+
+<img src="images/sucessful_inference.png">
