@@ -40,10 +40,15 @@ Our slides for our problem, methods, and results presentation can be found [here
 
 ![](reports/Compression_Results.jpg)
 
+Overall we found that distilled student performed the best. Pruned distill student was only slightly faster and smaller 
+but much worse in performance. We used distilled student for TFLite quantization. Interestingly, quantized ran slightly slower
+but was 3.36 times smaller.
+
 Note that the slide with numbers results on distillation/compression/quantization came from this [compression notebook](./notebooks/milestone_4_compression_and_sweeps/Fine_Tune_And_Compression/EfficientV2L_Model_Compression_Dask_Norm.ipynb). 
 In this notebook, the displayed final summary chart has training loss, but it should be noted that the powerpoint reports validation loss in Mean Absolute Error (MAE). 
 The validation losses were taken from the model printed epoch progress since we did not want to waste our low GPU credits to re-run the entire notebooks and extract this into the summary chart. 
 The actual notebook was rerun for testing since the presentation, so the exact loss and validation numbers may vary in the final saved [compression notebook](./notebooks/milestone_4_compression_and_sweeps/Fine_Tune_And_Compression/EfficientV2L_Model_Compression_Dask_Norm.ipynb). 
+
 
 ### **Notebooks**
 
@@ -169,9 +174,3 @@ We have README's and demos of our efforts as follows:
 - **Cloud Functions**
      - See [Full Details Here: Cloud Functions README.md](cloud_functions/README.md)
 
-**Full Project Directory Structure**
-<br>
-```bash
-
-
-```
