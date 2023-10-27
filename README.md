@@ -36,6 +36,10 @@ Our main dataset is named `Nutrition 5K` where we focus on overhead images of fo
 
 Our slides for our problem, methods, and results presentation can be found [here](Group_26_Midterm_Presentation.pptx)
 
+#### Screenshot of Slide With Best Model Compression Results
+
+![](reports/Compression_Results.jpg)
+
 Note that the slide with numbers results on distillation/compression/quantization came from this [compression notebook](./notebooks/milestone_4_compression_and_sweeps/Fine_Tune_And_Compression/EfficientV2L_Model_Compression_Dask_Norm.ipynb). 
 In this notebook, the displayed final summary chart has training loss, but it should be noted that the powerpoint reports validation loss in Mean Absolute Error (MAE). 
 The validation losses were taken from the model printed epoch progress since we did not want to waste our low GPU credits to re-run the entire notebooks and extract this into the summary chart. 
