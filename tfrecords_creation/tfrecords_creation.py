@@ -55,13 +55,11 @@ def read_resize_image(file_path):
 def create_tf_example(item, dask_metrics):
     # Read image
     image = tf.io.read_file(item[1])
-    image = tf.image.decode_png(image, channels=NUM_CHANNELS, dtype=tf.uint8)
-    image = tf.cast(image, tf.float32)
-    #image = tf.convert_image_dtype(image, tf.float32)
+    image = tf.image.decode_png(image, channels=NUM_CHANNELS)
     image = tf.image.resize(image, [IMAGE_HEIGHT, IMAGE_WIDTH])
 
     # Custom Normalize image with pre-calculated Dask Metrics
-    image = (image - dask_metrics['mean']) / dask_metrics['stdev']
+    image = (tf.cast(image, tf.float32) - dask_metrics['mean']) / dask_metrics['stdev']
     # # Encode
     # image = tf.cast(image, tf.uint8)
     # image = tf.image.encode_jpeg(image, optimize_size=True, chroma_downsampling=False)
@@ -102,7 +100,7 @@ def create_tf_records(data, dask_metrics, num_shards=10, prefix='', folder='data
 #Let's get image mean and stdev from train dataset
 full_train_val = train_xy + validate_xy
 lazy_loaded_images = [read_resize_image(path_and_label[1]) for path_and_label in full_train_val]
-image_arrays = [dask.array.from_delayed(img,dtype=np.float32, shape=(IMAGE_WIDTH, IMAGE_HEIGHT, NUM_CHANNELS)) for img in lazy_loaded_images]
+image_arrays = [dask.array.from_delayed(img,dtype=np.uint8,shape=(IMAGE_WIDTH, IMAGE_HEIGHT, NUM_CHANNELS)) for img in lazy_loaded_images]
 all_images_dask = dask.array.stack(image_arrays, axis=0)
 
 start_time = time.time()
