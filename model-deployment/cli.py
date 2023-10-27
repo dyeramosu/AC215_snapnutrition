@@ -22,11 +22,12 @@ import wandb
 # Global variables
 GCP_PROJECT = os.environ["GCP_PROJECT"]
 GCS_MODELS_BUCKET_NAME = os.environ["GCS_MODELS_BUCKET_NAME"]
-BEST_MODEL = "model-test_0e69bc13-4b63-4f75-bae3-369618ddb782:v19"
+BEST_MODEL = "distilled_student:v0"
 ARTIFACT_URI = f"gs://{GCS_MODELS_BUCKET_NAME}/{BEST_MODEL}"
+ARTIFACT_WB = "snap-nutrition/snap-nutrition/distilled_student:v0"
 SERVING_CONTAINER_IMAGE_URI = "us-docker.pkg.dev/vertex-ai/prediction/tf2-cpu.2-12:latest"
-MODEL_ENDPOINT = "projects/551792351994/locations/us-central1/endpoints/2150277507046178816"
-IMAGE_SIZE = (180, 180)
+MODEL_ENDPOINT = "projects/551792351994/locations/us-central1/endpoints/1274186642034262016"
+IMAGE_SIZE = (224, 224)
 
 def main(args=None):
     if args.upload:
@@ -42,9 +43,7 @@ def main(args=None):
 
         # Download model artifact from wandb
         run = wandb.init()
-        artifact = run.use_artifact(
-            'snap-nutrition/snapnutrition-training-vertex-ai/model-test_0e69bc13-4b63-4f75-bae3-369618ddb782:v19',
-            type='model')
+        artifact = run.use_artifact(ARTIFACT_WB, type='model')
         artifact_dir = artifact.download()
 
         print("artifact_dir", artifact_dir)
@@ -76,7 +75,7 @@ def main(args=None):
         model_call = tf.function(prediction_model.call).get_concrete_function(
             [
                 tf.TensorSpec(
-                    shape=[None, 180, 180, 3], dtype=tf.float32, name="model_input"
+                    shape=[None, 224, 224, 3], dtype=tf.float32, name="model_input"
                 )
             ]
         )
@@ -120,6 +119,7 @@ def main(args=None):
 
         # Get the endpoint
         # Endpoint format: endpoint_name="projects/{PROJECT_NUMBER}/locations/us-central1/endpoints/{ENDPOINT_ID}"
+        print(f'MODEL_ENDPOINT : {MODEL_ENDPOINT}')
         endpoint = aiplatform.Endpoint(MODEL_ENDPOINT)
 
         # Get a sample image to predict
