@@ -1,0 +1,31 @@
+input_data:
+  version: # TF Data/Records object
+
+build_params:
+  model_name: efficientnet_v2l
+  input_shape: !!python/tuple [224, 224, 3] # [rows, columns, channels]
+  n_classes: 5
+  n_filters: 32 
+  dense_nodes: 1024
+  conv_dropout: 0.25 
+  dense_dropout: 0.5  
+  filter_size: !!python/tuple [3, 3] # [rows, columns]
+  pool_size: !!python/tuple [2, 2] # [rows, columns]
+  output_activation: linear
+
+compile_params:
+  loss: mean_squared_error
+  optimizer: adam
+  learning_rate: 0.001
+  metrics: [rmse, mae]
+
+train_params:
+  batch_size: 128
+  epochs: 200
+  early_stopping: True
+  patience: 10
+  fine_tune: True
+
+save_instructions:
+  model_path:
+  history_path:
