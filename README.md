@@ -1,4 +1,4 @@
-# AC215 - Milestone3 - SnapNutrition
+# AC215 - Milestone4 - SnapNutrition
 
 **Team Members**
 - Brent Ruttle, [brent.ruttle@gmail.com](brent.ruttle@gmail.com)
@@ -13,16 +13,17 @@ SnapNutrition
 **Project**
 In this project we aim to develop an application that can estimate calories and macronutrients of food from user submitted photos of food using computer vision.
 
-## Milestone3
+## Milestone4
 
 ### **Main Objectives for Milestone**
 
 The main objectives for our project on this milestone:
 
-1. Build a comprehensive containerized data pipeline with extraction, transformation, and dataset versioning capabilities.
-2. Implement distributed computing using Dask as well as integrate Cloud Storage using Googles Cloud Storage options.
-3. Scale up our model training by developing a containerized training workflow that uses Google's Vertex AI platform for serverless training, Weights and Biases for model metric tracking, and Google cloud storage to store models for inference. 
+1) Distillation/Quantization/Compression: Implement methods for model optimization such as distillation, quantization, and compression. This will enable deployment in resource-constrained environments.
 
+2) Vertex AI Pipelines (Kubeflow) and Cloud Functions Integration: Utilize Vertex AI Pipelines (Kubeflow) for machine learning workflows and integrate cloud functions to automate and scale various processes within the project, aligning with cloud-native practices.
+
+3) Presenting a Technical Project: Create a presentation that concisely covers what has been accomplished up to this point, and what the plan is for next steps. Here are some useful questions to think about when creating the presentation: Who is the audience (technical or non-technical), and what information can you expect them to know (and not know) going into the presentation? What’s the story that you are trying to tell? How are you planning to tell that story (e.g. slide structure, visuals, visuals, demo)? What do you want the audience to take away from the presentation?
 ### **Datasets**
 
 Our main dataset is named `Nutrition 5K` where we focus on overhead images of food dishes and corresponding labels of total_calories, total_mass, total_fat, total_carb, total_protein.
@@ -30,18 +31,49 @@ Our main dataset is named `Nutrition 5K` where we focus on overhead images of fo
 ### **Architecture Diagram**
 
 ![](block_diagram.drawio.svg)
-**Note:** the diagram above includes a depiction of an inference container. We have the set-up for incorporating a 
-future inference container, but it is not an objective for this milestone and thus not included at this time.
+
+### **Presentation**
+
+Our slides for our problem, methods, and results presentation can be found [here](Group_26_Midterm_Presentation.pptx)
+
+Note that the slide with numbers results on distillation/compression/quantization came from this [compression notebook](./notebooks/milestone_4_compression_and_sweeps/Fine_Tune_And_Compression/EfficientV2L_Model_Compression_Dask_Norm.ipynb). 
+In this notebook, the displayed final summary chart has training loss, but it should be noted that the powerpoint reports validation loss in Mean Absolute Error (MAE). 
+The validation losses were taken from the model printed epoch progress since we did not want to waste our low GPU credits to re-run the entire notebooks and extract this into the summary chart. 
+The actual notebook was rerun for testing since the presentation, so the exact loss and validation numbers may vary in the final saved [compression notebook](./notebooks/milestone_4_compression_and_sweeps/Fine_Tune_And_Compression/EfficientV2L_Model_Compression_Dask_Norm.ipynb). 
 
 ### **Notebooks**
 
-The [highlight notebook](./notebooks/classification_models_wandb_deepika.ipynb) for this milestone shows how we use **dask** to 
-compute image metrics and preprocess the image (re-sizing, etc.). This notebook additionally trains on a couple model types including 
-MobileNet for transfer learning. Finally, it also connects to **weights and biases** for training output metrics tracking.
+The [compression notebook](./notebooks/milestone_4_compression_and_sweeps/Fine_Tune_And_Compression/EfficientV2L_Model_Compression_Dask_Norm.ipynb) 
+for this milestone shows how we use used our best transfer learning model EfficientV2L as the teacher model and subsequently perform:
+    
+- **Distillation** to Student Model
+- **Pruning** of Student Distillation Model
+- **Quantization with TFLite**: statically quantize only the weights from floating point to integer, which provides 8-bits of precision
+- Connects to **weights and biases** for training output metrics tracking
 
-These notebook components were also containerized in this project into several containers for preprocessing, dataset-splitting,
-TFRecords creation, and model training on Vertex.
+**NOTE 1:** Hyperparameter gridsearch was initially done in separate notebooks over 6 different transfer learning model types trying combos of either Dask 
+for image normalization (our dataset mean and stdev), or Imagenet/Built-in model normalization. 
+The gridsearch was done using WANDB Sweeps functions.  
 
+**NOTE 2:** There were a few more transfer learning model types tried but with our model-trainer container and not sweeps.
+
+#### Transfer Model Sweeps Overall Results 
+![](reports/Sweeps_Ranking.jpg)
+
+**Description:** There are 12 (+1 base CNN) total transfer learning model Sweep notebooks with 6 transfer model types in [dask normalized sweeps folder](./notebooks/milestone_4_compression_and_sweeps/Transfer_Learning_w_Dask_Norm) 
+and the same 6 types in [built-in normalization folder](./notebooks/milestone_4_compression_and_sweeps/Transfer_Learning_w_Builtin_Normalization), 
+corresponding to the respective dask or no dask image normalizations.
+
+**Discussion Comments:** Efficient B7 was technically the best overall but has some strange calorie output issues (very off estimates despite low RMSE)
+so Efficient V2L which was a close second was chosen instead. Our theory is that since MAE and MSE are calculated across all values in the macros+mass label, 
+maybe some models are, for example, optimizing more for predicting mass at the expense of calories. This also made us consider whether we should have separate models
+to predict each of the 5 respective macros. We plan to investigate further in later milestones.
+
+**NOTE:** 
+- Additionally, the sweeps and models were all added into **Vertex AI training job containers** see [model-sweeps container README](model-sweeps/README.md)
+- **Fine-tuning** options for all transfer model types were also added to [model-training container](model-training/README.md)
+
+**Other References:**
 - All project Jupyter notebooks and dataset EDA [here](./notebooks)
 - Weights and Biases product page [here](https://wandb.ai/site)
 - Vertex AI product page [here](https://cloud.google.com/vertex-ai?hl=en)
@@ -54,38 +86,60 @@ We built the following containers for our project:
 2) [Data Labels Processing and Train, Test, Validation Split](./data_labels_processing)
 3) [TFRecords Creation](./tfrecords_creation)
 4) [Model Training](./model-training)
-5) [App Frontend Container:](./src/app) Note that this container will be used later in our project.
-6) [Image Processing](./src/image_prep) Note: Multiple processing options including data augmentation.
+5) [Model Sweeps](./model-sweeps)
+6) [App Frontend Container:](./src/app) Note that this container will be used later in our project.
+7) [Image Processing](./src/image_prep) Note: Multiple processing options including data augmentation.
 
 **Data Version Control Container**
- - This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - We use an open source tool called DVC (product page [here](https://dvc.org/doc)) for versioning our datasets stored in Google Cloud Bucket
  - We mainly track our raw images and corresponding labels, as well as our generated TFRecords.
+ -  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - [Full Details Here: data versioning control README.md](./data_versioning_control/README.md)
 
 **Data Labels Processing and Train, Test, Validation Split**
 
- - This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - As input, it reads the raw image and label data, and saves the formatted filepaths + labels as pickle files into the Bucket.
  - These pickle files are already split into train, test, and validation splits for ingestion by the TFRecords container
+ -  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - [Full Details Here: data labels processing README.md](./data_labels_processing/README.md)
 
 **TFRecords Creation Container**
- - This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - This container is expected to read the output of the **Data Labels Processing and Train, Test, Validation Split** container. 
  - It reads the train, test, validation splits pickle files, and subsequently creates TFRecords
  - This step includes some image preprocessing, re-sizing, etc. before saving the TFRecords into the Bucket. 
- - These TFRecords are prepped for consumption either by our Google Colab notebooks or by our **Model Training Container**
+ - This container also uses **Dask** to compute dataset metrics and preprocess images with dask normalizations before saving as TFRecords.
+ - These TFRecords are prepped for consumption either by our Google Colab notebooks or by our **Model Training Container** and **Model Sweeps Container**
+ -  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
  - [Full Details Here: TFRecords Creation README.md](./tfrecords_creation/README.md)
 
 **Model Training Container**
 
 - This contains the code necessary to package our training script, execute a job in Vertex AI, and track model progress in Weights and Biases.
-- The training script currently uses a simple VGG-like model architecture for simplicity at this stage of the project. Later milestones will see usage of more complex architectures
+- A variety of complex architectures and transfer learning base models can be selected in the config yaml.
+- Fine-tuning option flag and multi-GPU training options were also added.
 - The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
 - The `README.md` in this container gives detailed instructions on how to build the container, package the training scripts, and execute the packages in Vertex AI.
-- The current configuration of this container allows us to manipulate a YAML file called `model_config.yml` to more easily change hyperparameters. Later versions will allow more control over model architectures and tracking within Weights and Biases.
+- The current configuration of this container allows us to manipulate a YAML file called `model_config.yml` to more easily change hyperparameters.
 - [Full Details Here: model-training README.md](./model-training/README.md)
+
+**Model Sweeps Container**
+
+- This contains the code necessary to package our model sweep training script, execute a job in Vertex AI, and track model progress in Weights and Biases.
+- A Sweep is a Weights and Biases equivalent of GridSearch where you can iterate over different combinations of parameters for model training. 
+- Each Sweep gives different run id's to each training combo and groups these for tracking in Weights and Biases.
+- A variety of complex architectures and transfer learning base models can be selected in the config yaml.
+- The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
+- [Full Details Here: model-sweeps README.md](./model-sweeps/README.md)
+
+**Model Deployment Container**
+
+- This container contains the code necessary to select a model saved in Weights and Biases and run inference on select images.
+- The purpose is as follows: 
+     1. Download best model from Weights and Biases.
+     2. Change the models signature so that images that are feed into the model during inference are preprocessed.
+     3. Upload the model to Vertex AI Model Registry.
+     4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
+- [Full Details Here: model-deployment README.md](./model-deployment/README.md)
 
 **App Front-End Container**
 
@@ -100,146 +154,20 @@ We built the following containers for our project:
  - **Note:** Augmented image data is not currently used in our training at this time. 
  - [Full Details Here: Image Processing Containers README.md](./src/image_prep/README.md)
 
+### **Additional Architectural Explorations**
+
+We explored several reccomended tools and structures from our AC215 course and are currently ideating on use-cases. 
+Currently, we do not have a use-case in mind for our project, but that can change in future milestones. 
+We have README's and demos of our efforts as follows:
+- **KubeFlow**
+     - See [Full Details Here: Kubeflow README.md](ml_workflow_demo/README.md)
+
+- **Cloud Functions**
+     - See [Full Details Here: Cloud Functions README.md](cloud_functions/README.md)
+
 **Full Project Directory Structure**
 <br>
 ```bash
-
-├── LICENSE
-├── Pipfile
-├── README.md
-├── app
-│   ├── __pycache__
-│   │  
-│   └── data
-├── block_diagram.drawio.svg
-├── data
-│   ├── FooDD.dvc
-│   ├── Nutrition5k_Other.dvc
-│   └── Nutrition5k_realsense_overhead.dvc
-├── data_labels_processing
-│   ├── Dockerfile
-│   ├── Pipfile
-│   ├── Pipfile.lock
-│   ├── README.md
-│   ├── docker-entrypoint.sh
-│   ├── docker-shell.sh
-│   └── labels_processing.py
-├── data_versioning_control
-│   ├── Dockerfile
-│   ├── Pipfile
-│   ├── Pipfile.lock
-│   ├── README.md
-│   ├── docker-entrypoint.sh
-│   └── docker-shell.sh
-├── docker-compose.yml
-├── model-training
-│   ├── Dockerfile
-│   ├── LICENSE
-│   ├── Pipfile
-│   ├── Pipfile.lock
-│   ├── README.md
-│   ├── cli-multi-gpu.sh
-│   ├── cli.py
-│   ├── cli.sh
-│   ├── docker-entrypoint.sh
-│   ├── docker-shell.bat
-│   ├── docker-shell.sh
-│   ├── package
-│   │   ├── PKG-INFO
-│   │   ├── setup.py
-│   │   └── trainer
-│   │       ├── __init__.py
-│   │       ├── model_config.yml
-│   │       ├── task.py
-│   │       └── task_multi_gpu.py
-│   ├── package-trainer.sh
-│   └── serverless-training.png
-├── notebooks
-│   ├── 230922_EDA_of_Nutrition5k_Ben.ipynb
-│   ├── FooDD_EDA.ipynb
-│   ├── Nutrition5k_EDA_Base_Model.ipynb
-│   ├── README.md
-│   ├── classification_models_wandb_deepika.ipynb
-│   └── data_versioning_control_demo.ipynb
-├── reports
-│   ├── base_CNN_prediction_example.jpg
-│   ├── command_line.png
-│   ├── data_labels_processing_output_1.jpg
-│   ├── data_labels_processing_output_2.jpg
-│   ├── data_versioning_1.png
-│   ├── dvc_notebook_1.png
-│   ├── image_preprocessing_definition.png
-│   ├── image_preprocessing_output.png
-│   ├── tfrecord_creations_output1.jpg
-│   ├── tfrecord_creations_output2.jpg
-│   ├── vertex_ai.png
-│   ├── wanb_3.png
-│   ├── wandb_1.png
-│   └── wandb_2.png
-├── secrets
-│   └── data-service-account.json
-├── snapnutrition_data_bucket.dvc
-├── src
-│   ├── app
-│   │   ├── Dockerfile
-│   │   ├── Pipfile
-│   │   ├── Pipfile.lock
-│   │   ├── app.py
-│   │   ├── static
-│   │   │   ├── css
-│   │   │   │   ├── custom_styles.css
-│   │   │   │   └── styles.css
-│   │   │   ├── fonts
-│   │   │   │   ├── glyphicons-halflings-regular.eot
-│   │   │   │   ├── glyphicons-halflings-regular.svg
-│   │   │   │   ├── glyphicons-halflings-regular.ttf
-│   │   │   │   ├── glyphicons-halflings-regular.woff
-│   │   │   │   └── glyphicons-halflings-regular.woff2
-│   │   │   ├── img
-│   │   │   │   ├── 1837-diabetic-pecan-crusted-chicken-breast_JulAug20DF_clean-simple_061720 Background Removed.png
-│   │   │   │   ├── 1837-diabetic-pecan-crusted-chicken-breast_JulAug20DF_clean-simple_061720.jpg
-│   │   │   │   ├── construction_img.jpeg
-│   │   │   │   └── sample_upload_file_ui.png
-│   │   │   └── js
-│   │   │       ├── main.js
-│   │   │       └── scripts.js
-│   │   └── templates
-│   │       ├── layouts
-│   │       │   └── main.html
-│   │       └── pages
-│   │           ├── home.html
-│   │           ├── results.html
-│   │           ├── under_construction.html
-│   │           └── upload_photo.html
-│   └── image_prep
-│       ├── Dockerfile
-│       ├── Pipfile
-│       ├── Pipfile.lock
-│       ├── README.md
-│       ├── batch_definitions
-│       │   └── batch_a
-│       ├── image_prep
-│       │   ├── __init__.py
-│       │   ├── __main__.py
-│       │   ├── batch_builder.py
-│       │   ├── cli.py
-│       │   ├── function_registry.py
-│       │   ├── preprocessing_pipeline.py
-│       │   └── task.py
-│       └── pipelines
-│           ├── pipeline_a
-│           ├── pipeline_b
-│           ├── pipeline_c
-│           ├── pipeline_d
-│           └── pipeline_e
-└── tfrecords_creation
-    ├── Dockerfile
-    ├── Pipfile
-    ├── Pipfile.lock
-    ├── README.md
-    ├── docker-entrypoint.sh
-    ├── docker-shell.sh
-    └── tfrecords_creation.py
 
 
 ```

@@ -2,7 +2,7 @@
 The purpose of this tfrecords container is as follows:
 
 1) Have logic to create tfrecords from our train, test, validation pickle files which contain both images filepaths and corresponding labels. These pickle files are the output from the ```data_labels_processing``` directory container of this repo.
-2) Pre-process images e.g. resize, rescale before saving as tf record (variables defined at the top of ```tfrecords_creation.py```)
+2) Pre-process images e.g. resize, rescale, dask image normalization before saving as tf record (variables defined at the top of ```tfrecords_creation.py```)
 2) Save these tfrecords into our Google Cloud Storage Bucket for ingestion by downstream data training services
 
 **Purpose:** These tfrecords allow optimized training data ingestion for our downstream model training services. Remember tfrecords will change with any changes to the raw image&label data and data splits. Therefore, dvc is and should be used to version raw-data dependencies in addition to the tfrecords themselves.
