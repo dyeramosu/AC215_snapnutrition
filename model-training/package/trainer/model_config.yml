@@ -2,11 +2,14 @@ input_data:
   version: # TF Data/Records object
 
 build_params:
-  model_name: mobilenet_v2
+  # Model type options:
+  # default, mobilenet_v2, efficientnet_b7, efficientnet_v2l
+  # vgg16, vgg19, xception, resnet50
+  model_type: efficientnet_v2l
   input_shape: !!python/tuple [224, 224, 3] # [rows, columns, channels]
   n_classes: 5
   n_filters: 32 
-  dense_nodes: 1024
+  dense_nodes: 256
   conv_dropout: 0.25 
   dense_dropout: 0.5  
   filter_size: !!python/tuple [3, 3] # [rows, columns]
@@ -20,7 +23,7 @@ compile_params:
   metrics: [rmse, mae]
 
 train_params:
-  batch_size: 128
+  batch_size: 32
   epochs: 200
   early_stopping: True
   patience: 10

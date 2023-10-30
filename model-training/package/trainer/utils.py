@@ -55,31 +55,31 @@ def download_tfrecords(bucket_name, project_name, tfrecords_folder):
 def build_model(**build_params):
 
     # MobileNet V2
-    if build_params['model_name'] == 'mobilenet_v2':
+    if build_params['model_type'] == 'mobilenet_v2':
         model = mobilenet_v2_model(**build_params)
 
     # EfficientNet B7
-    elif build_params['model_name'] == 'efficientnet_b7':
+    elif build_params['model_type'] == 'efficientnet_b7':
         model = efficientnet_b7_model(**build_params)
 
     # EfficientNet V2L
-    elif build_params['model_name'] == 'efficientnet_v2l':
+    elif build_params['model_type'] == 'efficientnet_v2l':
         model = efficientnet_v2l_model(**build_params)
 
     # VGG16
-    elif build_params['model_name'] == 'vgg16':
+    elif build_params['model_type'] == 'vgg16':
         model = vgg16_model(**build_params)
 
     # VGG19
-    elif build_params['model_name'] == 'vgg19':
+    elif build_params['model_type'] == 'vgg19':
         model = vgg19_model(**build_params)
 
     # Xception
-    elif build_params['model_name'] == 'xception':
+    elif build_params['model_type'] == 'xception':
         model = xception_model(**build_params)
 
     # Resnet50
-    elif build_params['model_name'] == 'resnet50':
+    elif build_params['model_type'] == 'resnet50':
         model = resnet50_model(**build_params)
 
     # Default VGG-like model

@@ -7,12 +7,12 @@ import yaml
 from importlib.resources import files
 from trainer.utils import download_tfrecords, upload_model_weights, build_model
 
-
 # Tensorflow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # silence tf info, error, warning messages
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
+
 print(f'Tensorflow Version: {tf.__version__}')
 print("Eager Execution Enabled:", tf.executing_eagerly())
 strategy = tf.distribute.MirroredStrategy()
@@ -111,7 +111,6 @@ def load_tfrecords(
         batch_size,
         normalize_data=False
     ):
-
     # Read the tfrecord files
     train_tfrecord_files = tf.data.Dataset.list_files(tfrecords_directory+'/train*')
     validate_tfrecord_files = tf.data.Dataset.list_files(tfrecords_directory+'/val*')
@@ -144,9 +143,21 @@ with config_path.open('r') as file:
     config = yaml.full_load(file)
 
 
+# Create hyperparameter dictionary for Weights & Biases
+wandb_config = {
+    'input_shape': config['build_params']['input_shape'],
+    'loss': config['compile_params']['loss'],
+    'optimizer': config['compile_params']['optimizer'],
+    'learning_rate': config['compile_params']['learning_rate'],
+    'metrics': config['compile_params']['metrics'],
+    'batch_size': config['train_params']['batch_size'],
+    'epochs': config['train_params']['epochs']
+}
+
+
 # Build model
-model_name = config['build_params']['model_name']
-config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+model_type = config['build_params']['model_type']
+config['build_params']['model_name'] = f'{model_type}-{uuid.uuid4()}'
 model = build_model(**config['build_params'])
 print(model.summary())
 
@@ -190,10 +201,19 @@ train_data, validation_data = load_tfrecords(
 
 
 # Initialize a Weights & Biases run
-wandb.init(
+run = wandb.init(
     project="snapnutrition-training-vertex-ai",
-    config=config,
+    config=wandb_config,
     name=model.name,
+)
+
+
+# Log the model build code to the W&B run
+model_build_path = files('trainer').joinpath('models')
+run.log_code(
+    root=model_build_path,
+    name=model_type,
+    include_fn=lambda path: path.endswith(f'{model_type}.py'),
 )
 
 
@@ -203,7 +223,7 @@ if config['train_params']['early_stopping'] == True:
         monitor='val_loss', 
         patience=config['train_params']['patience'], 
         restore_best_weights=True, 
-        start_from_epoch=int(config['train_params']['epochs']*0.25)
+        start_from_epoch=20
     )
     callbacks = [WandbCallback(), early_stopping]
 else:
@@ -219,8 +239,8 @@ training_results = model.fit(
         callbacks=callbacks,
         verbose = 'auto'
 )
-execution_time = (time.time() - start_time)/60.0
-print(f'Training execution time (mins): {execution_time:.02f}')
+execution_time = f'{(time.time()-start_time)/60.0:.02f} mins'
+print(f'Training execution time:', execution_time)
 
 
 # Upload model weights
@@ -228,11 +248,88 @@ upload_model_weights(model, args.bucket, args.project, args.models_folder)
 
 
 # Update W&B
-wandb.config.update({"execution_time": execution_time})
+run.config.update({"execution_time": execution_time})
 
 
 # Close the W&B run
-wandb.finish()
+run.finish()
+
+
+# Fine tune model
+if config['train_params']['fine_tune'] == True:
+
+    # Fetch data again
+    train_data, validation_data = load_tfrecords(
+        'downloads',
+        config['train_params']['batch_size'],
+        normalize_data=False
+    )
+
+    # Reset optimizer for 100x smaller learning rate
+    learning_rate = config['compile_params']['learning_rate'] / 100.
+    wandb_config['learning_rate'] = learning_rate
+
+    # Initialize a Weights & Biases run
+    run2 = wandb.init(
+        project="snapnutrition-training-vertex-ai",
+        config=wandb_config,
+        name='fine_tuned-'+model.name,
+    )
+
+    # Log the model build code to the W&B run
+    model_build_path = files('trainer').joinpath('models')
+    run2.log_code(
+        root=model_build_path,
+        name=model_type,
+        include_fn=lambda path: path.endswith(f'{model_type}.py'),
+    )
+
+    # Clone the model and set all trainable parameters to True
+    config['build_params']['model_name'] = f'fine_tuned-{model.name}'
+    fine_tuned = build_model(**config['build_params'])
+    weights_path =  f'uploads/{model.name}.h5'
+    fine_tuned.load_weights(weights_path)
+    fine_tuned.trainable = True # set weights to trainable for fine tuning
+
+    # Set optimizer
+    if config['compile_params']['optimizer'] == 'adam':
+        optimizer = Adam(learning_rate=learning_rate)
+    else:
+        optimizer = Adam()
+
+    # Set metrics
+    for i, metric in enumerate(config['compile_params']['metrics']):
+        if metric ==  'rmse':
+            config['compile_params']['metrics'][i] = tf.keras.metrics.RootMeanSquaredError()
+
+    # Recompile model
+    fine_tuned.compile(
+        loss = config['compile_params']['loss'],
+        optimizer = optimizer,
+        metrics = config['compile_params']['metrics']
+    )
+
+    # Retrain
+    start_time = time.time()
+    training_results = fine_tuned.fit(
+            train_data,
+            validation_data = validation_data,
+            epochs = config['train_params']['epochs'],
+            callbacks=callbacks,
+            verbose = 'auto'
+    )
+    execution_time = f'{(time.time()-start_time)/60.0:.02f} mins'
+    print(f'Training execution time:', execution_time)
+
+
+    # Upload model weights
+    upload_model_weights(fine_tuned, args.bucket, args.project, args.models_folder)
+
+    # Update W&B
+    run2.config.update({"execution_time": execution_time})
+
+    # Close the W&B run
+    run2.finish()
 
 
 print("Training Job Complete")

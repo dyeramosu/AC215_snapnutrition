@@ -3,7 +3,7 @@ from setuptools import setup
 
 
 REQUIRED_PACKAGES = [
-    "wandb==0.15.11", 
+    "wandb", 
     "google-cloud-storage",
     "pyyaml" 
 ]

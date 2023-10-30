@@ -25,10 +25,15 @@ def resnet50_model(
         model_name: unique name for model
         train_base: train the transfer model layers or not (True/False)
     
+    Note: 
+        For ResNet, call tf.keras.applications.resnet.preprocess_input on 
+        your inputs before passing them to the model. resnet.preprocess_input 
+        will convert the input images from RGB to BGR, then will zero-center 
+        each color channel with respect to the ImageNet dataset, without scaling.
     """
 
     # Load a pretrained model from keras.applications
-    tranfer_model_base = tf.keras.applications.ResNet50(
+    tranfer_model_base = tf.keras.applications.resnet50.ResNet50(
         input_shape=input_shape, 
         weights="imagenet", 
         include_top=False
@@ -38,24 +43,21 @@ def resnet50_model(
     tranfer_model_base.trainable = train_base
 
     # Build model
-    model = tf.keras.models.Sequential(
-        [
-            tranfer_model_base,
-            tf.keras.layers.GlobalAveragePooling2D(),
-            tf.keras.layers.Dense(
-                units=dense_nodes,
-                activation="relu",
-                kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
-                bias_regularizer=tf.keras.regularizers.l1(bias_weight),
-            ),
-            tf.keras.layers.Dense(
-                units=n_classes,
-                activation=output_activation,
-                kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
-                bias_regularizer=tf.keras.regularizers.l1(bias_weight),
-            ),
-        ],
-        name=model_name,
-    )
-
-    return model
+    inputs = tf.keras.Input(shape=input_shape)
+    x = tf.keras.applications.resnet50.preprocess_input(inputs) # Preprocess for ResNet50
+    x = tranfer_model_base(x, training=False)
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.Dense(
+            units=dense_nodes,
+            activation="relu",
+            kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
+            bias_regularizer=tf.keras.regularizers.l1(bias_weight),
+        )(x)
+    outputs = tf.keras.layers.Dense(
+            units=n_classes,
+            activation=output_activation,
+            kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
+            bias_regularizer=tf.keras.regularizers.l1(bias_weight),
+        )(x)
+    
+    return tf.keras.Model(inputs, outputs, name=model_name)

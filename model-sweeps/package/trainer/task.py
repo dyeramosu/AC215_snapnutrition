@@ -23,9 +23,11 @@ print(tf.config.experimental.list_logical_devices('GPU'))
 print("GPU Available: ", tf.config.list_physical_devices('GPU'))
 print("All Physical Devices", tf.config.list_physical_devices())
 
+
 # Weights & Biases
 import wandb
 from wandb.keras import WandbCallback
+
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(
@@ -68,6 +70,7 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
+
 # Login to Weights and Biases
 wandb.login(key=args.wandb_key)
 
@@ -107,7 +110,7 @@ def load_tfrecords(
         tfrecords_directory,
         batch_size,
         normalize_data=False
-):
+    ):
     # Read the tfrecord files
     train_tfrecord_files = tf.data.Dataset.list_files(tfrecords_directory + '/train*')
     validate_tfrecord_files = tf.data.Dataset.list_files(tfrecords_directory + '/val*')
@@ -139,9 +142,10 @@ config_path = files('trainer').joinpath('model_config.yml')
 with config_path.open('r') as file:
     config = yaml.full_load(file)
 
+
 # Build model
-model_name = config['build_params']['model_name']
-config['build_params']['model_name'] = f'{model_name}_{uuid.uuid4()}'
+model_type = config['build_params']['model_type']
+config['build_params']['model_name'] = f'{model_type}-{uuid.uuid4()}'
 model = build_model(**config['build_params'])
 print(model.summary())
 
@@ -185,13 +189,6 @@ def train_model():
         normalize_data=False
     )
 
-    # # Initialize a Weights & Biases run
-    # wandb.init(
-    #     project="snapnutrition-training-vertex-ai",
-    #     config=config,
-    #     name=model.name,
-    # )
-
     # Early Stopping
     if config['train_params']['early_stopping'] == True:
         early_stopping = EarlyStopping(
@@ -206,7 +203,7 @@ def train_model():
 
     # Train model
     start_time = time.time()
-    training_results = model.fit(
+    model.fit(
         train_data,
         validation_data=validation_data,
         epochs=wandb.config.epochs,
@@ -215,11 +212,11 @@ def train_model():
     )
     execution_time = (time.time() - start_time) / 60.0
     print(f'Training execution time (mins): {execution_time:.02f}')
-    # Update W&B
-    # wandb.config.update({"execution_time": execution_time})
 
+
+# Define sweep parameters
 sweep_configs = {
-    "name": model_name,
+    "name": model_type,
     "method": "grid",
     "metric": {"name": "mse", "goal": "minimize"},
     "parameters": {
@@ -229,13 +226,20 @@ sweep_configs = {
     }
 }
 
-sweep_id = wandb.sweep(sweep_configs, project='snapnutrition-training-vertex-ai')
-wandb.agent(sweep_id=sweep_id, function=train_model)
+
+# Initiate sweeps
+sweep_id = wandb.sweep(
+    sweep_configs, 
+    project='snapnutrition-training-vertex-ai'
+)
+wandb.agent(
+    sweep_id=sweep_id, 
+    function=train_model
+)
+
 
 # Close the W&B run
 wandb.finish()
 
-# Upload model weights
-upload_model_weights(model, args.bucket, args.project, args.models_folder)
 
 print("Training Job Complete")

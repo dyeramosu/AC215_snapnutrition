@@ -25,6 +25,10 @@ def xception_model(
         model_name: unique name for model
         train_base: train the transfer model layers or not (True/False)
     
+    Note:   
+        For Xception, call tf.keras.applications.xception.preprocess_input 
+        on your inputs before passing them to the model. 
+        xception.preprocess_input will scale input pixels between -1 and 1.
     """
 
     # Load a pretrained model from keras.applications
@@ -38,24 +42,21 @@ def xception_model(
     tranfer_model_base.trainable = train_base
 
     # Build model
-    model = tf.keras.models.Sequential(
-        [
-            tranfer_model_base,
-            tf.keras.layers.GlobalAveragePooling2D(),
-            tf.keras.layers.Dense(
-                units=dense_nodes,
-                activation="relu",
-                kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
-                bias_regularizer=tf.keras.regularizers.l1(bias_weight),
-            ),
-            tf.keras.layers.Dense(
-                units=n_classes,
-                activation=output_activation,
-                kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
-                bias_regularizer=tf.keras.regularizers.l1(bias_weight),
-            ),
-        ],
-        name=model_name,
-    )
-
-    return model
+    inputs = tf.keras.Input(shape=input_shape)
+    x = tf.keras.applications.xception.preprocess_input(inputs) # Preprocess for Xception
+    x = tranfer_model_base(x, training=False)
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.Dense(
+            units=dense_nodes,
+            activation="relu",
+            kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
+            bias_regularizer=tf.keras.regularizers.l1(bias_weight),
+        )(x)
+    outputs = tf.keras.layers.Dense(
+            units=n_classes,
+            activation=output_activation,
+            kernel_regularizer=tf.keras.regularizers.l1(kernel_weight),
+            bias_regularizer=tf.keras.regularizers.l1(bias_weight),
+        )(x)
+    
+    return tf.keras.Model(inputs, outputs, name=model_name)
