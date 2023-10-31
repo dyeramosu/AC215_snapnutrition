@@ -3,7 +3,7 @@
 
 export UUID=$(openssl rand -hex 6)
 export DISPLAY_NAME="snapnutrition_training_job_$UUID"
-export MACHINE_TYPE="n1-standard-4"
+export MACHINE_TYPE="n1-highmem-16"
 export REPLICA_COUNT=1
 export PYTHON_PACKAGE_URI=$GCS_BUCKET_URI/trainer_package/snapnutrition-trainer.tar.gz
 export PYTHON_MODULE="trainer.task"

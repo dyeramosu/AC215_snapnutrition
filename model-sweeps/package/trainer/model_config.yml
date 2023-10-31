@@ -1,5 +1,5 @@
-input_data:
-  version: # TF Data/Records object
+
+# Modify this file before running container and sending job
 
 build_params:
   # Model type options:
@@ -7,14 +7,16 @@ build_params:
   # vgg16, vgg19, xception, resnet50
   model_type: efficientnet_v2l
   input_shape: !!python/tuple [224, 224, 3] # [rows, columns, channels]
+  dense_nodes: 64
+  output_activation: linear
+
+  # Set these parameters for the default model 
   n_classes: 5
   n_filters: 32 
-  dense_nodes: 256
   conv_dropout: 0.25 
   dense_dropout: 0.5  
   filter_size: !!python/tuple [3, 3] # [rows, columns]
   pool_size: !!python/tuple [2, 2] # [rows, columns]
-  output_activation: linear
 
 compile_params:
   loss: mean_squared_error
@@ -23,12 +25,8 @@ compile_params:
   metrics: [rmse, mae]
 
 train_params:
-  batch_size: 32
+  batch_size: 4
   epochs: 200
   early_stopping: True
   patience: 10
   fine_tune: True
-
-save_instructions:
-  model_path:
-  history_path:

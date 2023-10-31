@@ -8,12 +8,12 @@ from importlib.resources import files
 from trainer.utils import download_tfrecords, upload_model_weights, build_model
 
 
-
 # Tensorflow
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # silence tf info, error, warning messages
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping
+
 print(f'Tensorflow Version: {tf.__version__}')
 print("Eager Execution Enabled:", tf.executing_eagerly())
 strategy = tf.distribute.MirroredStrategy()
@@ -239,9 +239,9 @@ if config['train_params']['early_stopping'] == True:
         restore_best_weights=True, 
         start_from_epoch=20
     )
-    callbacks = [WandbCallback(), early_stopping]
+    callbacks = [WandbCallback(save_weights_only=True), early_stopping]
 else:
-    callbacks = [WandbCallback()]
+    callbacks = [WandbCallback(save_weights_only=True)]
 
 
 # Train model

@@ -197,9 +197,9 @@ def train_model():
             restore_best_weights=True,
             start_from_epoch=int(config['train_params']['epochs'] * 0.25)
         )
-        callbacks = [WandbCallback(), early_stopping]
+        callbacks = [WandbCallback(save_weights_only=True), early_stopping]
     else:
-        callbacks = [WandbCallback()]
+        callbacks = [WandbCallback(save_weights_only=True)]
 
     # Train model
     start_time = time.time()
