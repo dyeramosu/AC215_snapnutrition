@@ -1,0 +1,13 @@
+model_names:
+  - fine_tuned-resnet50-5392e323-91e9-4014-a390-9418e6aaf8af
+  - fine_tuned-vgg16-5a60c734-7005-4e5a-b1db-366332fa04e2
+  - resnet50-5392e323-91e9-4014-a390-9418e6aaf8af
+  - vgg16-5a60c734-7005-4e5a-b1db-366332fa04e2
+  - fine_tuned-resnet50-5faf8dcd-db59-4d91-ba51-b244e17cd00c
+  - fine_tuned-vgg16-fce8f31c-91a4-48ad-8809-6470b33ca4ec
+  - vgg16-fce8f31c-91a4-48ad-8809-6470b33ca4ec
+  - resnet50-5faf8dcd-db59-4d91-ba51-b244e17cd00c
+  - fine_tuned-resnet50-ad339530-cf7e-4d7f-bf07-4fec31c14343
+  - fine_tuned-vgg16-8200d833-3030-4549-bb8e-6f3c839eb406
+  - resnet50-ad339530-cf7e-4d7f-bf07-4fec31c14343
+  - vgg16-8200d833-3030-4549-bb8e-6f3c839eb406
