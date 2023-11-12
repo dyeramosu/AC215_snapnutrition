@@ -2,7 +2,7 @@
 
 set -e
 
-export IMAGE_NAME=model-training-cli
+export IMAGE_NAME=model-sweeps-cli
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/../secrets/
 export GCS_BUCKET_NAME="snapnutrition_data_bucket"

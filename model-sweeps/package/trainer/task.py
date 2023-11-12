@@ -185,7 +185,7 @@ def train_model():
     download_tfrecords(args.bucket, args.project, args.tfrecords_folder)
     train_data, validation_data = load_tfrecords(
         'downloads',
-        config['train_params']['batch_size'],
+        wandb.config.batch_size,
         normalize_data=False
     )
 
@@ -220,9 +220,10 @@ sweep_configs = {
     "method": "grid",
     "metric": {"name": "mse", "goal": "minimize"},
     "parameters": {
-        "learning_rate": {"values": [0.001, 0.01, 0.05, 0.1]},
+        "learning_rate": {"values": [0.001]},
         "epochs": {"values": [100]},
-        "loss": {"values": ["mae", "mse"]}
+        "loss": {"values": ["mae", "mse"]},
+        "batch_size": {"values": [4, 8, 16, 32, 64, 128]},
     }
 }
 

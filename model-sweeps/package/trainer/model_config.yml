@@ -5,7 +5,7 @@ build_params:
   # Model type options:
   # default, mobilenet_v2, efficientnet_b7, efficientnet_v2l
   # vgg16, vgg19, xception, resnet50
-  model_type: efficientnet_v2l
+  model_type: vgg16
   input_shape: !!python/tuple [224, 224, 3] # [rows, columns, channels]
   dense_nodes: 64
   output_activation: linear
@@ -22,7 +22,7 @@ compile_params:
   loss: mean_squared_error
   optimizer: adam
   learning_rate: 0.001
-  metrics: [rmse, mae]
+  metrics: [rmse, mae, mse]
 
 train_params:
   batch_size: 4
