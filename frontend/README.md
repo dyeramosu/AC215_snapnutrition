@@ -52,7 +52,8 @@ press Ctrl + c
 
 ### Config
 Certain things like endpoints may need to be configured manually. In the case of the snap-nutrition api, you can set the
-base url in the .env.development file.
+base url in the [.env.development](./.env.development) file. Normally this file is not included in the repo but for
+convenience, it's been included here and contains no sensitive information.
 
 
 ## Firebase Setup (One Time)
@@ -80,3 +81,6 @@ So calorie-counter becomes a route you can and will visit in the url, ie: http:/
 3. This is not a part of Next, but global state is currently being done with Redux Toolkit (RTK), queries with RTK Query
 which is a part of the same package. It's highly recommend to understand the basics behind RTK before making changes to 
 any "store" logic. More info here: https://redux-toolkit.js.org/introduction/getting-started
+
+4. Nearly all visual components are using the MUI framework, so attributes and configuration for those should be based 
+on their component API. More info here: https://mui.com/material-ui/getting-started/

@@ -9,6 +9,7 @@ import { useAppDispatch } from "@/app/_components/store/hooks";
 import { addCalorieEntry } from "@/app/_components/store/calorieLogSlice";
 
 
+// This is ripped from MUI's button page, just enables you to have a button that acts as an input.
 const VisuallyHiddenInput = styled('input')({
     clipPath: 'inset(50%)',
     height: 1,
