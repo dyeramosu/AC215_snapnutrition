@@ -32,4 +32,5 @@ def make_prediction_vertexai(image_path):
         "fat_g": prediction[2],
         "carbs_g": prediction[3],
         "protein_g": prediction[4],
+        "poisonous": False
     }

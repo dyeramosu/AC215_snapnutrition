@@ -6,8 +6,8 @@ set -e
 # Define some environment variables
 export IMAGE_NAME="snapnutrition-app-api-service"
 export BASE_DIR=$(pwd)
-export SECRETS_DIR=$(pwd)/../../../secrets/
-export PERSISTENT_DIR=$(pwd)/../../../persistent-folder/
+export SECRETS_DIR=$(pwd)/../secrets/
+export PERSISTENT_DIR=$(pwd)/../persistent-folder/
 export GCS_BUCKET_NAME="snap_nutrition_model_deploy"
 
 # Build the image based on the Dockerfile
