@@ -1,0 +1,17 @@
+.test {
+  border-radius: 5px;
+  border: 5px solid red;
+  align-content: center;
+  justify-content: center;
+  display: flex;
+  padding: 25px;
+}
+
+.card {
+  border: 2px solid black;
+  padding: 5px
+}
+
+.inputField {
+  padding: 5px
+}
