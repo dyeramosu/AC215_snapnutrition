@@ -8,7 +8,8 @@ export IMAGE_NAME="snapnutrition-app-api-service"
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/../secrets/
 export PERSISTENT_DIR=$(pwd)/../persistent-folder/
-export GCS_BUCKET_NAME="snap_nutrition_model_deploy"
+export GCS_BUCKET_NAME="snapnutrition_data_bucket"
+export GCP_PROJECT="csci-115-398800"
 
 # Build the image based on the Dockerfile
 docker build -t $IMAGE_NAME -f Dockerfile .
