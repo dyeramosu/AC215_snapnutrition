@@ -4,16 +4,17 @@
 #set -e
 
 # Define some environment variables
-export IMAGE_NAME="mushroom-app-deployment"
+export IMAGE_NAME="snapnutrition-app-deployment"
 export BASE_DIR=$(pwd)
 export SECRETS_DIR=$(pwd)/../../../secrets/
-export GCP_PROJECT="ac215-project" # Change to your GCP Project
+export GCP_PROJECT="csci-115-398800" # Change to your GCP Project
 export GCP_ZONE="us-central1-a"
 export GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json
 
 # Build the image based on the Dockerfile
-#docker build -t $IMAGE_NAME -f Dockerfile .
-docker build -t $IMAGE_NAME --platform=linux/amd64 -f Dockerfile .
+docker build -t $IMAGE_NAME -f Dockerfile .
+# M1/2 chip macs use this line
+# docker build -t $IMAGE_NAME --platform=linux/amd64 -f Dockerfile .
 
 # Run the container
 docker run --rm --name $IMAGE_NAME -ti \
