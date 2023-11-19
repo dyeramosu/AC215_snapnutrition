@@ -6,7 +6,7 @@
 # Define some environment variables
 export IMAGE_NAME="snapnutrition-app-deployment"
 export BASE_DIR=$(pwd)
-export SECRETS_DIR=$(pwd)/../secrets/
+export SECRETS_DIR=$(pwd)/../../../secrets/
 export GCP_PROJECT="csci-115-398800" # Change to your GCP Project
 export GCP_ZONE="us-central1-a"
 export GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json
