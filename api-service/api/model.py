@@ -1,5 +1,3 @@
-import os
-import json
 from google.cloud import aiplatform
 import base64
 
