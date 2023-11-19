@@ -6,8 +6,8 @@ set -e
 # Define some environment variables
 export IMAGE_NAME="snapnutrition-app-api-service"
 export BASE_DIR=$(pwd)
-export SECRETS_DIR=$(pwd)/../secrets/
-export PERSISTENT_DIR=$(pwd)/../persistent-folder/
+export SECRETS_DIR=$(pwd)/../../../secrets/
+export PERSISTENT_DIR=$(pwd)/../../../persistent-folder/
 export GCS_BUCKET_NAME="snapnutrition_data_bucket"
 export GCP_PROJECT="csci-115-398800"
 
@@ -23,6 +23,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v "$PERSISTENT_DIR":/persistent \
 -p 9000:9000 \
 -e DEV=1 \
--e GOOGLE_APPLICATION_CREDENTIALS=/secrets/model-deployment.json \
+-e GOOGLE_APPLICATION_CREDENTIALS=/secrets/model-training.json \
 -e GCS_BUCKET_NAME=$GCS_BUCKET_NAME \
+-e GCP_PROJECT=$GCP_PROJECT \
 $IMAGE_NAME

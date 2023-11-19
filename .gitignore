@@ -6,4 +6,4 @@
 /secrets/
 *annotations.json
 *checkpoint*
-
+/persistent-folder/

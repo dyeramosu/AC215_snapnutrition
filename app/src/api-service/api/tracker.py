@@ -24,47 +24,54 @@ def download_from_bucket(
         bucket_name, 
         project_name
     ):
-        """Downloads a file or directory from a GCS bucket"""    
+        """Downloads a file or directory from a GCS bucket"""   
+
         storage_client = storage.Client(project=project_name)
         bucket = storage_client.bucket(bucket_name)
-        if os.path.isfile(source_path):
-            blob = bucket.blob(source_path)
+
+        # Download file
+        _, ext = os.path.splitext(source_path)
+        if bool(ext):
+            blob = bucket.get_blob(source_path)
             blob.download_to_filename(os.path.join(destination_path, os.path.basename(source_path)))
             return
-        for item in glob(source_path + '/*'):
-            if os.path.isfile(item):
-                blob = bucket.blob(item)
+        
+        # Download directory
+        for item in tf.io.gfile.glob(f"gs://{bucket_name}/{source_path}/*"):
+            item = item.replace(f"gs://{bucket_name}/", "")
+            _, ext = os.path.splitext(item)
+            if bool(ext):
+                blob = bucket.get_blob(item)
                 blob.download_to_filename(os.path.join(destination_path, os.path.basename(item)))
             else:
-                if not os.path.exists(os.path.join(destination_path, item)):
-                    os.mkdir(os.path.join(destination_path, item))
+                new_destination_path = os.path.join(destination_path, os.path.basename(item))
+                if not os.path.exists(new_destination_path):
+                    os.mkdir(new_destination_path)
                 download_from_bucket(
                     item, 
-                    os.path.join(destination_path, item), 
+                    new_destination_path, 
                     bucket_name, 
                     project_name
                 )
 
 
-def download_experiment_results():
+def download_experiment_results(timestamp):
     """Get all experiment results"""
-
-    timestamp = 0
 
     results_file = 'model_eval/experiment_results.csv'
     local_results_file = os.path.join(
             local_experiments_path, os.path.basename(results_file)
         )
     
-    download_from_bucket(
-        results_file,
-        local_experiments_path,
-        bucket_name,
-        project_name
-    )
-    
     file_timestamp = os.path.getmtime(local_results_file)
+
     if file_timestamp > timestamp:
+        download_from_bucket(
+            results_file,
+            local_experiments_path,
+            bucket_name,
+            project_name
+        )
         timestamp = file_timestamp
     
     return timestamp
@@ -77,18 +84,24 @@ def download_best_model():
         print("Shape:", experiments.shape)
         print(experiments.head())
 
-        # Find the overall best model across users
+        # Find the overall best model 
         best_model = experiments.iloc[0].to_dict()
+        
         # Create a json file best_model.json
         with open(
             os.path.join(local_experiments_path, "best_model.json"), "w"
         ) as json_file:
             json_file.write(json.dumps(best_model))
 
+        # Setup best model folder
+        best_model_path = os.path.join(local_experiments_path, 'best_model')
+        if not os.path.exists(best_model_path):
+            os.mkdir(best_model_path)
+        
         # Download model
         download_from_bucket(
             'model_eval/best_model',
-            os.path.join(local_experiments_path, 'best_model'),
+            best_model_path,
             bucket_name,
             project_name
         )       
@@ -108,8 +121,11 @@ class TrackerService:
             print("Tracking experiments...")
 
             # Download new model metrics
-            timestamp = download_experiment_results()
+            timestamp = download_experiment_results(self.timestamp)
 
             if timestamp > self.timestamp:
                 # Download best model
                 download_best_model()
+
+                # Reset timestamp
+                self.timestamp = timestamp

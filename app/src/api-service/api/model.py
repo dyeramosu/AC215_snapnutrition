@@ -80,11 +80,11 @@ def make_prediction(image_path):
     prediction = prediction_model.predict(test_data)
 
     return {
-        "calories": prediction[0],
-        "total_mass_g": prediction[1],
-        "fat_g": prediction[2],
-        "carbs_g": prediction[3],
-        "protein_g": prediction[4],
+        "calories": prediction[0,0].item(),
+        "total_mass_g": prediction[0,1].item(),
+        "fat_g": prediction[0,2].item(),
+        "carbs_g": prediction[0,3].item(),
+        "protein_g": prediction[0,4].item(),
     }
 
 
