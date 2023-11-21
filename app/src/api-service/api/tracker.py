@@ -63,7 +63,16 @@ def download_experiment_results(timestamp):
             local_experiments_path, os.path.basename(results_file)
         )
     
-    file_timestamp = os.path.getmtime(local_results_file)
+    try:
+        file_timestamp = os.path.getmtime(local_results_file)
+    except:
+        download_from_bucket(
+            results_file,
+            local_experiments_path,
+            bucket_name,
+            project_name
+        )
+        return os.path.getmtime(local_results_file)
 
     if file_timestamp > timestamp:
         download_from_bucket(
@@ -78,10 +87,11 @@ def download_experiment_results(timestamp):
 
 
 def download_best_model():
-    print("Download best model")
+    print("Downloading best model...")
     try:
         experiments = pd.read_csv(local_experiments_path + "/experiment_results.csv")
-        print("Shape:", experiments.shape)
+        print("Number of experiments:", experiments.shape[0])
+        print("Number of metrics for each experiment:", experiments.shape[1])
         print(experiments.head())
 
         # Find the overall best model 
@@ -117,7 +127,6 @@ class TrackerService:
 
     async def track(self):
         while True:
-            await asyncio.sleep(60)
             print("Tracking experiments...")
 
             # Download new model metrics
@@ -129,3 +138,5 @@ class TrackerService:
 
                 # Reset timestamp
                 self.timestamp = timestamp
+
+            await asyncio.sleep(60)
