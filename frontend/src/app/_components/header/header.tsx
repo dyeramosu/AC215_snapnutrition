@@ -1,9 +1,9 @@
 import { AppBar, Box, Button, IconButton, Link, Menu, Toolbar, Typography } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
 import { auth } from "@/app/_components/auth/firebase";
 import { signInWithGoogle, signOut } from "@/app/_components/auth/fireauth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import NextLink from "next/link";
+import { DinnerDining } from "@mui/icons-material";
 
 export default function Header() {
 
@@ -26,7 +26,7 @@ export default function Header() {
                         aria-label="menu"
                         sx={{mr: 2}}
                     >
-                        <MenuIcon/>
+                        <DinnerDining/>
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         {user?.displayName}

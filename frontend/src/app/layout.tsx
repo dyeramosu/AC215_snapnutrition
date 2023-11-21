@@ -9,24 +9,39 @@ import { Box, Stack } from "@mui/material";
 
 const inter = Inter({ subsets: ['latin'] })
 
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import React from "react";
+
+const darkTheme = createTheme({
+    palette: {
+        mode: 'light',
+    },
+});
+
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
   return (
-      <Provider store={store}>
-          <html lang="en">
+      <ThemeProvider theme={darkTheme}>
+          <CssBaseline />
+          <Provider store={store}>
+              <html lang="en">
 
-            <body className={inter.className}>
-                <Header />
-                <Box m={"auto"} className={styles.test}>
-                    <Stack>
-                        <main>{children}</main>
-                    </Stack>
-                </Box>
-            </body>
-          </html>
-      </Provider>
+              <body className={inter.className}>
+              <Header />
+              <Box m={"auto"} className={styles.test}>
+                  <Stack>
+                      <main>{children}</main>
+                  </Stack>
+              </Box>
+              </body>
+              </html>
+          </Provider>
+      </ThemeProvider>
+
   )
 }

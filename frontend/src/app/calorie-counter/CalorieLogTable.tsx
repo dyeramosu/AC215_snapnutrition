@@ -1,30 +1,50 @@
 import { useAppSelector } from "@/app/_components/store/hooks";
-import { selectCalorieLog } from "@/app/_components/store/calorieLogSlice";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { selectCalorieLog, snapNutritionData } from "@/app/_components/store/calorieLogSlice";
+import {
+    Card,
+    CardContent,
+    CardHeader, Link, Portal, Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow, Typography
+} from "@mui/material";
 import Image from "next/image";
+import styles from "@/app/page.module.css"
+import { CalorieEntryDialog } from "@/app/calorie-counter/CalorieEntryDialog";
+import { useState } from "react";
+import { createPortal } from "react-dom";
+import { base64Thumbnail } from "@/app/_components/util/imageTools";
+import NextLink from "next/link";
+import { usePathname } from "next/navigation";
 
 
 
 
-function base64Thumbnail(base64Str: string | ArrayBuffer | null){
-    // blurURL prevents some complaints with re-rendering, I've just put a tiny base64 image as the placeholder
-   const blurUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAABAAgMAA" +
-       "AAhThzVAAAADFBMVEX///+IiIjDw8PExMTmLg9mAAAAAXRSTlMAQObYZgAAAGpJREFUKJHN0rkNACEMRNEvMgqhJMsJRdAM/bi0DdhjQkO0" +
-       "zl7gGckydk8APBiKrnAAAwCbIWhDULuguAQwQ9CGoHZB8S8AZgjaENQuKP4GmJmlwTt5nPaYpiWwVvdw3PPju7GeI42Tnn1cuaO" +
-       "hRIkVzr8AAAAASUVORK5CYII="
-
-    return (
-        <div style={{ position: 'relative', width: '50px', height: '30px' }}>
-            <Image src={base64Str as string} placeholder={"blur"} blurDataURL={blurUrl} alt={"Upload Image"} sizes={"50px"}
-                   fill style={{objectFit: "contain"}} />
-        </div>
-    )
-}
 export default function CalorieLogTable(){
     const calorieLog = useAppSelector(selectCalorieLog)
 
+    const [open, setOpen] = useState(false);
+    const [selectedValue, setSelectedValue] = useState("");
+    const [calorieEntry, setCalorieEntry] = useState<snapNutritionData | null>(null)
+    const currentPath = usePathname();
 
-    return (
+
+    const handleClose = (value: string) => {
+        setOpen(false);
+        setSelectedValue(value);
+    };
+
+    function entryPopup(entry: snapNutritionData) {
+        setOpen(true);
+        setCalorieEntry(entry)
+        console.log(entry)
+    }
+
+
+    const calorieTable = (
         <TableContainer>
             <Table>
                 <TableHead>
@@ -42,6 +62,7 @@ export default function CalorieLogTable(){
                         <TableRow
                             key={idx}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            onClick={(e) => entryPopup(entry)}
                         >
                             <TableCell component="th" scope="row">
                                 {base64Thumbnail(entry.photoBase64)}
@@ -56,9 +77,31 @@ export default function CalorieLogTable(){
                         </TableRow>
                     ))}
                 </TableBody>
-
             </Table>
-        </TableContainer>
+    </TableContainer>
+    )
+
+    const clickHere = <Link component={NextLink} href={"/calorie-counter"}>Go here to upload something!</Link>
+    const alreadyHere = "Use the photo uploader to upload something!"
+    const emptyContent = (<Typography>
+        You haven&apos;t uploaded any photos yet! {currentPath == "/calorie-counter" ?
+        alreadyHere : clickHere}
+    </Typography>)
+
+    return (
+        <Card className={styles.card}>
+            <CalorieEntryDialog selectedValue={selectedValue}
+                                open={open}
+                                onClose={handleClose}
+                                calorieEntry={calorieEntry}/>
+
+            <CardHeader title={"Calorie Log"} titleTypographyProps={{color: "white"}} />
+            <CardContent>
+                {calorieLog.length == 0 ? emptyContent: calorieTable}
+            </CardContent>
+
+        </Card>
+
 
     )
 }
