@@ -23,7 +23,7 @@ docker run --rm --name $IMAGE_NAME -ti \
 -v "$PERSISTENT_DIR":/persistent \
 -p 9000:9000 \
 -e DEV=1 \
--e GOOGLE_APPLICATION_CREDENTIALS=/secrets/model-training.json \
+-e GOOGLE_APPLICATION_CREDENTIALS=/secrets/model-deployment.json \
 -e GCS_BUCKET_NAME=$GCS_BUCKET_NAME \
 -e GCP_PROJECT=$GCP_PROJECT \
 $IMAGE_NAME
