@@ -1,0 +1,18 @@
+.test {
+  border-radius: 5px;
+  align-content: center;
+  justify-content: center;
+  display: flex;
+  padding: 25px;
+}
+
+.inputField {
+  padding: 5px
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: #1976d2;
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0) 60px, white 0px);
+}
