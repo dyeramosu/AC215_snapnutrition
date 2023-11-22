@@ -67,6 +67,7 @@
         env:
           GOOGLE_APPLICATION_CREDENTIALS: "/secrets/gcp-service.json"
           GCS_BUCKET_NAME: "snapnutrition_data_bucket"
+          GCP_PROJECT: "{{ gcp_project }}"
         networks:
           - name: "{{docker_network_name}}"
         volumes:
