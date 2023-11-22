@@ -32,6 +32,8 @@ const Home = (props) => {
 
         var formData = new FormData();
         formData.append("file", event.target.files[0]);
+        console.log("SANITY CHECK")
+        console.log(event.target.files[0])
         DataService.Predict(formData)
             .then(function (response) {
                 console.log(response.data);
