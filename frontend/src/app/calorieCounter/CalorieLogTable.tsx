@@ -6,12 +6,11 @@ import {
     CardHeader, Link,
     Table,
     TableBody,
+    TableCell,
     TableContainer,
     TableHead,
     TableRow, Typography
 } from "@mui/material";
-
-import TableCell from "@mui/material/TableCell"
 
 import styles from "@/app/page.module.css"
 import { CalorieEntryDialog } from "@/app/calorieCounter/CalorieEntryDialog";

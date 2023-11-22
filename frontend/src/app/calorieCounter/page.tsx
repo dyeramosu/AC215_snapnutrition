@@ -1,4 +1,5 @@
 'use client'
+import styles from "@/app/page.module.css"
 import { Button, Card, CardHeader, styled } from "@mui/material";
 import {Fragment, useRef} from "react";
 import { CloudUpload } from "@mui/icons-material";
@@ -6,7 +7,6 @@ import { usePostFoodPicMutation } from "@/app/_components/store/snapNutritionApi
 import CalorieLogTable from "@/app/calorieCounter/CalorieLogTable";
 import { useAppDispatch } from "@/app/_components/store/hooks";
 import { addCalorieEntry } from "@/app/_components/store/calorieLogSlice";
-import styles from "@/app/page.module.css"
 import Dropzone from "react-dropzone";
 import FastfoodIcon from '@mui/icons-material/Fastfood';
 
