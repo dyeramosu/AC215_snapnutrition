@@ -6,16 +6,16 @@ import {
     CardHeader, Link,
     Table,
     TableBody,
-    TableCell,
     TableContainer,
     TableHead,
     TableRow, Typography
 } from "@mui/material";
-//import Image from "next/image";
+
+import TableCell from "@mui/material/TableCell"
+
 import styles from "@/app/page.module.css"
-import { CalorieEntryDialog } from "@/app/calorie-counter/CalorieEntryDialog";
+import { CalorieEntryDialog } from "@/app/calorieCounter/CalorieEntryDialog";
 import { useState } from "react";
-//import { createPortal } from "react-dom";
 import { base64Thumbnail } from "@/app/_components/util/imageTools";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
@@ -83,10 +83,10 @@ export default function CalorieLogTable(){
     </TableContainer>
     )
 
-    const clickHere = <Link component={NextLink} href={"/calorie-counter"}>Go here to upload something!</Link>
+    const clickHere = <Link component={NextLink} href={"/calorieCounter"}>Go here to upload something!</Link>
     const alreadyHere = "Use the photo uploader to upload something!"
     const emptyContent = (<Typography>
-        You haven&apos;t uploaded any photos yet! {currentPath == "/calorie-counter" ?
+        You haven&apos;t uploaded any photos yet! {currentPath == "/calorieCounter" ?
         alreadyHere : clickHere}
     </Typography>)
 

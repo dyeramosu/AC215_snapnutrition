@@ -32,7 +32,7 @@ export default function Header() {
                         {user?.displayName}
                     </Typography>
                     <Button color={"inherit"} LinkComponent={NextLink} href={"/"}>Home</Button>
-                    <Button color={"inherit"} LinkComponent={NextLink} href={"/calorie-counter"}>Calorie
+                    <Button color={"inherit"} LinkComponent={NextLink} href={"/calorieCounter"}>Calorie
                         Counter</Button>
 
                     {loginButton}

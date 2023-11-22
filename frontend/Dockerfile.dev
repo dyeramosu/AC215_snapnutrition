@@ -1,4 +1,4 @@
-FROM node:14.9.0-buster-slim
+FROM node:20.9.0-buster-slim
 
 # Ensure we don't run the app as root.
 RUN set -ex; \

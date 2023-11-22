@@ -1,16 +1,14 @@
 'use client'
 import { Button, Card, CardHeader, styled } from "@mui/material";
-import { useRef } from "react";
+import {Fragment, useRef} from "react";
 import { CloudUpload } from "@mui/icons-material";
 import { usePostFoodPicMutation } from "@/app/_components/store/snapNutritionApiSlice";
-import { readFile } from "@/app/_components/util/fileHandling";
-import CalorieLogTable from "@/app/calorie-counter/CalorieLogTable";
+import CalorieLogTable from "@/app/calorieCounter/CalorieLogTable";
 import { useAppDispatch } from "@/app/_components/store/hooks";
 import { addCalorieEntry } from "@/app/_components/store/calorieLogSlice";
 import styles from "@/app/page.module.css"
 import Dropzone from "react-dropzone";
 import FastfoodIcon from '@mui/icons-material/Fastfood';
-//import { padding } from "@mui/system";
 
 
 // This is ripped from MUI's button page, just enables you to have a button that acts as an input.
@@ -91,7 +89,7 @@ export default function CalorieCounter() {
     )
 
     return (
-        <>
+        <Fragment>
             <div style={{padding: "15px"}}>
                 <Card className={styles.card}>
                     <CardHeader title={"Food Image Upload"} titleTypographyProps={{color: "white"}} />
@@ -104,6 +102,6 @@ export default function CalorieCounter() {
                 </Card>
             </div>
             <CalorieLogTable/>
-        </>
+        </Fragment>
     )
 }

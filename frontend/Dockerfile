@@ -1,21 +1,18 @@
-FROM node:alpine
+FROM node:14.5.0-alpine as build
 
-RUN mkdir -p /usr/src/app
-ENV PORT 3000
+WORKDIR /app
+ENV PATH /app/node_modules/.bin:$PATH
+ENV PUBLIC_URL /
 
-WORKDIR /usr/src/app
+COPY package.json ./
+COPY yarn.lock ./
+RUN yarn install
 
-COPY package.json /usr/src/app
-COPY yarn.lock /usr/src/app
+COPY . ./
+RUN yarn run build
 
-# Production use node instead of root
-# USER node
-
-RUN yarn install --production
-
-COPY . /usr/src/app
-
-RUN yarn build
-
-EXPOSE 3000
-CMD [ "yarn", "start" ]
+# Nginx wrapper to serve static files
+FROM nginx:stable
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
