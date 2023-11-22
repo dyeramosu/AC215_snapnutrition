@@ -27,7 +27,7 @@ The main objectives for our project on this milestone:
 
 ### Application Design
 
-We built a detailed design document outlining the application’s architecture. We built a Solution Architecture abd Technical Architecture to ensure all our components work together.
+We built a detailed design document outlining the application’s architecture. More specifically, we built a Solution Architecture and Technical Architecture to ensure all our components work together.
 
 #### **Solution Architecture**
 
@@ -74,7 +74,7 @@ Google Container Registry
 Ansible CLI output when provisioning instance
 ![](reports/mile_5_cli_provision_VM.png)
 
-Automatically deplyed VM running
+Automatically deployed VM running
 ![](reports/mile_5_automatically_deployed_vm.png)
 
 SSH into VM shows three containers running (nginx, api-service, frontend)
