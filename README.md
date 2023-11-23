@@ -34,7 +34,7 @@ We built a detailed design document outlining the application’s architecture. 
 
 ![](./reports/SolutionArchitecture.png)
 
-Here is our overall solution archtecture with our processes, executions, and states.
+Here is our overall solution architecture with our processes, executions, and states.
 
 #### **Technical Architecture**
 
@@ -56,7 +56,7 @@ containers involved and more README's.
 
 ### Frontend
 
-We started developing a user friendly frontend web app based on the React framework.  
+We started developing a user-friendly frontend web app based on the React framework.  
 The app is being designed with the user in mind with a simple interface for a user to select or drag and drop a 
 picture of a plate of food and immediately receive and estimate of the macronutrients from our predictive model.
 
