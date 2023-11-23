@@ -210,6 +210,10 @@ We built the following containers for our project:
 - This is also utilized as another option by the backend API
 - [Full Details Here](./model-deployment/README.md)
 
+### Previous Milestones Structure (Not Including Containers for Final Application, But Model Training)
+![](./block_diagram.drawio.svg)
+
+
 ### **Additional Architectural Explorations (Previous Milestones)**
 
 We explored several recommended tools and structures from our AC215 course and are currently ideating on use-cases.
