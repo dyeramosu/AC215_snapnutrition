@@ -31,15 +31,18 @@ We built a detailed design document outlining the application’s architecture. 
 
 #### **Solution Architecture**
 
-![](https://github.com/ac2152023/ac2152023_template/raw/milestone5/images/solution-arch.png)
 
-*Documentation on solution arch...*
+![](./reports/SolutionArchitecture.png)
+
+Here is our overall solution archtecture with our processes, executions, and states.
 
 #### **Technical Architecture**
 
- ![](https://github.com/ac2152023/ac2152023_template/raw/milestone5/images/technical-arch.png)
+![](./reports/TechnicalArchitecture.png)
 
- *Documentation on technical arch...*
+Here is our technical architecture. For more technical details, visit the bottom of this readme for the
+containers involved and more README's.
+
 
  ### Backend API
 
@@ -161,10 +164,10 @@ We built the following containers for our project:
 
 - This container contains the code necessary to select a model saved in Weights and Biases and run inference on select images.
 - The purpose is as follows:
-    1. Download best model from Weights and Biases.
-    2. Change the models signature so that images that are feed into the model during inference are preprocessed.
-    3. Upload the model to Vertex AI Model Registry.
-    4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
+  1. Download best model from Weights and Biases.
+  2. Change the models signature so that images that are feed into the model during inference are preprocessed.
+  3. Upload the model to Vertex AI Model Registry.
+  4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
 - [Full Details Here: model-deployment README.md](./model-deployment/README.md)
 
 **App Front-End Container**
@@ -187,13 +190,13 @@ We built the following containers for our project:
 
 **API Service**
 - This container is our backend service for the frontend API. It either grabs predictions from Vertex endpoint or downloads
-the best model locally on start-up. 
+  the best model locally on start-up.
 - [Full Folder Here: Backend README](./api-service)
 
 **Model Evaluation**
 - This container evaluates model candidates for the best model
-- It creates an evaluation summary called `experiment_results.csv` 
-and stores it in the `snapnutrition_data_bucket` GCS bucket within the `model_eval` folder
+- It creates an evaluation summary called `experiment_results.csv`
+  and stores it in the `snapnutrition_data_bucket` GCS bucket within the `model_eval` folder
 - It finds the best model and store it in the `best_model` folder within the `model_eval` folder in the GCS bucket
 - This will be used for which model to serve by the backend API
 - [Full Details Here: Model Eval READMO](./model-eval/README.md)
@@ -211,7 +214,7 @@ We explored several reccomended tools and structures from our AC215 course and a
 Currently, we do not have a use-case in mind for our project, but that can change in future milestones.
 We have README's and demos of our efforts as follows:
 - **KubeFlow**
-    - See [Full Details Here: Kubeflow README.md](ml_workflow_demo/README.md)
+  - See [Full Details Here: Kubeflow README.md](ml_workflow_demo/README.md)
 
 - **Cloud Functions**
-    - See [Full Details Here: Cloud Functions README.md](cloud_functions/README.md)
+  - See [Full Details Here: Cloud Functions README.md](cloud_functions/README.md)
