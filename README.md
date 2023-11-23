@@ -85,7 +85,7 @@ We used Ansible to create, provision, and deploy our frontend and backend to GCP
 
 **Example of Containers Automatically Registered in Google Container Registry using Ansible**
 
-Ansible CLI output when deplying Docker images
+Ansible CLI output when deploying Docker images
 ![](reports/mile_5_cli_deploy_containers.png)
 
 Google Container Registry
@@ -200,7 +200,7 @@ We built the following containers for our project:
   and stores it in the `snapnutrition_data_bucket` GCS bucket within the `model_eval` folder
 - It finds the best model and store it in the `best_model` folder within the `model_eval` folder in the GCS bucket
 - This will be used for which model to serve by the backend API
-- [Full Details Here: Model Eval READMO](./model-eval/README.md)
+- [Full Details Here: Model Eval README](./model-eval/README.md)
 
 **Model Deployment**
 - Downloads best model from Weights and Biases.
@@ -212,7 +212,7 @@ We built the following containers for our project:
 
 ### **Additional Architectural Explorations (Previous Milestones)**
 
-We explored several reccomended tools and structures from our AC215 course and are currently ideating on use-cases.
+We explored several recommended tools and structures from our AC215 course and are currently ideating on use-cases.
 Currently, we do not have a use-case in mind for our project, but that can change in future milestones.
 We have README's and demos of our efforts as follows:
 - **KubeFlow**
