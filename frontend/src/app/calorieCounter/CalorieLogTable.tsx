@@ -3,7 +3,7 @@ import { selectCalorieLog, snapNutritionData } from "@/app/_components/store/cal
 import {
     Card,
     CardContent,
-    CardHeader, Link, Portal, Stack,
+    CardHeader, Link,
     Table,
     TableBody,
     TableCell,
@@ -11,11 +11,10 @@ import {
     TableHead,
     TableRow, Typography
 } from "@mui/material";
-import Image from "next/image";
+
 import styles from "@/app/page.module.css"
-import { CalorieEntryDialog } from "@/app/calorie-counter/CalorieEntryDialog";
+import { CalorieEntryDialog } from "@/app/calorieCounter/CalorieEntryDialog";
 import { useState } from "react";
-import { createPortal } from "react-dom";
 import { base64Thumbnail } from "@/app/_components/util/imageTools";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
@@ -52,17 +51,18 @@ export default function CalorieLogTable(){
                         <TableCell>Thumbnail</TableCell>
                         <TableCell>Photo Name</TableCell>
                         <TableCell align="right">Calories</TableCell>
+                        <TableCell align="right">Total Mass (g)</TableCell>
                         <TableCell align="right">Fat&nbsp;(g)</TableCell>
                         <TableCell align="right">Carbs&nbsp;(g)</TableCell>
                         <TableCell align="right">Protein&nbsp;(g)</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {calorieLog.map((entry, idx) => (
+                    {calorieLog.map((entry: snapNutritionData, idx) => (
                         <TableRow
                             key={idx}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            onClick={(e) => entryPopup(entry)}
+                            onClick={() => entryPopup(entry)}
                         >
                             <TableCell component="th" scope="row">
                                 {base64Thumbnail(entry.photoBase64)}
@@ -70,10 +70,11 @@ export default function CalorieLogTable(){
                             <TableCell component="th" scope="row">
                                 {entry.photoName}
                             </TableCell>
-                            <TableCell align="right">{entry.total_calories}</TableCell>
-                            <TableCell align="right">{entry.total_fat}</TableCell>
-                            <TableCell align="right">{entry.total_carb}</TableCell>
-                            <TableCell align="right">{entry.total_protein}</TableCell>
+                            <TableCell align="right">{entry.calories}</TableCell>
+                            <TableCell align="right">{entry.total_mass_g}</TableCell>
+                            <TableCell align="right">{entry.fat_g}</TableCell>
+                            <TableCell align="right">{entry.carbs_g}</TableCell>
+                            <TableCell align="right">{entry.protein_g}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -81,10 +82,10 @@ export default function CalorieLogTable(){
     </TableContainer>
     )
 
-    const clickHere = <Link component={NextLink} href={"/calorie-counter"}>Go here to upload something!</Link>
+    const clickHere = <Link component={NextLink} href={"/calorieCounter"}>Go here to upload something!</Link>
     const alreadyHere = "Use the photo uploader to upload something!"
     const emptyContent = (<Typography>
-        You haven&apos;t uploaded any photos yet! {currentPath == "/calorie-counter" ?
+        You haven&apos;t uploaded any photos yet! {currentPath == "/calorieCounter" ?
         alreadyHere : clickHere}
     </Typography>)
 

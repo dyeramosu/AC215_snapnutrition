@@ -9,7 +9,7 @@ export async function readFile(file: File): Promise<string | ArrayBuffer | null>
         reader.onload = () => {
             resolve(reader.result)
         }
-        reader.readAsDataURL(file)
+        reader.readAsArrayBuffer(file)
 
     })
 }

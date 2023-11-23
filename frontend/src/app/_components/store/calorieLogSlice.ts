@@ -4,12 +4,13 @@ import type { RootState } from './store'
 
 
 export interface snapNutritionData{
-    photoBase64: string | ArrayBuffer | null,
+    photoBase64: string,
     photoName: string,
-    total_calories: number,
-    total_fat: number,
-    total_carb: number,
-    total_protein: number
+    calories: number,
+    total_mass_g: number,
+    fat_g: number,
+    carbs_g: number,
+    protein_g: number
 }
 
 // Define a type for the slice state

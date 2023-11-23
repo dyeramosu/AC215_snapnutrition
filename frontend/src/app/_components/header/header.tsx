@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, IconButton, Link, Menu, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import { auth } from "@/app/_components/auth/firebase";
 import { signInWithGoogle, signOut } from "@/app/_components/auth/fireauth";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -32,7 +32,7 @@ export default function Header() {
                         {user?.displayName}
                     </Typography>
                     <Button color={"inherit"} LinkComponent={NextLink} href={"/"}>Home</Button>
-                    <Button color={"inherit"} LinkComponent={NextLink} href={"/calorie-counter"}>Calorie
+                    <Button color={"inherit"} LinkComponent={NextLink} href={"/calorieCounter"}>Calorie
                         Counter</Button>
 
                     {loginButton}

@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle } from "@mui/material";
+import { Dialog} from "@mui/material";
 import { base64Thumbnail } from "@/app/_components/util/imageTools";
 import { snapNutritionData } from "@/app/_components/store/calorieLogSlice";
 
@@ -16,9 +16,9 @@ export function CalorieEntryDialog(props: SimpleDialogProps) {
         onClose(selectedValue);
     };
 
-    const handleListItemClick = (value: string) => {
-        onClose(value);
-    };
+    // const handleListItemClick = (value: string) => {
+    //     onClose(value);
+    // };
 
     const thumbnail = (
             <div style={{padding: "25px"}}>
