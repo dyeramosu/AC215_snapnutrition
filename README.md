@@ -111,5 +111,107 @@ We built the following containers for our project:
 5) [Model Sweeps](./model-sweeps)
 6) [App Frontend Container:](./src/app) Note that this container will be used later in our project.
 7) [Image Processing](./src/image_prep) Note: Multiple processing options including data augmentation.
+8) [Frontend Container (React, Next.js, Google Firebase Auth)](./frontend)
+9) [API-Service](./api-service)
+10) [model-eval](./model-eval)
+11) [model-deployment](./model-deployment)
 
+**Data Version Control Container**
+- We use an open source tool called DVC (product page [here](https://dvc.org/doc)) for versioning our datasets stored in Google Cloud Bucket
+- We mainly track our raw images and corresponding labels, as well as our generated TFRecords.
+-  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
+- [Full Details Here: data versioning control README.md](./data_versioning_control/README.md)
 
+**Data Labels Processing and Train, Test, Validation Split**
+
+- As input, it reads the raw image and label data, and saves the formatted filepaths + labels as pickle files into the Bucket.
+- These pickle files are already split into train, test, and validation splits for ingestion by the TFRecords container
+-  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
+- [Full Details Here: data labels processing README.md](./data_labels_processing/README.md)
+
+**TFRecords Creation Container**
+- This container is expected to read the output of the **Data Labels Processing and Train, Test, Validation Split** container.
+- It reads the train, test, validation splits pickle files, and subsequently creates TFRecords
+- This step includes some image preprocessing, re-sizing, etc. before saving the TFRecords into the Bucket.
+- This container also uses **Dask** to compute dataset metrics and preprocess images with dask normalizations before saving as TFRecords.
+- These TFRecords are prepped for consumption either by our Google Colab notebooks or by our **Model Training Container** and **Model Sweeps Container**
+-  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
+- [Full Details Here: TFRecords Creation README.md](./tfrecords_creation/README.md)
+
+**Model Training Container**
+
+- This contains the code necessary to package our training script, execute a job in Vertex AI, and track model progress in Weights and Biases.
+- A variety of complex architectures and transfer learning base models can be selected in the config yaml.
+- Fine-tuning option flag and multi-GPU training options were also added.
+- The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
+- The `README.md` in this container gives detailed instructions on how to build the container, package the training scripts, and execute the packages in Vertex AI.
+- The current configuration of this container allows us to manipulate a YAML file called `model_config.yml` to more easily change hyperparameters.
+- [Full Details Here: model-training README.md](./model-training/README.md)
+
+**Model Sweeps Container**
+
+- This contains the code necessary to package our model sweep training script, execute a job in Vertex AI, and track model progress in Weights and Biases.
+- A Sweep is a Weights and Biases equivalent of GridSearch where you can iterate over different combinations of parameters for model training.
+- Each Sweep gives different run id's to each training combo and groups these for tracking in Weights and Biases.
+- A variety of complex architectures and transfer learning base models can be selected in the config yaml.
+- The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
+- [Full Details Here: model-sweeps README.md](./model-sweeps/README.md)
+
+**Model Deployment Container**
+
+- This container contains the code necessary to select a model saved in Weights and Biases and run inference on select images.
+- The purpose is as follows:
+    1. Download best model from Weights and Biases.
+    2. Change the models signature so that images that are feed into the model during inference are preprocessed.
+    3. Upload the model to Vertex AI Model Registry.
+    4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
+- [Full Details Here: model-deployment README.md](./model-deployment/README.md)
+
+**App Front-End Container**
+
+- This contains the frontend app that runs in your browser.
+- The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
+- Visit [here](./src/app) for container directory
+
+**Image Processing Container**
+
+- This container has code that allows you to define data preprocessing pipelines with Luigi
+- You can build batches to increase the size of your image datasets and make them more robust to variations in image quality.
+- **Note:** Augmented image data is not currently used in our training at this time.
+- [Full Details Here: Image Processing Containers README.md](./src/image_prep/README.md)
+
+**Frontend Container**
+- This container runs React, Next.js, and Google Firebase Auth (for signup and login)
+- It allows users to upload their food images and get predictions from our best model (Vertex AI API or downloaded locally)
+- [Full Details Here: Frontend README](./frontend/README.md)
+
+**API Service**
+- This container is our backend service for the frontend API. It either grabs predictions from Vertex endpoint or downloads
+the best model locally on start-up. 
+- [Full Folder Here: Backend README](./api-service)
+
+**Model Evaluation**
+- This container evaluates model candidates for the best model
+- It creates an evaluation summary called `experiment_results.csv` 
+and stores it in the `snapnutrition_data_bucket` GCS bucket within the `model_eval` folder
+- It finds the best model and store it in the `best_model` folder within the `model_eval` folder in the GCS bucket
+- This will be used for which model to serve by the backend API
+- [Full Details Here: Model Eval READMO](./model-eval/README.md)
+
+**Model Deployment**
+- Downloads best model from Weights and Biases.
+- Change the models signature so that images that are feed into the model during inference are preprocessed.
+- Uploads the model to Vertex AI Model Registry.
+- Deploy the model to Vertex AI and create an endpoint for prediction requests.
+- [Full Details Here](./model-deployment/README.md)
+
+### **Additional Architectural Explorations (Previous Milestones)**
+
+We explored several reccomended tools and structures from our AC215 course and are currently ideating on use-cases.
+Currently, we do not have a use-case in mind for our project, but that can change in future milestones.
+We have README's and demos of our efforts as follows:
+- **KubeFlow**
+    - See [Full Details Here: Kubeflow README.md](ml_workflow_demo/README.md)
+
+- **Cloud Functions**
+    - See [Full Details Here: Cloud Functions README.md](cloud_functions/README.md)
