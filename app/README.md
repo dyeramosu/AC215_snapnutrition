@@ -1,6 +1,6 @@
 # SnapNutrition App - Deployment & Scaling
 
-We would like to credit Shivas Jayaram from AC215 course where these instructions are largely based. For screenshots of successful runs, please refer to main README.
+We would like to credit Shivas Jayaram from AC215 course where these instructions are largely based. For screenshots of successful runs, please scroll to bottom or refer to main README.
 
 ## Deployment to GCP (Manual)
 
