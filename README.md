@@ -53,9 +53,28 @@ We built a detailed design document outlining the application’s architecture. 
 
 ### Frontend
 
-We started developing a user friendly frontend web app based on the React framework.  The app is being designed with the user in mind with a simple interface for a user to select or drag and drop a picture of a plate of food and immediatly recieve and estimate of the macronutries from our predictive model.
+We started developing a user friendly frontend web app based on the React framework.  
+The app is being designed with the user in mind with a simple interface for a user to select or drag and drop a 
+picture of a plate of food and immediately receive and estimate of the macronutrients from our predictive model.
 
-*Examples of final frontend here...*
+It uses next.js on top of React for routing, and also we setup Google Firebase Authentication for sign-in.
+
+#### Screenshots of Successful Frontend
+
+New user and/or not logged in
+![](reports/new_user_homepage.png)
+Once click log-in, you redirect here for Firebase Auth Login
+![](reports/firebase_signin_redirect.png)
+Once you are logged-in, you go to the Calorie Counter tab
+![](reports/calorie_page_signed_in.png)
+You can either click upload or drag files into the dropzone
+![](reports/drag_files.jpg)
+You will see your results appear below the dropzone as an increasing list
+![](reports/calorie_log_page_w_results.png)
+If you go back to the home page, you will see recent uploads and results
+![](reports/m5_homepage_results.png)
+You can also click on an image to get a zoomed-in view
+![](reports/image_zoom_homepage.png)
 
 ### Deployment
 
@@ -79,8 +98,6 @@ Automatically deployed VM running
 
 SSH into VM shows three containers running (nginx, api-service, frontend)
 ![](reports/mile_5_vm_running_3_containers.png)
-
- *Ben Stopped here...*
 
 ### **Code Structure**
 #### **Containers**
