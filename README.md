@@ -207,6 +207,7 @@ We built the following containers for our project:
 - Change the models signature so that images that are feed into the model during inference are preprocessed.
 - Uploads the model to Vertex AI Model Registry.
 - Deploy the model to Vertex AI and create an endpoint for prediction requests.
+- This is also utilized as another option by the backend API
 - [Full Details Here](./model-deployment/README.md)
 
 ### **Additional Architectural Explorations (Previous Milestones)**
