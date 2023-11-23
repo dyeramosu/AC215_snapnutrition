@@ -115,7 +115,7 @@ We built the following containers for our project:
 6) [App Frontend Container:](./src/app) Note that this container will be used later in our project.
 7) [Image Processing](./src/image_prep) Note: Multiple processing options including data augmentation.
 8) [Frontend Container (React, Next.js, Google Firebase Auth)](./frontend)
-9) [API-Service](./api-service)
+9) [API-Service](./app/src/api-service)
 10) [model-eval](./model-eval)
 11) [model-deployment](./model-deployment)
 
@@ -191,7 +191,7 @@ We built the following containers for our project:
 **API Service**
 - This container is our backend service for the frontend API. It either grabs predictions from Vertex endpoint or downloads
   the best model locally on start-up.
-- [Full Folder Here: Backend README](./api-service)
+- [Full Details Here: Backend README](./app/src/api-service/README.md)
 
 **Model Evaluation**
 - This container evaluates model candidates for the best model
