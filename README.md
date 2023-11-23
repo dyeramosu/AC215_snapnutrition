@@ -174,7 +174,8 @@ We built the following containers for our project:
 
 **App Front-End Container**
 
-- This contains the frontend app that runs in your browser.
+- [Deprecated]
+- This contains the frontend app that runs in your browser. (There are 3 that can be found in this repo, this is the earliest one from milestone 2).
 - The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
 - Visit [here](./src/app) for container directory
 
@@ -188,7 +189,7 @@ We built the following containers for our project:
 **Frontend Container**
 - This container runs React, Next.js, and Google Firebase Auth (for signup and login)
 - It allows users to upload their food images and get predictions from our best model (Vertex AI API or downloaded locally)
-- **Note:** you may see a frontend-react which was a basic frontend container used for initial testing e.g. [here](./app/src/frontend-react)
+- **Note:** you may see a frontend-react which was a basic react frontend container used for initial testing e.g. [here](./app/src/frontend-react)
 - [Full Details Here: Frontend README](./frontend/README.md)
 
 **API Service**
