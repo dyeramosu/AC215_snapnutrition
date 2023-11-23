@@ -102,6 +102,8 @@ Automatically deployed VM running
 SSH into VM shows three containers running (nginx, api-service, frontend)
 ![](reports/mile_5_vm_running_3_containers.png)
 
+For more details on commands run to achieve these screenshots, visit [README on deploying SnapNutrition Application via Ansible](./app/README.md)
+
 ### **Code Structure**
 #### **Containers**
 
