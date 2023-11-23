@@ -186,6 +186,7 @@ We built the following containers for our project:
 **Frontend Container**
 - This container runs React, Next.js, and Google Firebase Auth (for signup and login)
 - It allows users to upload their food images and get predictions from our best model (Vertex AI API or downloaded locally)
+- **Note:** you may see a frontend-react which was a basic frontend container used for initial testing e.g. [here](./app/src/frontend-react)
 - [Full Details Here: Frontend README](./frontend/README.md)
 
 **API Service**
