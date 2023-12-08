@@ -62,8 +62,11 @@ Most of the below steps support either npm or pnpm, so where applicable you will
    yarn start
    ```
    or alternatively (recommended):
+
    ```shell
    # In terminal
+   # may need to run this setting if you have later than node v16
+   # export NODE_OPTIONS=--openssl-legacy-provider
    yarn build
    sh docker-shell.sh
    # Then inside docker container

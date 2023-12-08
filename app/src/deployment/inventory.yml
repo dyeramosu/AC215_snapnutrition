@@ -10,13 +10,13 @@ all:
       gcp_region: "us-east1"
       gcp_zone: "us-east1-b"
       docker_network_name: "snap-nutrition-network"
-      persistent_disk_name: "snapnutrition-app-disk-final"
+      persistent_disk_name: "snapnutrition-app-disk-final-1"
       persistent_disk_size: 50
-      machine_instance_name: "snapnutrition-app-auto-final"
+      machine_instance_name: "snapnutrition-app-auto-final-1"
       machine_type: "n2d-standard-2"
       machine_disk_size: 50
 
     children:
         appserver:
             hosts:
-                35.196.31.195 :
+                34.23.131.208 :

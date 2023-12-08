@@ -72,7 +72,7 @@ export default function CalorieCounter() {
 
 
     const photoDropzone = (
-        <Dropzone onDrop={(acceptedFiles: File[]) => handleUpload(acceptedFiles)} accept={{'image/*': ['.jpeg', '.png']}}>
+        <Dropzone onDrop={(acceptedFiles: File[]) => handleUpload(acceptedFiles)} accept={{'image/jpeg': [], 'image/png': [] }}>
             {({getRootProps, getInputProps}) => (
                 <section>
                     <DropZoneDiv {...getRootProps()}>

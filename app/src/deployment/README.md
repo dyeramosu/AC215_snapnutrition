@@ -254,7 +254,7 @@ gcloud compute project-info add-metadata --project <YOUR GCP_PROJECT> --metadata
 ```
 example: 
 ```
-gcloud compute project-info add-metadata --project ac215-project --metadata enable-oslogin=TRUE
+gcloud compute project-info add-metadata --project csci-115-398800 --metadata enable-oslogin=TRUE
 ```
 
 #### Create SSH key for service account
