@@ -1,0 +1,3 @@
+tasks:
+- func: filter_gaussian
+  params: {}

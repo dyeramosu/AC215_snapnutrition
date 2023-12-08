@@ -1,0 +1,7 @@
+tasks:
+- func: grayscale
+  params: {}
+- func: equalize_hist
+  params: {}
+- func: rank_equalize
+  params: {}

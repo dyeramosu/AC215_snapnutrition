@@ -1,0 +1,6 @@
+subsets:
+- - "raw_data/FooDD/Apple/1-Samsung-S4-Light Environment/"
+  - processed/FooDD/Apple/
+  - pipeline_a
+  - 100
+  - false
