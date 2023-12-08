@@ -27,8 +27,20 @@ jobs:
 
       - name: Configure Docker Client
         run: |-
-          gcloud auth configure-docker # --quiet #authenticate to gcr
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sh get-docker.sh
 
+      - name: Create secrets directory
+        run: |-
+          mkdir ${{ github.workspace }}/secrets
+          chmod 0777 secrets
+
+      - name: Create secrets file
+        run: 'echo "$SSH_KEY" > key'
+        shell: bash
+        env:
+          SSH_KEY: ${{ secrets.DEPLOYMENT }}
+          
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
 
@@ -41,6 +53,7 @@ jobs:
           cd ${{ github.workspace }}/app/src/deployment/
           sh docker-shell.sh
       
+      - name: Create deployment.json
       - name: Deploy K8s Cluster
         run: |-
           ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
