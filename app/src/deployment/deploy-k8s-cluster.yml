@@ -10,21 +10,6 @@
     initial_node_count: 2
 
   tasks:
-  - name: "Create a GKE cluster"
-    google.cloud.gcp_container_cluster:
-      name: "{{cluster_name}}"
-      initial_node_count: "{{ initial_node_count }}"
-      location: "{{ gcp_zone }}"
-      project: "{{ gcp_project }}"
-      release_channel:
-        channel: "UNSPECIFIED"
-      ip_allocation_policy:
-        use_ip_aliases: "yes"
-      auth_kind: "{{ gcp_auth_kind }}"
-      service_account_file: "{{ gcp_service_account_file }}"
-      state: "{{ cluster_state }}"
-    register: cluster
-
   - name: "Create a Node Pool"
     google.cloud.gcp_container_node_pool:
       name: default-pool

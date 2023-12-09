@@ -51,4 +51,3 @@ RUN set -ex; \
 
 # Start a new shell to use the installed SDK
 ENTRYPOINT ["/bin/bash","./docker-entrypoint.sh"]
-CMD ["/bin/bash", "ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present"]

@@ -7,8 +7,8 @@ all:
       gcp_auth_kind: "serviceaccount"
       gcp_scopes: "https://www.googleapis.com/auth/compute"
       gcp_project: "csci-115-398800"
-      gcp_region: "us-east1"
-      gcp_zone: "us-east1-b"
+      gcp_region: "us-central1"
+      gcp_zone: "us-central1-a"
       docker_network_name: "snap-nutrition-network"
       persistent_disk_name: "snapnutrition-app-disk-final-1"
       persistent_disk_size: 50
