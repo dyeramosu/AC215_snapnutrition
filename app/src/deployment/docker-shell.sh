@@ -16,7 +16,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/secrets/deployment.json
 docker build -t $IMAGE_NAME --platform=linux/amd64 -f Dockerfile .
 
 # Run the container
-docker run --rm --name $IMAGE_NAME -ti \
+docker run --rm --name $IMAGE_NAME \
 -v /var/run/docker.sock:/var/run/docker.sock \
 -v "$BASE_DIR":/app \
 -v "$SECRETS_DIR":/secrets \
@@ -27,5 +27,6 @@ docker run --rm --name $IMAGE_NAME -ti \
 -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e GCP_ZONE=$GCP_ZONE \
-$IMAGE_NAME
+ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+
 
