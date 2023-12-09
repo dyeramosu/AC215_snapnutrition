@@ -2,7 +2,7 @@
 
 ## Deployment to GCP (Manual)
 
-One way to deploy an app to the web to make it accessible is to create a virtual machine on the Google Cloud Platform and manually provision the VM with docker and pull the backend api-service container and frontend-react container from Docker Hub.  This process works but involves cutting and pasting of configuration files.  Later in this README we will automatically do all of these steps with Ansible.
+One way to deploy an app to the web to make it accessible is to create a virtual machine on the Google Cloud Platform and manually provision the VM with Docker and pull the backend api-service container and frontend-react container from Docker Hub.  This process works but involves manually creating the VM instance, provisioning the instance, and cutting and pasting of configuration files.  Later in this README we will automatically do all of these steps with Ansible.
 
 This section details how we can provision a GCP VM and run the following containers:
 
@@ -23,23 +23,23 @@ This section details how we can provision a GCP VM and run the following contain
 
 #### Build, Tag & Push api-service
 * Inside the folder `api-service`, make sure you are not in the docker shell
-* Build and Tag the Docker Image: `docker build -t <USER NAME>/mushroom-app-api-service -f Dockerfile .`
-* If you are on M1/2 Macs: Build and Tag the Docker Image: `docker build -t <USER NAME>/mushroom-app-api-service --platform=linux/amd64/v2 -f Dockerfile .`
-* Push to Docker Hub: `docker push <USER NAME>/mushroom-app-api-service`
+* Build and Tag the Docker Image: `docker build -t <USER NAME>/snapnutrition-app-api-service -f Dockerfile .`
+* If you are on M1/2 Macs: Build and Tag the Docker Image: `docker build -t <USER NAME>/snapnutrition-app-api-service --platform=linux/amd64/v2 -f Dockerfile .`
+* Push to Docker Hub: `docker push <USER NAME>/snapnutrition-app-api-service`
 
 #### Build, Tag & Push frontend-react
-* We need to rebuild the frontend as we are building th react app for production release. So we use the `Dockerfile` instead of the `Docker.dev` file
+* We need to rebuild the frontend as we are building the react app for production release. So we use the `Dockerfile` instead of the `Docker.dev` file
 * Inside the folder`frontend-react`, make sure you are not in the docker shell
-* Build and Tag the Docker Image: `docker build -t  <USER NAME>/mushroom-app-frontend -f Dockerfile .`
-* Push to Docker Hub: `docker push <USER NAME>/mushroom-app-frontend`
+* Build and Tag the Docker Image: `docker build -t  <USER NAME>/snapnutrition-app-frontend -f Dockerfile .`
+* Push to Docker Hub: `docker push <USER NAME>/snapnutrition-app-frontend`
 
 Docker Build, Tag & Push commands should look like this:
 ```
-docker build -t dlops/mushroom-app-api-service --platform=linux/amd64/v2 -f Dockerfile .
-docker push dlops/mushroom-app-api-service
+docker build -t dlops/snapnutrition-app-api-service --platform=linux/amd64/v2 -f Dockerfile .
+docker push dlops/snapnutrition-app-api-service
 
-docker build -t dlops/mushroom-app-frontend --platform=linux/amd64/v2 -f Dockerfile .
-docker push dlops/mushroom-app-frontend
+docker build -t dlops/snapnutrition-app-frontend --platform=linux/amd64/v2 -f Dockerfile .
+docker push dlops/snapnutrition-app-frontend
 ```
 
 ### Running Docker Containers on VM
@@ -84,7 +84,7 @@ echo '<___Provided Json Key___>' > secrets/bucket-reader.json
 
 #### Create Docker network
 ```
-sudo docker network create mushroom-app
+sudo docker network create snapnutrition-app
 ```
 
 #### Run api-service
@@ -95,27 +95,27 @@ sudo docker run -d --name api-service \
 -v "$(pwd)/secrets/":/secrets \
 -p 9000:9000 \
 -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/bucket-reader.json \
--e GCS_BUCKET_NAME=mushroom-app-models \
---network mushroom-app dlops/mushroom-app-api-service
+-e GCS_BUCKET_NAME=snapnutrition-app-models \
+--network snapnutrition-app dlops/snapnutrition-app-api-service
 ```
 
 
-If you want to run in interactive mode like we id in development:
+If you want to run in interactive mode like we did in development:
 ```
 sudo docker run --rm -ti --name api-service \
 -v "$(pwd)/persistent-folder/":/persistent \
 -v "$(pwd)/secrets/":/secrets \
 -p 9000:9000 \
 -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/bucket-reader.json \
--e GCS_BUCKET_NAME=mushroom-app-models \
+-e GCS_BUCKET_NAME=snapnutrition-app-models \
 -e DEV=1 \
---network mushroom-app dlops/mushroom-app-api-service
+--network snapnutrition-app dlops/snapnutrition-app-api-service
 ```
 
 #### Run frontend
 Run the container using the following command
 ```
-sudo docker run -d --name frontend -p 3000:80 --network mushroom-app dlops/mushroom-app-frontend
+sudo docker run -d --name frontend -p 3000:80 --network snapnutrition-app dlops/snapnutrition-app-frontend
 ```
 
 #### Add NGINX config file
@@ -185,7 +185,7 @@ http {
 #### Run NGINX Web Server
 Run the container using the following command
 ```
-sudo docker run -d --name nginx -v $(pwd)/conf/nginx/nginx.conf:/etc/nginx/nginx.conf -p 80:80 --network mushroom-app nginx:stable
+sudo docker run -d --name nginx -v $(pwd)/conf/nginx/nginx.conf:/etc/nginx/nginx.conf -p 80:80 --network snapnutrition-app nginx:stable
 ```
 
 You can access the deployed API using `http://<Your VM IP Address>/`
@@ -193,7 +193,7 @@ You can access the deployed API using `http://<Your VM IP Address>/`
 
 ## Deployment to GCP
 
-In this section we will deploy the Mushroom App to GCP using Ansible Playbooks. We will automate all the deployment steps we did previously.
+In this section we will deploy the snapnutrition App to GCP using Ansible Playbooks. We will automate all the deployment steps we did previously.
 
 ### API's to enable in GCP before you begin
 Search for each of these in the GCP search bar and click enable to enable these API's
@@ -220,6 +220,9 @@ Search for each of these in the GCP search bar and click enable to enable these 
 - Follow the same process Create another service account called `gcp-service`
 - For `gcp-service` give the following roles:
     - Storage Object Viewer
+	- If using a Vertex AI model endpoint
+		- AI Platform Admin
+		- Vertex AI Administrator"
 - Then click done.
 - This will create a service account
 - On the right "Actions" column click the vertical ... and select "Create key". A prompt for Create private key for "gcp-service" will appear select "JSON" and click create. This will download a Private key json file to your computer. Copy this json file into the **secrets** folder.
@@ -270,10 +273,10 @@ gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub
 ```
 From the output of the above command keep note of the username. Here is a snippet of the output 
 ```
-- accountId: ac215-project
+- accountId: csci-115-398800
     gid: '3906553998'
     homeDirectory: /home/sa_100110341521630214262
-    name: users/deployment@ac215-project.iam.gserviceaccount.com/projects/ac215-project
+    name: users/deployment@csci-115-398800.iam.gserviceaccount.com/projects/csci-115-398800
     operatingSystemType: LINUX
     primary: true
     uid: '3906553998'
@@ -340,10 +343,9 @@ Once the command runs go to `http://<External IP>/`
 ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent
 ```
 
-
 ## Deployment with Scaling using Kubernetes
 
-In this section we will deploy the mushroom app to a K8s cluster
+In this section our snapnutrition app will be deployed to a K8s cluster
 
 ### API's to enable in GCP for Project
 Search for each of these in the GCP search bar and click enable to enable these API's
@@ -389,9 +391,9 @@ kubectl get nodes
 
 ### If you want to shell into a container in a Pod
 ```
-kubectl get pods --namespace=mushroom-app-cluster-namespace
-kubectl get pod api-5d4878c545-47754 --namespace=mushroom-app-cluster-namespace
-kubectl exec --stdin --tty api-5d4878c545-47754 --namespace=mushroom-app-cluster-namespace  -- /bin/bash
+kubectl get pods --namespace=snapnutrition-app-cluster-namespace
+kubectl get pod api-5d4878c545-47754 --namespace=snapnutrition-app-cluster-namespace
+kubectl exec --stdin --tty api-5d4878c545-47754 --namespace=snapnutrition-app-cluster-namespace  -- /bin/bash
 ```
 
 ### View the App
@@ -506,5 +508,4 @@ sudo docker exec -it api-service /bin/bash
 sudo docker exec -it frontend /bin/bash
 sudo docker exec -it nginx /bin/bash
 ```
-
 
