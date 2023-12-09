@@ -52,8 +52,6 @@ jobs:
           cd ${{ github.workspace }}/app/src/deployment/
           sh docker-shell.sh
       
-      - name: Create deployment.json
       - name: Deploy K8s Cluster
         run: |
           ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
-          
