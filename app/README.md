@@ -4,15 +4,17 @@ We would like to credit Shivas Jayaram from AC215 course where these instruction
 
 ## Deployment to GCP (Manual)
 
-In this section we will deploy the snapnutrition App to GCP. For this we will create a VM instance in GCP and deploy the following container on the VM:
-* api-service
-* frontend-react or frontend (one was basic react site and other more complex)
+One way to deploy an app to the web to make it accessible is to create a virtual machine on the Google Cloud Platform and manually provision the VM with Docker and pull the backend api-service container and frontend-react container from Docker Hub.  This process works but involves manually creating the VM instance, provisioning the instance, and cutting and pasting of configuration files.  Later in this README we will automatically do all of these steps with Ansible.
 
+This section details how we can provision a GCP VM and run the following containers:
+
+* api-service
+* frontend-react
 
 ### Ensure you have all your container build and works locally
 #### api-service
 * Go to `http://localhost:9000/docs` and make sure you can see the API Docs
-#### frontend-react or frontend
+#### frontend-react
 * Go to `http://localhost:3000/` and make sure you can see the prediction page
 
 ### Push Docker Images to Docker Hub
@@ -27,9 +29,9 @@ In this section we will deploy the snapnutrition App to GCP. For this we will cr
 * If you are on M1/2 Macs: Build and Tag the Docker Image: `docker build -t <USER NAME>/snapnutrition-app-api-service --platform=linux/amd64/v2 -f Dockerfile .`
 * Push to Docker Hub: `docker push <USER NAME>/snapnutrition-app-api-service`
 
-#### Build, Tag & Push frontend
-* We need to rebuild the frontend as we are building th react app for production release. So we use the `Dockerfile` instead of the `Docker.dev` file
-* Inside the folder`frontend-react` or `frontend`, make sure you are not in the docker shell
+#### Build, Tag & Push frontend-react
+* We need to rebuild the frontend as we are building the react app for production release. So we use the `Dockerfile` instead of the `Docker.dev` file
+* Inside the folder`frontend-react`, make sure you are not in the docker shell
 * Build and Tag the Docker Image: `docker build -t  <USER NAME>/snapnutrition-app-frontend -f Dockerfile .`
 * Push to Docker Hub: `docker push <USER NAME>/snapnutrition-app-frontend`
 
@@ -100,7 +102,7 @@ sudo docker run -d --name api-service \
 ```
 
 
-If you want to run in interactive mode like we id in development:
+If you want to run in interactive mode like we did in development:
 ```
 sudo docker run --rm -ti --name api-service \
 -v "$(pwd)/persistent-folder/":/persistent \
@@ -220,6 +222,9 @@ Search for each of these in the GCP search bar and click enable to enable these 
 - Follow the same process Create another service account called `gcp-service`
 - For `gcp-service` give the following roles:
     - Storage Object Viewer
+	- If using a Vertex AI model endpoint
+		- AI Platform Admin
+		- Vertex AI Administrator"
 - Then click done.
 - This will create a service account
 - On the right "Actions" column click the vertical ... and select "Create key". A prompt for Create private key for "gcp-service" will appear select "JSON" and click create. This will download a Private key json file to your computer. Copy this json file into the **secrets** folder.
@@ -254,7 +259,7 @@ gcloud compute project-info add-metadata --project <YOUR GCP_PROJECT> --metadata
 ```
 example: 
 ```
-gcloud compute project-info add-metadata --project ac215-project --metadata enable-oslogin=TRUE
+gcloud compute project-info add-metadata --project csci-115-398800 --metadata enable-oslogin=TRUE
 ```
 
 #### Create SSH key for service account
@@ -270,10 +275,10 @@ gcloud compute os-login ssh-keys add --key-file=/secrets/ssh-key-deployment.pub
 ```
 From the output of the above command keep note of the username. Here is a snippet of the output 
 ```
-- accountId: ac215-project
+- accountId: csci-115-398800
     gid: '3906553998'
     homeDirectory: /home/sa_100110341521630214262
-    name: users/deployment@ac215-project.iam.gserviceaccount.com/projects/ac215-project
+    name: users/deployment@csci-115-398800.iam.gserviceaccount.com/projects/csci-115-398800
     operatingSystemType: LINUX
     primary: true
     uid: '3906553998'
@@ -340,10 +345,9 @@ Once the command runs go to `http://<External IP>/`
 ansible-playbook deploy-create-instance.yml -i inventory.yml --extra-vars cluster_state=absent
 ```
 
-
 ## Deployment with Scaling using Kubernetes
 
-In this section we will deploy the snapnutrition app to a K8s cluster
+In this section our snapnutrition app will be deployed to a K8s cluster
 
 ### API's to enable in GCP for Project
 Search for each of these in the GCP search bar and click enable to enable these API's
