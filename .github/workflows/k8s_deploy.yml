@@ -26,17 +26,17 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       - name: Configure Docker Client
-        run: |-
+        run: |
           curl -fsSL https://get.docker.com -o get-docker.sh
           sh get-docker.sh
 
       - name: Create secrets directory
-        run: |-
+        run: |
           mkdir ${{ github.workspace }}/secrets
           chmod 0777 secrets
 
       - name: Create secrets file
-        run: |-
+        run: |
           echo ${{ secrets.DEPLOYMENT }} > ~/secrets/deployment.json
           echo ${{ secrets.DEPLOYMENT }} > ~/secrets/gcp-service.json
           
@@ -48,11 +48,11 @@ jobs:
           ls ${{ github.workspace }}
 
       - name: Build Deployment Container 
-        run: |-
+        run: |
           cd ${{ github.workspace }}/app/src/deployment/
           sh docker-shell.sh
       
       - name: Create deployment.json
       - name: Deploy K8s Cluster
-        run: |-
+        run: |
           ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
