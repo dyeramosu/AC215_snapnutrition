@@ -27,6 +27,5 @@ docker run --rm --name $IMAGE_NAME \
 -e USE_GKE_GCLOUD_AUTH_PLUGIN=True \
 -e GCP_PROJECT=$GCP_PROJECT \
 -e GCP_ZONE=$GCP_ZONE \
-ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
-
+$IMAGE_NAME
 
