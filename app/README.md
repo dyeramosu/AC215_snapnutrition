@@ -11,7 +11,7 @@ This section details how we can provision a GCP VM and run the following contain
 * api-service
 * frontend-react
 
-### Ensure you have all your container build and works locally
+### Ensure you have all your container built and works locally
 #### api-service
 * Go to `http://localhost:9000/docs` and make sure you can see the API Docs
 #### frontend-react
@@ -224,7 +224,7 @@ Search for each of these in the GCP search bar and click enable to enable these 
     - Storage Object Viewer
 	- If using a Vertex AI model endpoint
 		- AI Platform Admin
-		- Vertex AI Administrator"
+		- Vertex AI Administrator
 - Then click done.
 - This will create a service account
 - On the right "Actions" column click the vertical ... and select "Create key". A prompt for Create private key for "gcp-service" will appear select "JSON" and click create. This will download a Private key json file to your computer. Copy this json file into the **secrets** folder.
