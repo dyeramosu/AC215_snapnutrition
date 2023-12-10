@@ -1,4 +1,5 @@
-# AC215 - Milestone5 - SnapNutrition
+# AC215 - SnapNutrition
+==============================
 
 **Team Members**
 - Brent Ruttle, [brent.ruttle@gmail.com](brent.ruttle@gmail.com)
@@ -7,62 +8,33 @@
 - Christina Wang, [wschristina@gmail.com](wschristina@gmail.com)
 - Russell Brown, [r.n.brown314@gmail.com](r.n.brown314@gmail.com)
 
-**Group Name**
-SnapNutrition
+### Presentation  Video
+* \<Link Here>
 
-**Project**
+### Blog Post Link
+*  \<Link Here>
+---
+
+# AC215 - Final Project
+
+**Group Name:** SnapNutrition
+
+**Project - Problem Definition**<br>
 In this project we aim to develop an application that can estimate calories and macronutrients of food from user submitted photos of food using computer vision.
 
-## Milestone5
+## Data Description
 
-### **Main Objectives for Milestone**
+PLACE_HOLDER: Need to fill out...
 
-The main objectives for our project on this milestone:
+## Proposed Solution
 
-1. App Design, Setup, and Code Organization: Design the overall architecture of the application, including its user interface, functionality, and underlying code structure. Focus on intuitive design and clean code organization to ensure maintainability and efficiency.
+By developing an accurate computer vision model, that is able to accurately estimate the macronutrients in pictures of plates of food, and pairing this model with a great user experience, we believe that our application will address an unmet need in the fitness and health industry by making the tedious task of nutrient logging simple and easy.
 
-1. APIs & Frontend Integration: Develop robust APIs that facilitate communication between the front end and back end of the application. Implement a responsive and user-friendly front-end interface that leverages these APIs to create a seamless user experience.
+**SnapNutrition App**
 
-1. Deployment Strategy: Utilize Ansible to create, provision, and deploy our frontend and backend to GCP in an automated fashion.
+We built a user friendly frontend using the React framework that allows users to upload images of plates of food from either a desktop or mobile device for immediate macronutrient estimation.  Uploaded images are sent to a backend api service that uses a light weight but accurate computer vision model. 
 
-### Application Design
-
-We built a detailed design document outlining the application’s architecture. More specifically, we built a Solution Architecture and Technical Architecture to ensure all our components work together.
-
-#### **Solution Architecture**
-
-
-![](./reports/SolutionArchitecture.png)
-
-Here is our overall solution architecture with our processes, executions, and states.
-
-#### **Technical Architecture**
-
-![](./reports/TechnicalArchitecture.png)
-
-Here is our technical architecture. For more technical details, visit the bottom of this readme for the
-containers involved and more README's.
-
-
- ### Backend API
-
- We built backend API service using fast API to expose model functionality to the frontend.  Within this API service we built a mechanism that automatically retrieves our best model from a Google bucket. We also have the option of using a Vertex AI endpoint which may reduce inference latency. Testing is still in progress.
-
- ![](reports/mile_5_api-service_docs.png)
-
- __Example:__ api-service automatically pulling a csv file of model metrics to be use in selecting the best available model.
-
- ![](reports/mile_5_cli_model_selection.png)
-
-### Frontend
-
-We started developing a user-friendly frontend web app based on the React framework.  
-The app is being designed with the user in mind with a simple interface for a user to select or drag and drop a 
-picture of a plate of food and immediately receive and estimate of the macronutrients from our predictive model.
-
-It uses next.js on top of React for routing, and also we setup Google Firebase Authentication for sign-in.
-
-#### Screenshots of Successful Frontend
+**Here are some screenshots of our app:**<br>
 
 New user and/or not logged in
 ![](reports/new_user_homepage.png)
@@ -79,30 +51,67 @@ If you go back to the home page, you will see recent uploads and results
 You can also click on an image to get a zoomed-in view
 ![](reports/image_zoom_homepage.png)
 
-### Deployment
+
+ **Backend API Service Container**
+
+ We built backend API service using fast API to expose model functionality to the frontend.  Within this API service we built a mechanism that automatically retrieves our best model from a Google bucket. We also have the option of using a Vertex AI endpoint which may reduce inference latency.
+
+ ![](reports/mile_5_api-service_docs.png)
+
+ To run the container locally:
+- Open a terminal and go to the location where `app/src/api-service`
+- Run `sh docker-shell.sh`
+- Once inside the docker container run `uvicorn_server`
+- To view and test APIs go to `http://localhost:9000/docs`
+
+
+**Frontend**
+
+We developed a user-friendly frontend web app based on the React framework.  
+The app was designed with the user in mind with a simple interface for a user to select or drag and drop a 
+picture of a plate of food and immediately receive and estimate of the macronutrients from our predictive model.
+
+It uses next.js on top of React for routing, and also we setup Google Firebase Authentication for sign-in.
+
+To run the container locally:
+- Open a terminal and go to the location where `app/src/frontend`
+- Run `sh docker-shell.sh`
+- If running the container for the first time, run `yarn install`
+- Once inside the docker container run `yarn start`
+- Go to `http://localhost:3000` to access the app locally
+
+[For more details click here to visit the the Frontend container README.md](app/src/deployment/README.md)
+
+**Deployment**
 
 We used Ansible to create, provision, and deploy our frontend and backend to GCP in an automated fashion. Ansible helps us manage infrastructure as code and this is very useful to keep track of our app infrastructure as code in GitHub. It helps use setup deployments in a very automated way.
 
-**Example of Containers Automatically Registered in Google Container Registry using Ansible**
+To run the container locally:
+- Open a terminal and go to the location where `app/src/deployment`
+- Run `sh docker-shell.sh`
+- Build and Push Docker Containers to GCR (Google Container Registry)
+```
+ansible-playbook deploy-docker-images.yml -i inventory.yml
+```
 
-Ansible CLI output when deploying Docker images
-![](reports/mile_5_cli_deploy_containers.png)
+- Create & Deploy Cluster
+```
+ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
+```
 
-Google Container Registry
-![](reports/mile_5_containers_GCR.png)
+[For more details on running this container click here.](app/src/deployment/README.md)
 
-**Example of Automatically Created and Provisioned VM using Ansible**<br>
+PLACE_HOLDER: How do we view the app???
 
-Ansible CLI output when provisioning instance
-![](reports/mile_5_cli_provision_VM.png)
+### Deploy using GitHub Actions
 
-Automatically deployed VM running
-![](reports/mile_5_automatically_deployed_vm.png)
+Finally we added CI/CD using GitHub Actions, such that we can trigger deployment or any other pipeline using GitHub Events. Our yaml files can be found under `.github/workflows`
 
-SSH into VM shows three containers running (nginx, api-service, frontend)
-![](reports/mile_5_vm_running_3_containers.png)
+`cicdworkflow.yml` - Brief description here
 
-For more details on commands run to achieve these screenshots, visit [README on deploying SnapNutrition Application via Ansible](app/src/deployment/README.md)
+We implemented a CI/CD workflow to use the deployment container to 
+* Invoke docker image building and pushing to GCR on code changes
+* Deploy the changed containers to update the k8s cluster
 
 ### **Code Structure**
 #### **Containers**
@@ -117,8 +126,8 @@ We built the following containers for our project:
 1. [Image Processing](app/src/image_prep) Note: Multiple processing options including data augmentation.
 1. [Frontend Container (React, Next.js, Google Firebase Auth)](app/src/frontend)
 1. [API-Service](./app/src/api-service)
-1. [model-eval](app/src/model-eval)
-1. [model-deployment](app/src/model-deployment)
+1. [Model-eval](app/src/model-eval)
+1. [Model-deployment](app/src/model-deployment)
 1. [Deployment](app/src/deployment)
 
 **Data Version Control Container**
@@ -162,16 +171,6 @@ We built the following containers for our project:
 - The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
 - [Full Details Here: model-sweeps README.md](app/src/model-sweeps/README.md)
 
-**Model Deployment Container**
-
-- This container contains the code necessary to select a model saved in Weights and Biases and run inference on select images.
-- The purpose is as follows:
-  1. Download best model from Weights and Biases.
-  2. Change the models signature so that images that are feed into the model during inference are preprocessed.
-  3. Upload the model to Vertex AI Model Registry.
-  4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
-- [Full Details Here: model-deployment README.md](app/src/model-deployment/README.md)
-
 **Image Processing Container**
 
 - This container has code that allows you to define data preprocessing pipelines with Luigi
@@ -198,6 +197,16 @@ We built the following containers for our project:
 - This will be used for which model to serve by the backend API
 - [Full Details Here: Model Eval README](app/src/model-eval/README.md)
 
+**Model Deployment Container**
+
+- This container contains the code necessary to select a model saved in Weights and Biases and run inference on select images.
+- The purpose is as follows:
+  1. Download best model from Weights and Biases.
+  2. Change the models signature so that images that are feed into the model during inference are preprocessed.
+  3. Upload the model to Vertex AI Model Registry.
+  4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
+- [Full Details Here: model-deployment README.md](app/src/model-deployment/README.md)
+
 **Model Deployment**
 - Downloads best model from Weights and Biases.
 - Change the models signature so that images that are feed into the model during inference are preprocessed.
@@ -206,17 +215,14 @@ We built the following containers for our project:
 - This is also utilized as another option by the backend API
 - [Full Details Here](app/src/model-deployment/README.md)
 
-### Previous Milestones Structure (Not Including Containers for Final Application, But Model Training)
-![](reports/block_diagram.drawio.svg)
+**Deployment**
+- Uses Ansible and Kubernetes to manage:
+  - Frontend and API Service registration on Google Container Registry (GCR)
+  - Creating and Provisioning nodes (Virtual Machines) with our frontend and backend API service.
+- [Full Details Here](app/src/deployment/README.md)
 
+## NOTE
 
-### **Additional Architectural Explorations (Previous Milestones)**
+**DO NOT KEEP YOUR GCP INSTANCES RUNNING**
 
-We explored several recommended tools and structures from our AC215 course and are currently ideating on use-cases.
-Currently, we do not have a use-case in mind for our project, but that can change in future milestones.
-We have README's and demos of our efforts as follows:
-- **KubeFlow**
-  - See [Full Details Here: Kubeflow README.md](app/src/ml_workflow_demo/README.md)
-
-- **Cloud Functions**
-  - See [Full Details Here: Cloud Functions README.md](app/src/cloud_functions/README.md)
+Once you are done with taking screenshots for the milestone bring them down. 
