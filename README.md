@@ -102,37 +102,37 @@ Automatically deployed VM running
 SSH into VM shows three containers running (nginx, api-service, frontend)
 ![](reports/mile_5_vm_running_3_containers.png)
 
-For more details on commands run to achieve these screenshots, visit [README on deploying SnapNutrition Application via Ansible](./app/README.md)
+For more details on commands run to achieve these screenshots, visit [README on deploying SnapNutrition Application via Ansible](app/src/deployment/README.md)
 
 ### **Code Structure**
 #### **Containers**
 
 We built the following containers for our project:
 
-1) [Data Versioning Control](./data_versioning_control)
-2) [Data Labels Processing and Train, Test, Validation Split](./data_labels_processing)
-3) [TFRecords Creation](./tfrecords_creation)
-4) [Model Training](./model-training)
-5) [Model Sweeps](./model-sweeps)
-6) [App Frontend Container:](./src/app) Note that this container will be used later in our project.
-7) [Image Processing](./src/image_prep) Note: Multiple processing options including data augmentation.
-8) [Frontend Container (React, Next.js, Google Firebase Auth)](./frontend)
-9) [API-Service](./app/src/api-service)
-10) [model-eval](./model-eval)
-11) [model-deployment](./model-deployment)
+1. [Data Versioning Control](app/src/data_versioning_control)
+1. [Data Labels Processing and Train, Test, Validation Split](app/src/data_labels_processing)
+1. [TFRecords Creation](app/src/tfrecords_creation)
+1. [Model Training](app/src/model-training)
+1. [Model Sweeps](app/src/model-sweeps)
+1. [Image Processing](app/src/image_prep) Note: Multiple processing options including data augmentation.
+1. [Frontend Container (React, Next.js, Google Firebase Auth)](app/src/frontend)
+1. [API-Service](./app/src/api-service)
+1. [model-eval](app/src/model-eval)
+1. [model-deployment](app/src/model-deployment)
+1. [Deployment](app/src/deployment)
 
 **Data Version Control Container**
 - We use an open source tool called DVC (product page [here](https://dvc.org/doc)) for versioning our datasets stored in Google Cloud Bucket
 - We mainly track our raw images and corresponding labels, as well as our generated TFRecords.
 -  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
-- [Full Details Here: data versioning control README.md](./data_versioning_control/README.md)
+- [Full Details Here: data versioning control README.md](app/src/data_versioning_control/README.md)
 
 **Data Labels Processing and Train, Test, Validation Split**
 
 - As input, it reads the raw image and label data, and saves the formatted filepaths + labels as pickle files into the Bucket.
 - These pickle files are already split into train, test, and validation splits for ingestion by the TFRecords container
 -  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
-- [Full Details Here: data labels processing README.md](./data_labels_processing/README.md)
+- [Full Details Here: data labels processing README.md](app/src/data_labels_processing/README.md)
 
 **TFRecords Creation Container**
 - This container is expected to read the output of the **Data Labels Processing and Train, Test, Validation Split** container.
@@ -141,7 +141,7 @@ We built the following containers for our project:
 - This container also uses **Dask** to compute dataset metrics and preprocess images with dask normalizations before saving as TFRecords.
 - These TFRecords are prepped for consumption either by our Google Colab notebooks or by our **Model Training Container** and **Model Sweeps Container**
 -  This container is meant to run in a Google Cloud VM and reads from our Google Cloud Storage Bucket.
-- [Full Details Here: TFRecords Creation README.md](./tfrecords_creation/README.md)
+- [Full Details Here: TFRecords Creation README.md](app/src/tfrecords_creation/README.md)
 
 **Model Training Container**
 
@@ -151,7 +151,7 @@ We built the following containers for our project:
 - The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
 - The `README.md` in this container gives detailed instructions on how to build the container, package the training scripts, and execute the packages in Vertex AI.
 - The current configuration of this container allows us to manipulate a YAML file called `model_config.yml` to more easily change hyperparameters.
-- [Full Details Here: model-training README.md](./model-training/README.md)
+- [Full Details Here: model-training README.md](app/src/model-training/README.md)
 
 **Model Sweeps Container**
 
@@ -160,7 +160,7 @@ We built the following containers for our project:
 - Each Sweep gives different run id's to each training combo and groups these for tracking in Weights and Biases.
 - A variety of complex architectures and transfer learning base models can be selected in the config yaml.
 - The scripts also make use of TF Records and TF Data pipelines for faster data preprocessing. See the `task.py` script to understand how we've implemented these features
-- [Full Details Here: model-sweeps README.md](./model-sweeps/README.md)
+- [Full Details Here: model-sweeps README.md](app/src/model-sweeps/README.md)
 
 **Model Deployment Container**
 
@@ -170,27 +170,20 @@ We built the following containers for our project:
   2. Change the models signature so that images that are feed into the model during inference are preprocessed.
   3. Upload the model to Vertex AI Model Registry.
   4. Deploy the model to Vertex AI and create an endpoint for prediction requests.
-- [Full Details Here: model-deployment README.md](./model-deployment/README.md)
-
-**App Front-End Container**
-
-- [Deprecated]
-- This contains the frontend app that runs in your browser. (There are 3 that can be found in this repo, this is the earliest one from milestone 2).
-- The frontend is made using Flask and allows user to submit their own food photos and see the model-estimated nutrition info.
-- Visit [here](./src/app) for container directory
+- [Full Details Here: model-deployment README.md](app/src/model-deployment/README.md)
 
 **Image Processing Container**
 
 - This container has code that allows you to define data preprocessing pipelines with Luigi
 - You can build batches to increase the size of your image datasets and make them more robust to variations in image quality.
 - **Note:** Augmented image data is not currently used in our training at this time.
-- [Full Details Here: Image Processing Containers README.md](./src/image_prep/README.md)
+- [Full Details Here: Image Processing Containers README.md](app/src/image_prep/README.md)
 
 **Frontend Container**
 - This container runs React, Next.js, and Google Firebase Auth (for signup and login)
 - It allows users to upload their food images and get predictions from our best model (Vertex AI API or downloaded locally)
-- **Note:** you may see a frontend-react which was a basic react frontend container used for initial testing e.g. [here](./app/src/frontend-react)
-- [Full Details Here: Frontend README](./frontend/README.md)
+- **Note:** you may see a frontend-react which was a basic react frontend container used for initial testing e.g. [here](./app/src/frontend-mushroom-inspired)
+- [Full Details Here: Frontend README](app/src/frontend/README.md)
 
 **API Service**
 - This container is our backend service for the frontend API. It either grabs predictions from Vertex endpoint or downloads
@@ -203,7 +196,7 @@ We built the following containers for our project:
   and stores it in the `snapnutrition_data_bucket` GCS bucket within the `model_eval` folder
 - It finds the best model and store it in the `best_model` folder within the `model_eval` folder in the GCS bucket
 - This will be used for which model to serve by the backend API
-- [Full Details Here: Model Eval README](./model-eval/README.md)
+- [Full Details Here: Model Eval README](app/src/model-eval/README.md)
 
 **Model Deployment**
 - Downloads best model from Weights and Biases.
@@ -211,10 +204,10 @@ We built the following containers for our project:
 - Uploads the model to Vertex AI Model Registry.
 - Deploy the model to Vertex AI and create an endpoint for prediction requests.
 - This is also utilized as another option by the backend API
-- [Full Details Here](./model-deployment/README.md)
+- [Full Details Here](app/src/model-deployment/README.md)
 
 ### Previous Milestones Structure (Not Including Containers for Final Application, But Model Training)
-![](./block_diagram.drawio.svg)
+![](reports/block_diagram.drawio.svg)
 
 
 ### **Additional Architectural Explorations (Previous Milestones)**
@@ -223,7 +216,7 @@ We explored several recommended tools and structures from our AC215 course and a
 Currently, we do not have a use-case in mind for our project, but that can change in future milestones.
 We have README's and demos of our efforts as follows:
 - **KubeFlow**
-  - See [Full Details Here: Kubeflow README.md](ml_workflow_demo/README.md)
+  - See [Full Details Here: Kubeflow README.md](app/src/ml_workflow_demo/README.md)
 
 - **Cloud Functions**
-  - See [Full Details Here: Cloud Functions README.md](cloud_functions/README.md)
+  - See [Full Details Here: Cloud Functions README.md](app/src/cloud_functions/README.md)

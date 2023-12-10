@@ -39,7 +39,7 @@
     - name: Create frontend container
       docker_container:
         name: "frontend"
-        image: "gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-react-c:{{ tag.stdout}}"
+        image: "gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-mushroom-inspired-c:{{ tag.stdout}}"
         state: started
         recreate: yes
         pull: yes
