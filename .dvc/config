@@ -1,0 +1,4 @@
+[core]
+    remote = snapnutrition_data_bucket
+['remote "snapnutrition_data_bucket"']
+    url = gs://snapnutrition_data_bucket/dvc_store

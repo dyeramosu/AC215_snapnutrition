@@ -1,0 +1,22 @@
+all:
+    vars:
+      ansible_user: sa_113722258430510671890
+      ansible_ssh_private_key_file: "/../../../secrets/ssh-key-deployment"
+      gcp_service_account_file: "/../../../secrets/deployment.json"
+      gcp_service_account_email: "deployment@csci-115-398800.iam.gserviceaccount.com"
+      gcp_auth_kind: "serviceaccount"
+      gcp_scopes: "https://www.googleapis.com/auth/compute"
+      gcp_project: "csci-115-398800"
+      gcp_region: "us-central1"
+      gcp_zone: "us-central1-a"
+      docker_network_name: "snap-nutrition-network"
+      persistent_disk_name: "snapnutrition-app-disk-final-1"
+      persistent_disk_size: 50
+      machine_instance_name: "snapnutrition-app-auto-final-1"
+      machine_type: "n2d-standard-2"
+      machine_disk_size: 50
+
+    children:
+        appserver:
+            hosts:
+                34.23.131.208 :

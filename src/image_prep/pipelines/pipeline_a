@@ -1,0 +1,11 @@
+tasks:
+- func: equalize_hist
+  params: {}
+- func: rotate
+  params:
+    angle: 30
+    resize: true
+- func: resize
+  params:
+    height: 500
+    width: 500

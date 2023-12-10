@@ -1,0 +1,7 @@
+tasks:
+- func: grayscale
+  params: {}
+- func: filter_gaussian
+  params: {}
+- func: equalize_adapthist
+  params: {}
