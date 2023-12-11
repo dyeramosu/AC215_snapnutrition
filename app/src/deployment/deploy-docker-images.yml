@@ -13,12 +13,12 @@
     community.general.docker_image:
       build:
         path: /frontend
-      name: gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-react-c:{{ tag.stdout}}
+      name: gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-mushroom-inspired-c:{{ tag.stdout}}
       source: build
   - name: Push frontend image to GCR
     community.general.docker_image:
-      name: gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-react-c:{{ tag.stdout}}
-      repository: gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-react-c:{{ tag.stdout}}
+      name: gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-mushroom-inspired-c:{{ tag.stdout}}
+      repository: gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-mushroom-inspired-c:{{ tag.stdout}}
       push: yes
       source: local
   - name: Build api-service container image

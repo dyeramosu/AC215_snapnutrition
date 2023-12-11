@@ -135,7 +135,7 @@
                 run: frontend
             spec:
               containers:
-              - image: "gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-react-c:{{ tag.stdout}}"
+              - image: "gcr.io/{{ gcp_project }}/snapnutrition-app-frontend-mushroom-inspired-c:{{ tag.stdout}}"
                 imagePullPolicy: IfNotPresent
                 name: frontend
                 ports:
