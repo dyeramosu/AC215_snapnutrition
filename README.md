@@ -24,7 +24,7 @@ In this project we aim to develop an application that can estimate calories and 
 
 ## Data Description
 
-PLACE_HOLDER: Need to fill out...
+We conducted a thorough review of literature, open-source projects, and datasets. The dataset that we decided as team to use for this project was published by a Google Research Group and called [Nutrition 5K](https://github.com/google-research-datasets/Nutrition5k).  The paper accompanying the dataset describes a their systematic approach to capturing and curating images, depth images, and video of entire plates of food from two cafeterias for the purpose of model training. In addition, the original dataset was composed of 180 GB, most of which was video.  As video and depth images introduce additional challenges with regard to model training, we decided to scope our project to just overhead images which reduced our training dataset to 2.2 GB! This was extremely important as it allowed to to explore a more diverse set of models as well as implement hyperparameter sweeps. Each image that we used included quantified macronutrient labels for calories, fat, carbohydrates, protein, and total mass.
 
 ## Proposed Solution
 
@@ -224,5 +224,3 @@ We built the following containers for our project:
 ## NOTE
 
 **DO NOT KEEP YOUR GCP INSTANCES RUNNING**
-
-Once you are done with taking screenshots for the milestone bring them down. 
