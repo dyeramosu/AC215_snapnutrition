@@ -15,6 +15,8 @@
 *  \<Link Here>
 ---
 
+
+
 # AC215 - Final Project
 
 **Group Name:** SnapNutrition
@@ -100,8 +102,6 @@ ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_st
 ```
 
 [For more details on running this container click here.](app/src/deployment/README.md)
-
-PLACE_HOLDER: How do we view the app???
 
 ### Deploy using GitHub Actions
 
