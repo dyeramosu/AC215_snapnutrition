@@ -231,7 +231,3 @@ We built the following containers for our project:
   - Frontend and API Service registration on Google Container Registry (GCR)
   - Creating and Provisioning nodes (Virtual Machines) with our frontend and backend API service.
 - [Full Details Here](app/src/deployment/README.md)
-
-## NOTE
-
-**DO NOT KEEP YOUR GCP INSTANCES RUNNING**
