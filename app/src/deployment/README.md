@@ -516,8 +516,6 @@ sudo docker exec -it nginx /bin/bash
 Copy the contents of deployment.json from above. Under the repository settings on Github, go to Secrets and variables / Actions, create a key named `DEPLOYMENT` and paste the contents into the value field.
 Any commits to the `main` branch that contain the string `/run-` in the commit message will trigger an automatic deployment. Github Actions will build the deployment container and then spin up a Kubernetes cluster and deploy all containers required to run the app. Check the Github Actions logs when it's done running, in the Build Deployment Container section, to get the `nginx_ingress_ip` and head to <nginx_ingress_ip>.sslip.io to access the app.
 
-![](../../../reports/github_actions_screenshot.png)
-
 ### Screenshots of Runs
 
 **Example of Containers Automatically Registered in Google Container Registry using Ansible**
@@ -538,3 +536,6 @@ Automatically deployed VM running
 
 SSH into VM shows three containers running (nginx, api-service, frontend)
 ![](../../../reports/mile_5_vm_running_3_containers.png)
+
+Github Actions run logs show the nginx ingress ip after automatic deployment
+![](../../../reports/github_actions_screenshot.png)
