@@ -110,7 +110,7 @@ ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_st
 
 Finally we added CI/CD using GitHub Actions, such that we can trigger deployment or any other pipeline using GitHub Events. Our yaml files can be found under `.github/workflows`
 
-`cicdworkflow.yml` - Brief description here
+`k8s_deploy.yml` - Brief description here
 
 We implemented a CI/CD workflow to use the deployment container to 
 * Invoke docker image building and pushing to GCR on code changes
