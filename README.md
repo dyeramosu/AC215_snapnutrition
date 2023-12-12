@@ -15,7 +15,11 @@
 *  \<Link Here>
 ---
 
+### Project Organization
 
+---
+
+![](reports/final_project_directory_structure.png)
 
 # AC215 - Final Project
 
