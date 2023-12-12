@@ -89,7 +89,11 @@ To run the container locally:
 
 **Deployment**
 
-We used Ansible to create, provision, and deploy our frontend and backend to GCP in an automated fashion. Ansible helps us manage infrastructure as code and this is very useful to keep track of our app infrastructure as code in GitHub. It helps use setup deployments in a very automated way.
+We used Ansible to create, provision, and deploy our frontend and backend to GCP in an automated fashion. Ansible helps us manage infrastructure as code and this is very useful to keep track of our app infrastructure as code in GitHub. It also helps us set up deployments in a very automated way. In addition to Ansible, we use a kubernetes cluster to take care of load balancing and failover.
+
+Here is an example of 2 nodes from our k8 cluster running:
+
+<img src="reports/k8cluster_nodes.png"  width="800"><br>
 
 To run the container locally:
 - Open a terminal and go to the location where `app/src/deployment`
@@ -103,6 +107,10 @@ ansible-playbook deploy-docker-images.yml -i inventory.yml
 ```
 ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
 ```
+
+- View the App
+  * Copy the `nginx_ingress_ip` from the terminal from the create cluster command
+  * Go to `http://<YOUR INGRESS IP>.sslip.io`
 
 [For more details on running this container click here.](app/src/deployment/README.md)
 
