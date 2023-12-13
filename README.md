@@ -9,11 +9,16 @@
 - Russell Brown, [r.n.brown314@gmail.com](r.n.brown314@gmail.com)
 
 ### Presentation  Video
-* \<Link Here>
+* [Youtube Presentation](https://youtu.be/7q6euZdu2UE)
 
 ### Blog Post Link
-*  \<Link Here>
+*  [Medium Draft Post](https://medium.com/institute-for-applied-computational-science/snapnutrition-bridging-the-gap-between-technology-and-dietary-well-being-dbd6fc5ffc1c)
 ---
+
+### Project Organization
+
+
+![](reports/final_project_directory_structure.png)
 
 # AC215 - Final Project
 
@@ -24,7 +29,7 @@ In this project we aim to develop an application that can estimate calories and 
 
 ## Data Description
 
-PLACE_HOLDER: Need to fill out...
+We conducted a thorough review of literature, open-source projects, and datasets. The dataset that we decided as team to use for this project was published by a Google Research Group and called [Nutrition 5K](https://github.com/google-research-datasets/Nutrition5k).  The paper accompanying the dataset describes a their systematic approach to capturing and curating images, depth images, and video of entire plates of food from two cafeterias for the purpose of model training. In addition, the original dataset was composed of 180 GB, most of which was video.  As video and depth images introduce additional challenges with regard to model training, we decided to scope our project to just overhead images which reduced our training dataset to 2.2 GB! This was extremely important as it allowed to to explore a more diverse set of models as well as implement hyperparameter sweeps. Each image that we used included quantified macronutrient labels for calories, fat, carbohydrates, protein, and total mass.
 
 ## Proposed Solution
 
@@ -84,7 +89,11 @@ To run the container locally:
 
 **Deployment**
 
-We used Ansible to create, provision, and deploy our frontend and backend to GCP in an automated fashion. Ansible helps us manage infrastructure as code and this is very useful to keep track of our app infrastructure as code in GitHub. It helps use setup deployments in a very automated way.
+We used Ansible to create, provision, and deploy our frontend and backend to GCP in an automated fashion. Ansible helps us manage infrastructure as code and this is very useful to keep track of our app infrastructure as code in GitHub. It also helps us set up deployments in a very automated way. In addition to Ansible, we use a kubernetes cluster to take care of load balancing and failover.
+
+Here is an example of 2 nodes from our k8 cluster running:
+
+<img src="reports/k8cluster_nodes.png"  width="800"><br>
 
 To run the container locally:
 - Open a terminal and go to the location where `app/src/deployment`
@@ -99,15 +108,17 @@ ansible-playbook deploy-docker-images.yml -i inventory.yml
 ansible-playbook deploy-k8s-cluster.yml -i inventory.yml --extra-vars cluster_state=present
 ```
 
-[For more details on running this container click here.](app/src/deployment/README.md)
+- View the App
+  * Copy the `nginx_ingress_ip` from the terminal from the create cluster command
+  * Go to `http://<YOUR INGRESS IP>.sslip.io`
 
-PLACE_HOLDER: How do we view the app???
+[For more details on running this container click here.](app/src/deployment/README.md)
 
 ### Deploy using GitHub Actions
 
 Finally we added CI/CD using GitHub Actions, such that we can trigger deployment or any other pipeline using GitHub Events. Our yaml files can be found under `.github/workflows`
 
-`cicdworkflow.yml` - Brief description here
+`k8s_deploy.yml` - Brief description here
 
 We implemented a CI/CD workflow to use the deployment container to 
 * Invoke docker image building and pushing to GCR on code changes
@@ -220,9 +231,3 @@ We built the following containers for our project:
   - Frontend and API Service registration on Google Container Registry (GCR)
   - Creating and Provisioning nodes (Virtual Machines) with our frontend and backend API service.
 - [Full Details Here](app/src/deployment/README.md)
-
-## NOTE
-
-**DO NOT KEEP YOUR GCP INSTANCES RUNNING**
-
-Once you are done with taking screenshots for the milestone bring them down. 
