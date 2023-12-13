@@ -9,10 +9,10 @@
 - Russell Brown, [r.n.brown314@gmail.com](r.n.brown314@gmail.com)
 
 ### Presentation  Video
-* \<Link Here>
+* [Youtube Presentation](https://youtu.be/7q6euZdu2UE)
 
 ### Blog Post Link
-*  \<Link Here>
+*  [Medium Draft Post](https://medium.com/institute-for-applied-computational-science/snapnutrition-bridging-the-gap-between-technology-and-dietary-well-being-dbd6fc5ffc1c)
 ---
 
 ### Project Organization
