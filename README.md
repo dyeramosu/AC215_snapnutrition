@@ -12,7 +12,7 @@
 * [Youtube Presentation](https://youtu.be/7q6euZdu2UE)
 
 ### Blog Post Link
-*  [Medium Post](https://medium.com/institute-for-applied-computational-science/ac215-fall2023-projects/home)
+*  [Medium Post](https://medium.com/@wschristina/snapnutrition-bridging-the-gap-between-technology-and-dietary-well-being-dbd6fc5ffc1c)
 ---
 
 ### Project Organization
